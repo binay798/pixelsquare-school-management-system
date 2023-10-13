@@ -1,0 +1,38 @@
+{
+  // Editor settings
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.wordWrap": "on",
+  "editor.formatOnSave": true,
+  "editor.minimap.enabled": false,
+
+  // File associations
+  "files.associations": {
+    "*.js": "javascript",
+    "*.jsx": "javascriptreact",
+    "*.ts": "typescript",
+    "*.tsx": "typescriptreact"
+  },
+
+  // ESLint integration
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.alwaysShowStatus": true,
+  "eslint.format.enable": true,
+
+  // TypeScript specific settings
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  // Theme settings (choose your preferred theme)
+  // "workbench.colorTheme": "Monokai",
+  "workbench.iconTheme": "material-icon-theme",
+
+  // Other general settings
+  "workbench.editor.enablePreview": false,
+  "window.zoomLevel": -1
+}
