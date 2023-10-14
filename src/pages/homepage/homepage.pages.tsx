@@ -1,3 +1,3 @@
 export function Homepage() {
-  return <div>HOmepage</div>
+  return <div>Homepage</div>
 }

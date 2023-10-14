@@ -1,32 +1,6 @@
-import {
-  PrivateRoute,
-  ProtectedRouteComp,
-} from '@src/components/auth/routes.component'
-import { Login } from '@src/pages/auth/login/login.pages'
-import { Homepage } from '@src/pages/homepage/homepage.pages'
+import { privateRoutes, protectedRoutes, publicRoutes } from '@src/routes'
 import { createContext, useContext } from 'react'
-import {
-  RouterProvider,
-  createHashRouter,
-  RouteObject,
-  Navigate,
-} from 'react-router-dom'
-
-const publicRoutes: RouteObject[] = [{ path: '/', element: <Homepage /> }]
-const privateRoutes: RouteObject[] = [
-  {
-    path: '/',
-    element: <PrivateRoute />,
-    children: [{ path: '/dashboard', element: <div>dashboard</div> }],
-  },
-]
-const protectedRoutes: RouteObject[] = [
-  {
-    path: '/login',
-    element: <ProtectedRouteComp />,
-    children: [{ path: '', element: <Login /> }],
-  },
-]
+import { RouterProvider, createHashRouter, Navigate } from 'react-router-dom'
 
 const combinedRoutes = [
   ...publicRoutes,
