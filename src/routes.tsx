@@ -23,7 +23,7 @@ export const privateRoutes: RouteObject[] = [
 ]
 
 /** Example of protected routes are : Login , signup page
- * These pages should not be accessed by logged in user
+ * These pages should not be accessed by logged in users
  */
 export const protectedRoutes: RouteObject[] = [
   {
