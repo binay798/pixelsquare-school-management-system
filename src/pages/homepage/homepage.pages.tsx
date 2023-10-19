@@ -1,10 +1,15 @@
-import { Toast } from '@src/components/toast/toast.component'
+import { useToast } from '@src/components/toast/toast.hooks'
 
 export function Homepage() {
+  const { success } = useToast()
+  const clickedHandler = () => {
+    success('hello there' + Date.now())
+  }
+
   return (
     <div>
       Homepage
-      <Toast />
+      <button onClick={clickedHandler}>Add toast</button>
     </div>
   )
 }
