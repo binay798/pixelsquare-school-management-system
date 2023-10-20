@@ -1,27 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-interface InitialState {
+export interface ToastReduxState {
   data: {
     id: number
     message: string
     type: 'success' | 'error'
-    height: number
   }[]
 }
-const initialState: InitialState = {
+const initialState: ToastReduxState = {
   data: [],
 }
 const toastSlice = createSlice({
   name: 'toast',
   initialState,
   reducers: {
-    addToastMessage: (state, action: { payload: InitialState['data'][0] }) => {
+    addToastMessage: (
+      state,
+      action: { payload: ToastReduxState['data'][0] }
+    ) => {
       state.data.push(action.payload)
     },
     deleteToastMessage: (state, action: { payload: number }) => {
       state.data = state.data.filter((el) => el.id !== action.payload)
     },
-    resetToastData: (state, action: { payload: InitialState['data'] }) => {
+    resetToastData: (state, action: { payload: ToastReduxState['data'] }) => {
       state.data = action.payload
     },
   },

@@ -1,14 +1,13 @@
 import { useDispatch } from '@src/store/hooks.store'
 import {
+  ToastReduxState,
   addToastMessage,
   deleteToastMessage,
   resetToastData,
 } from '@src/store/redux/toast/toast.slice'
 import { createContext } from 'react'
 
-export const ToastProvider = createContext<
-  { id: number; message: string; type: 'success' | 'error' }[] | null
->(null)
+export const ToastProvider = createContext<ToastReduxState['data'] | null>(null)
 
 export function useToast() {
   const dispatch = useDispatch()
@@ -18,21 +17,13 @@ export function useToast() {
         id: Date.now(),
         message: msg,
         type: 'success',
-        height: 50,
       })
     )
   }
   const remove = (id: number) => {
     dispatch(deleteToastMessage(id))
   }
-  const reset = (
-    data: {
-      id: number
-      message: string
-      type: 'success' | 'error'
-      height: number
-    }[]
-  ) => {
+  const reset = (data: ToastReduxState['data']) => {
     dispatch(resetToastData(data))
   }
 

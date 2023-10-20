@@ -7,28 +7,35 @@ import { useEffect } from 'react'
 import { CloseBtn } from '../button/button.component'
 import tick from '../../assets/images/tick.png'
 import closePng from '../../assets/images/close.png'
+import { ToastReduxState } from '@src/store/redux/toast/toast.slice'
 
 export function Toast(props: { children: React.ReactNode }) {
   const { data: items } = useSelector((state) => state.toast)
-  const transitions = useTransition(items, {
-    from: {
-      opacity: 0,
-      height: 0,
-      life: '100%',
-      transformOrigin: 'center center',
-      scale: 0.7,
-    },
-    key: (item: { id: number }) => item.id,
-    enter: (item) => async (next) => {
-      await next({
-        opacity: 1,
-        height: item.height + 10,
-        scale: 1,
-      })
-      await next({ life: '0%' })
-    },
-    leave: [{ opacity: 0, scale: 0.7, height: 0 }],
-  })
+  const transitions = useTransition(
+    items.map((el) => ({
+      ...el,
+      height: 50,
+    })),
+    {
+      from: {
+        opacity: 0,
+        height: 0,
+        life: '100%',
+        transformOrigin: 'center center',
+        scale: 0.7,
+      },
+      key: (item: { id: number }) => item.id,
+      enter: (item) => async (next) => {
+        await next({
+          opacity: 1,
+          height: item.height + 10,
+          scale: 1,
+        })
+        await next({ life: '0%' })
+      },
+      leave: [{ opacity: 0, scale: 0.7, height: 0 }],
+    }
+  )
 
   return (
     <ToastProvider.Provider value={items}>
@@ -41,7 +48,7 @@ export function Toast(props: { children: React.ReactNode }) {
                 ...style,
               }}
             >
-              <ToastItem data={item} />
+              <ToastItem {...item} />
             </animated.div>
           ))}
         </Stack>
@@ -51,13 +58,11 @@ export function Toast(props: { children: React.ReactNode }) {
   )
 }
 
-function ToastItem(props: {
-  data: { id: number; message: string; type: 'success' | 'error' }
-}) {
+function ToastItem(props: ToastReduxState['data'][0]) {
   const toast = useToast()
   useEffect(() => {
     const timeout = setTimeout(() => {
-      toast.remove(props.data.id)
+      toast.remove(props.id)
     }, 7000)
 
     return () => {
@@ -66,7 +71,7 @@ function ToastItem(props: {
   }, [])
 
   const removeToast = () => {
-    toast.remove(props.data.id)
+    toast.remove(props.id)
   }
 
   return (
@@ -78,14 +83,16 @@ function ToastItem(props: {
         justifyContent={'space-between'}
       >
         <ToastTypeImage
-          src={props.data.type === 'success' ? tick : closePng}
+          src={props.type === 'success' ? tick : closePng}
           alt="tick"
         />
         <Typography variant="body2">
-          Item {props.data.message} hello ther and welcome htere and there
+          Item {props.message} hello ther and welcome htere and there
         </Typography>
         <CloseBtn onClick={removeToast} />
       </Stack>
     </ToastItemContainer>
   )
 }
+
+ToastItem.displayName = 'ToastItem'
