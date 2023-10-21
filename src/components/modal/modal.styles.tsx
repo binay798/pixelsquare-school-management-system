@@ -13,7 +13,7 @@ export const AnimatedBox = styled(animated.div)`
   overflow-y: auto;
   position: relative;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
-
+  min-width: 150px;
   ${scrollbarStyle()}
 `
 export const BackdropContainer = styled.div`

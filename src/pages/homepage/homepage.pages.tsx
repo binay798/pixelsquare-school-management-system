@@ -13,7 +13,9 @@ export function Homepage() {
         close={() => {
           setOpen(false)
         }}
-      />
+      >
+        Hello ther
+      </SpringModal>
     </div>
   )
 }

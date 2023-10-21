@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react'
 import Modal from '@mui/material/Modal'
-import Typography from '@mui/material/Typography'
 import { useSpring, animated, config } from '@react-spring/web'
 import { AnimatedBox, BackdropContainer, CloseContainer } from './modal.styles'
 import { CloseBtn } from '../button/button.component'
@@ -47,6 +46,7 @@ interface ModalProps {
   disableOutsideClick?: boolean
   open: boolean
   close: () => void
+  children: React.ReactNode
 }
 export default function SpringModal({
   noPadding = false,
@@ -80,12 +80,7 @@ export default function SpringModal({
               <CloseContainer>
                 <CloseBtn onClick={handleClose} />
               </CloseContainer>
-              <Typography id="spring-modal-title" variant="h6" component="h2">
-                Text in a modal
-              </Typography>
-              <Typography id="spring-modal-description" sx={{ mt: 2 }}>
-                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-              </Typography>
+              {props.children}
             </AnimatedBox>
           </BackdropContainer>
         </Fade>
