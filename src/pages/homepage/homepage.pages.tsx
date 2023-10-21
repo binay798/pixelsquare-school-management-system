@@ -1,15 +1,10 @@
-import { useToast } from '@src/components/toast/toast.hooks'
+import SpringModal from '@src/components/modal/modal.component'
 
 export function Homepage() {
-  const { success } = useToast()
-  const clickedHandler = () => {
-    success('hello there' + Date.now())
-  }
-
   return (
     <div>
       Homepage
-      <button onClick={clickedHandler}>Add toast</button>
+      <SpringModal />
     </div>
   )
 }
