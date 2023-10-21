@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import { animated } from '@react-spring/web'
+import { scrollbarStyle } from '@src/helpers/scrollbarStyle.helpers'
 
 export const Container = styled.div``
 
@@ -12,6 +13,8 @@ export const AnimatedBox = styled(animated.div)`
   overflow-y: auto;
   position: relative;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
+
+  ${scrollbarStyle()}
 `
 export const BackdropContainer = styled.div`
   background: #2e2d2d8c;

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react'
 import Modal from '@mui/material/Modal'
-import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { useSpring, animated, config } from '@react-spring/web'
 import { AnimatedBox, BackdropContainer, CloseContainer } from './modal.styles'
@@ -46,32 +45,34 @@ const Fade = React.forwardRef<HTMLDivElement, FadeProps>(
 interface ModalProps {
   noPadding?: boolean
   disableOutsideClick?: boolean
+  open: boolean
+  close: () => void
 }
-export default function SpringModal({ noPadding = false }: ModalProps) {
-  const [open, setOpen] = React.useState(false)
-  const handleOpen = () => setOpen(true)
+export default function SpringModal({
+  noPadding = false,
+  ...props
+}: ModalProps) {
   const handleClose = () => {
-    setOpen(false)
+    props.close()
   }
   const boxStyle = useSpring({
     from: { scale: 0.8 },
-    to: { scale: open ? 1 : 0.8 },
+    to: { scale: props.open ? 1 : 0.8 },
 
     config: config.stiff,
   })
 
   return (
     <div>
-      <Button onClick={handleOpen}>Open modal</Button>
       <Modal
         aria-labelledby="spring-modal-title"
         aria-describedby="spring-modal-description"
-        open={open}
+        open={props.open}
         onClose={handleClose}
         closeAfterTransition
         hideBackdrop={true}
       >
-        <Fade in={open}>
+        <Fade in={props.open}>
           <BackdropContainer>
             <AnimatedBox
               style={{ ...boxStyle, padding: noPadding ? '0px' : '20px' }}
@@ -79,12 +80,7 @@ export default function SpringModal({ noPadding = false }: ModalProps) {
               <CloseContainer>
                 <CloseBtn onClick={handleClose} />
               </CloseContainer>
-              <Typography
-                id="spring-modal-title"
-                variant="h6"
-                component="h2"
-                onClick={handleClose}
-              >
+              <Typography id="spring-modal-title" variant="h6" component="h2">
                 Text in a modal
               </Typography>
               <Typography id="spring-modal-description" sx={{ mt: 2 }}>
