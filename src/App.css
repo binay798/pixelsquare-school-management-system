@@ -64,7 +64,15 @@
   font-style: italic;
 }
 
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 body {
   font-family: Roboto;
   font-size: 14px;
+  position: relative;
 }

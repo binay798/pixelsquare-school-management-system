@@ -1,21 +1,11 @@
-import SpringModal from '@src/components/modal/modal.component'
-import { useState } from 'react'
+import { Typography } from '@mui/material'
+import { FullPageLoader } from '@src/components/loader/loader.component'
 
 export function Homepage() {
-  const [open, setOpen] = useState(false)
-
   return (
     <div>
-      Homepage
-      <button onClick={() => setOpen(true)}>Open</button>
-      <SpringModal
-        open={open}
-        close={() => {
-          setOpen(false)
-        }}
-      >
-        Hello ther
-      </SpringModal>
+      <Typography>Homepage</Typography>
+      <FullPageLoader />
     </div>
   )
 }
