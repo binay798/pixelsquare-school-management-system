@@ -2,10 +2,25 @@ import { ThemeProvider, createTheme } from '@mui/material'
 import { colors } from '@src/helpers/colors.helpers'
 import responsiveFontSizes from '@mui/material/styles/responsiveFontSizes'
 import { CssBaseline } from '@mui/material'
+import { alpha } from '@mui/system'
 
 let theme = createTheme({
   palette: {},
   components: {
+    MuiOutlinedInput: {
+      defaultProps: {
+        size: 'small',
+        margin: 'dense',
+      },
+      styleOverrides: {
+        root: {
+          fontSize: 14,
+          background: alpha(colors.grey[100], 0.7),
+          color: colors.grey[700],
+          borderRadius: 6,
+        },
+      },
+    },
     MuiButtonBase: {
       defaultProps: {
         disableRipple: true,
