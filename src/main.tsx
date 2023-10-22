@@ -18,6 +18,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </MuiThemeProvider>
       </ErrorBoundary>
     </Provider>
-    Item
   </React.StrictMode>
 )
