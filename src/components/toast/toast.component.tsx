@@ -1,4 +1,4 @@
-import { useTransition, animated } from '@react-spring/web'
+import { useTransition, animated, config } from '@react-spring/web'
 import { Container, ToastItemContainer, ToastTypeImage } from './toast.styes'
 import { Stack, Typography } from '@mui/material'
 import { useSelector } from '@src/store/hooks.store'
@@ -34,6 +34,7 @@ export function Toast(props: { children: React.ReactNode }) {
         await next({ life: '0%' })
       },
       leave: [{ opacity: 0, scale: 0.7, height: 0 }],
+      config: config.stiff,
     }
   )
 
@@ -86,9 +87,7 @@ function ToastItem(props: ToastReduxState['data'][0]) {
           src={props.type === 'success' ? tick : closePng}
           alt="tick"
         />
-        <Typography variant="body2">
-          Item {props.message} hello ther and welcome htere and there
-        </Typography>
+        <Typography variant="body2">{props.message}</Typography>
         <CloseBtn onClick={removeToast} />
       </Stack>
     </ToastItemContainer>

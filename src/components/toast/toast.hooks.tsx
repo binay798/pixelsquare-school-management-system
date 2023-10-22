@@ -20,6 +20,16 @@ export function useToast() {
       })
     )
   }
+  const error = (msg: string) => {
+    dispatch(
+      addToastMessage({
+        id: Date.now(),
+        message: msg,
+        type: 'error',
+      })
+    )
+  }
+
   const remove = (id: number) => {
     dispatch(deleteToastMessage(id))
   }
@@ -27,5 +37,5 @@ export function useToast() {
     dispatch(resetToastData(data))
   }
 
-  return { success, remove, reset }
+  return { success, remove, reset, error }
 }
