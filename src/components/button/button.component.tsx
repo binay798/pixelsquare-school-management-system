@@ -1,39 +1,74 @@
 import {
   Button,
   ButtonProps,
+  CircularProgress,
   IconButton,
   IconButtonProps,
+  Stack,
   Tooltip,
   TooltipProps,
 } from '@mui/material'
-import { IconBtn } from './button.styles'
 import { AiOutlineClose } from 'react-icons/ai'
 import React from 'react'
+import { omit } from 'lodash'
+import { colors } from '@src/helpers/colors.helpers'
 
 export function CloseBtn({ ...rest }: IconButtonProps) {
   return (
-    <IconBtn {...rest} disableFocusRipple disableTouchRipple size={'small'}>
+    <TooltipIconBtn
+      tooltipTitle="close"
+      placement="left-start"
+      {...rest}
+      disableFocusRipple
+      disableTouchRipple
+      size={'small'}
+    >
       <AiOutlineClose size={16} />
-    </IconBtn>
+    </TooltipIconBtn>
   )
 }
 
-interface TooltipBtnProps {
+interface TooltipBtnProps extends ButtonProps {
   tooltipTitle: string
-  buttonProps?: ButtonProps
   placement?: TooltipProps['placement']
   children?: React.ReactNode
+  loading?: boolean
 }
 export function TooltipBtn(props: TooltipBtnProps) {
   return (
     <Tooltip title={props.tooltipTitle} placement={props.placement}>
-      <Button {...props.buttonProps}>{props.children}</Button>
+      <Button
+        {...omit(props, 'loading', 'tooltipTitle', 'placement')}
+        disabled={props.loading}
+      >
+        <Stack direction="row" alignItems="center" gap={1}>
+          {props.loading ? (
+            <CircularProgress size={18} sx={{ color: colors.grey[400] }} />
+          ) : null}
+          {props.children}
+        </Stack>
+      </Button>
     </Tooltip>
   )
 }
 
-interface TooltipIconBtnProps {
-  buttonProps?: IconButtonProps
+interface ButtonCompProps extends ButtonProps {
+  loading?: boolean
+}
+export function ButtonComp(props: ButtonCompProps) {
+  return (
+    <Button {...omit(props, 'loading')} disabled={props.loading}>
+      <Stack direction="row" alignItems="center" gap={1}>
+        {props.loading ? (
+          <CircularProgress size={18} sx={{ color: colors.grey[500] }} />
+        ) : null}
+        {props.children}
+      </Stack>
+    </Button>
+  )
+}
+
+interface TooltipIconBtnProps extends IconButtonProps {
   tooltipTitle: string
   placement?: TooltipProps['placement']
   children?: React.ReactNode
@@ -41,7 +76,9 @@ interface TooltipIconBtnProps {
 export function TooltipIconBtn(props: TooltipIconBtnProps) {
   return (
     <Tooltip title={props.tooltipTitle} placement={props.placement}>
-      <IconButton {...props.buttonProps}>{props.children}</IconButton>
+      <IconButton {...omit(props, 'tooltipTitle', 'placement')}>
+        {props.children}
+      </IconButton>
     </Tooltip>
   )
 }
