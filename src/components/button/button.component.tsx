@@ -13,11 +13,14 @@ import React from 'react'
 import { omit } from 'lodash'
 import { colors } from '@src/helpers/colors.helpers'
 
-export function CloseBtn({ ...rest }: IconButtonProps) {
+interface CloseBtnProps extends IconButtonProps {
+  placement?: TooltipProps['placement']
+}
+export function CloseBtn({ placement, ...rest }: CloseBtnProps) {
   return (
     <TooltipIconBtn
-      tooltipTitle="close"
-      placement="left-start"
+      tooltipTitle=""
+      placement={placement}
       {...rest}
       disableFocusRipple
       disableTouchRipple

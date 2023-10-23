@@ -34,6 +34,7 @@ let theme = createTheme({
     MuiButton: {
       defaultProps: {
         size: 'small',
+        variant: 'contained',
       },
     },
     MuiTypography: {

@@ -88,7 +88,7 @@ function ToastItem(props: ToastReduxState['data'][0]) {
           alt="tick"
         />
         <Typography variant="body2">{props.message}</Typography>
-        <CloseBtn onClick={removeToast} />
+        <CloseBtn onClick={removeToast} placement="top" />
       </Stack>
     </ToastItemContainer>
   )
