@@ -1,23 +1,144 @@
-import { Divider, Typography } from '@mui/material'
-import { Container } from './sidebar.styles'
+import { Collapse, Divider, List, Typography } from '@mui/material'
+import {
+  Container,
+  ListContainer,
+  ListItemBtn,
+  ListItemIconContainer,
+  ListItemTitle,
+  ToggleIcon,
+} from './sidebar.styles'
 import { colors } from '@src/helpers/colors.helpers'
+import { BiSolidDashboard } from 'react-icons/bi'
+import { MdKeyboardArrowRight } from 'react-icons/md'
+import React, { useState } from 'react'
+import { config, useSpring } from '@react-spring/web'
+import { GenerateAdminSidebarProps } from './sidebar.types'
+import { isEmpty } from 'lodash'
+import { CgComponents } from 'react-icons/cg'
+import { ImStatsDots } from 'react-icons/im'
+import { AiFillDatabase } from 'react-icons/ai'
+import {
+  BsBarChartFill,
+  BsFillChatDotsFill,
+  BsFillCalendarDayFill,
+  BsKanban,
+} from 'react-icons/bs'
+import { RiCustomerService2Fill } from 'react-icons/ri'
 // import { GenerateAdminSidebarProps } from './sidebar.types'
 // import { isEmpty } from 'lodash'
 
-// const renderNestedEl = (data?: GenerateAdminSidebarProps[]) => {
-//   return (
-//     <div style={{ color: 'white' }}>
-//       {data?.map((el, id) => {
-//         return (
-//           <ul key={id} style={{ marginLeft: 4 }}>
-//             <li>{el.title}</li>
-//             {!isEmpty(el.subItems) && renderNestedEl(el.subItems)}
-//           </ul>
-//         )
-//       })}
-//     </div>
-//   )
-// }
+const sidebarItems: GenerateAdminSidebarProps[] = [
+  {
+    title: 'Dashboard',
+    icon: <BiSolidDashboard />,
+    subItems: [
+      { title: 'Default', icon: '' },
+      { title: 'Analytics', icon: 'A' },
+    ],
+  },
+  {
+    title: 'Components',
+    icon: <CgComponents />,
+  },
+  {
+    title: 'Statistics',
+    icon: <ImStatsDots size={20} />,
+  },
+  {
+    title: 'Data',
+    icon: <AiFillDatabase />,
+  },
+  {
+    title: 'Chart',
+    icon: <BsBarChartFill />,
+  },
+
+  {
+    title: 'Chat',
+    icon: <BsFillChatDotsFill />,
+  },
+  {
+    title: 'Calendar',
+    icon: <BsFillCalendarDayFill />,
+  },
+  {
+    title: 'Kanban',
+    icon: <BsKanban />,
+  },
+  {
+    title: 'Customer',
+    icon: <RiCustomerService2Fill />,
+    subItems: [
+      { title: 'List', icon: 'L' },
+      { title: 'Card', icon: 'C' },
+    ],
+  },
+  // next
+  {
+    title: 'Components',
+    icon: <CgComponents />,
+  },
+  {
+    title: 'Statistics',
+    icon: <ImStatsDots size={20} />,
+  },
+  {
+    title: 'Data',
+    icon: <AiFillDatabase />,
+  },
+  {
+    title: 'Chart',
+    icon: <BsBarChartFill />,
+  },
+
+  {
+    title: 'Chat',
+    icon: <BsFillChatDotsFill />,
+  },
+  {
+    title: 'Calendar',
+    icon: <BsFillCalendarDayFill />,
+  },
+  {
+    title: 'Kanban',
+    icon: <BsKanban />,
+  },
+  {
+    title: 'Customer',
+    icon: <RiCustomerService2Fill />,
+    subItems: [
+      { title: 'List', icon: 'L' },
+      { title: 'Card', icon: 'C' },
+    ],
+  },
+]
+
+const renderNestedEl = (data?: GenerateAdminSidebarProps[]) => {
+  return (
+    <List>
+      {data?.map((el, id) => {
+        return (
+          <div key={id}>
+            {!isEmpty(el.subItems) ? (
+              <MemoizedCollapsableListItem data={el} />
+            ) : (
+              <>
+                <ListItemBtn
+                  // onClick={() => toast.success('Successfully clicked.')}
+                  disableRipple={false}
+                >
+                  <ListItemIconContainer>{el.icon}</ListItemIconContainer>
+                  <ListItemTitle title="Dashboard" primary={el.title} />
+                </ListItemBtn>
+                <Divider color={colors.grey[800]} />
+              </>
+            )}
+          </div>
+        )
+      })}
+    </List>
+  )
+}
 
 export function AdminSidebar() {
   return (
@@ -30,8 +151,55 @@ export function AdminSidebar() {
       >
         Admin Panel
       </Typography>
-      <Divider color={colors.grey[400]} />
-      {/* {renderNestedEl(x)} */}
+      <ListContainer>{renderNestedEl(sidebarItems)}</ListContainer>
     </Container>
   )
 }
+
+function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
+  const [open, setOpen] = useState(false)
+
+  const handleClick = () => {
+    setOpen(!open)
+  }
+  const toggle = useSpring({
+    from: { rotate: '0deg' },
+    to: { rotate: open ? '90deg' : '0deg' },
+    config: config.stiff,
+  })
+
+  return (
+    <>
+      <ListItemBtn disableRipple={false} onClick={handleClick}>
+        <ListItemIconContainer>{data.icon}</ListItemIconContainer>
+        <ListItemTitle primary={data.title} />
+        <ToggleIcon style={toggle}>
+          <ListItemIconContainer style={{ minWidth: 0 }}>
+            <MdKeyboardArrowRight size={26} />
+          </ListItemIconContainer>
+        </ToggleIcon>
+      </ListItemBtn>
+      <Divider color={colors.grey[800]} />
+      <Collapse in={open} timeout={100} easing={'cubic-bezier(.57,.5,.84,.87)'}>
+        {data?.subItems?.map((el, id) => {
+          return (
+            <div key={id} style={{ marginLeft: 10 }}>
+              {!isEmpty(el.subItems) ? (
+                <MemoizedCollapsableListItem data={el} />
+              ) : (
+                <>
+                  <ListItemBtn disableRipple={false}>
+                    <ListItemIconContainer>{el.icon}</ListItemIconContainer>
+                    <ListItemTitle title="Dashboard" primary={el.title} />
+                  </ListItemBtn>
+                </>
+              )}
+            </div>
+          )
+        })}
+      </Collapse>
+    </>
+  )
+}
+
+const MemoizedCollapsableListItem = React.memo(CollapsableListItem)
