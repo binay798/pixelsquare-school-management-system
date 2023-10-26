@@ -24,6 +24,7 @@ import {
   BsKanban,
 } from 'react-icons/bs'
 import { RiCustomerService2Fill } from 'react-icons/ri'
+import { useNavigate } from 'react-router-dom'
 // import { GenerateAdminSidebarProps } from './sidebar.types'
 // import { isEmpty } from 'lodash'
 
@@ -114,6 +115,8 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
 ]
 
 const renderNestedEl = (data?: GenerateAdminSidebarProps[]) => {
+  const navigate = useNavigate()
+
   return (
     <List>
       {data?.map((el, id) => {
@@ -124,7 +127,7 @@ const renderNestedEl = (data?: GenerateAdminSidebarProps[]) => {
             ) : (
               <>
                 <ListItemBtn
-                  // onClick={() => toast.success('Successfully clicked.')}
+                  onClick={() => navigate(el.to)}
                   disableRipple={false}
                 >
                   <ListItemIconContainer>{el.icon}</ListItemIconContainer>
@@ -158,7 +161,7 @@ export function AdminSidebar() {
 
 function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
   const [open, setOpen] = useState(false)
-
+  const navigate = useNavigate()
   const handleClick = () => {
     setOpen(!open)
   }
@@ -188,7 +191,10 @@ function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
                 <MemoizedCollapsableListItem data={el} />
               ) : (
                 <>
-                  <ListItemBtn disableRipple={false}>
+                  <ListItemBtn
+                    disableRipple={false}
+                    onClick={() => navigate(el.to)}
+                  >
                     <ListItemIconContainer>{el.icon}</ListItemIconContainer>
                     <ListItemTitle title="Dashboard" primary={el.title} />
                   </ListItemBtn>
