@@ -127,7 +127,7 @@ const renderNestedEl = (data?: GenerateAdminSidebarProps[]) => {
             ) : (
               <>
                 <ListItemBtn
-                  onClick={() => navigate(el.to)}
+                  onClick={() => el.to && navigate(el.to)}
                   disableRipple={false}
                 >
                   <ListItemIconContainer>{el.icon}</ListItemIconContainer>
@@ -193,7 +193,7 @@ function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
                 <>
                   <ListItemBtn
                     disableRipple={false}
-                    onClick={() => navigate(el.to)}
+                    onClick={() => el.to && navigate(el.to)}
                   >
                     <ListItemIconContainer>{el.icon}</ListItemIconContainer>
                     <ListItemTitle title="Dashboard" primary={el.title} />
