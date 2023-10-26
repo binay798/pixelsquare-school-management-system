@@ -175,7 +175,7 @@ function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
         <ListItemTitle primary={data.title} />
         <ToggleIcon style={toggle}>
           <ListItemIconContainer style={{ minWidth: 0 }}>
-            <MdKeyboardArrowRight size={26} />
+            <MdKeyboardArrowRight style={{ width: 20, height: 20 }} />
           </ListItemIconContainer>
         </ToggleIcon>
       </ListItemBtn>
