@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  frontend:
+    container_name: react-boilerplate
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    volumes:
+      - type: volume
+        source: node_modules_vol
+        target: /app/node_modules
+      - type: volume
+        source: nginx_vol
+        target: /etc/nginx
+volumes:
+  node_modules_vol:
+  nginx_vol:
