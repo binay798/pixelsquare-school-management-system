@@ -4,6 +4,7 @@ import Modal from '@mui/material/Modal'
 import { useSpring, animated, config } from '@react-spring/web'
 import { AnimatedBox, BackdropContainer, CloseContainer } from './modal.styles'
 import { CloseBtn } from '../button/button.component'
+import { Card } from '@mui/material'
 
 interface FadeProps {
   children: React.ReactElement
@@ -74,13 +75,18 @@ export default function SpringModal({
       >
         <Fade in={props.open}>
           <BackdropContainer>
-            <AnimatedBox
-              style={{ ...boxStyle, padding: noPadding ? '0px' : '20px' }}
-            >
-              <CloseContainer>
-                <CloseBtn onClick={handleClose} />
-              </CloseContainer>
-              {props.children}
+            <AnimatedBox style={{ ...boxStyle }}>
+              <Card
+                sx={{
+                  padding: noPadding ? 0 : '20px',
+                  borderColor: 'secondary.dark',
+                }}
+              >
+                <CloseContainer>
+                  <CloseBtn onClick={handleClose} />
+                </CloseContainer>
+                {props.children}
+              </Card>
             </AnimatedBox>
           </BackdropContainer>
         </Fade>

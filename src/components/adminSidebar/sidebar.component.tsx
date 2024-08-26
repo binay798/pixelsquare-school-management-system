@@ -34,7 +34,14 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
     icon: <BiSolidDashboard />,
     subItems: [
       { title: 'Default', icon: '' },
-      { title: 'Analytics', icon: 'A' },
+      {
+        title: 'Analytics',
+        icon: 'A',
+        subItems: [
+          { title: 'Default', icon: '' },
+          { title: 'Analytics', icon: 'A' },
+        ],
+      },
     ],
   },
   {

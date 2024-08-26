@@ -5,8 +5,6 @@ import { scrollbarStyle } from '@src/helpers/scrollbarStyle.helpers'
 export const Container = styled.div``
 
 export const AnimatedBox = styled(animated.div)`
-  background: white;
-  padding: 20px;
   border-radius: 8px;
   max-width: 90vw;
   max-height: 90vh;
