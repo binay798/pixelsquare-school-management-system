@@ -1,4 +1,4 @@
-import { Collapse, Divider, List, Typography } from '@mui/material'
+import { Box, Collapse, List, Typography } from '@mui/material'
 import {
   Container,
   ListContainer,
@@ -33,13 +33,13 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
     title: 'Dashboard',
     icon: <BiSolidDashboard />,
     subItems: [
-      { title: 'Default', icon: '' },
+      { title: 'Default', icon: <CgComponents /> },
       {
         title: 'Analytics',
-        icon: 'A',
+        icon: <BsBarChartFill />,
         subItems: [
-          { title: 'Default', icon: '' },
-          { title: 'Analytics', icon: 'A' },
+          { title: 'Default', icon: <BiSolidDashboard /> },
+          { title: 'Analytics', icon: <BiSolidDashboard /> },
         ],
       },
     ],
@@ -140,7 +140,7 @@ const renderNestedEl = (data?: GenerateAdminSidebarProps[]) => {
                   <ListItemIconContainer>{el.icon}</ListItemIconContainer>
                   <ListItemTitle title="Dashboard" primary={el.title} />
                 </ListItemBtn>
-                <Divider color={colors.grey[800]} />
+                {/* <Divider color={colors.grey[800]} /> */}
               </>
             )}
           </div>
@@ -189,28 +189,42 @@ function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
           </ListItemIconContainer>
         </ToggleIcon>
       </ListItemBtn>
-      <Divider color={colors.grey[800]} />
-      <Collapse in={open} timeout={100} easing={'cubic-bezier(.57,.5,.84,.87)'}>
-        {data?.subItems?.map((el, id) => {
-          return (
-            <div key={id} style={{ marginLeft: 10 }}>
-              {!isEmpty(el.subItems) ? (
-                <MemoizedCollapsableListItem data={el} />
-              ) : (
-                <>
-                  <ListItemBtn
-                    disableRipple={false}
-                    onClick={() => el.to && navigate(el.to)}
-                  >
-                    <ListItemIconContainer>{el.icon}</ListItemIconContainer>
-                    <ListItemTitle title="Dashboard" primary={el.title} />
-                  </ListItemBtn>
-                </>
-              )}
-            </div>
-          )
-        })}
-      </Collapse>
+      {/* <Divider color={colors.grey[800]} /> */}
+      <Box sx={{ marginLeft: 5 }}>
+        <Collapse
+          in={open}
+          timeout={100}
+          easing={'cubic-bezier(.57,.5,.84,.87)'}
+          sx={{ borderLeft: '0.5px solid #5a5858' }}
+        >
+          {data?.subItems?.map((el, id) => {
+            return (
+              // <div key={id} style={{ marginLeft: 10 }}>
+              <div
+                key={id}
+                style={{
+                  marginLeft: 0,
+                  // backgroundColor: '#07050e',
+                }}
+              >
+                {!isEmpty(el.subItems) ? (
+                  <MemoizedCollapsableListItem data={el} />
+                ) : (
+                  <>
+                    <ListItemBtn
+                      disableRipple={false}
+                      onClick={() => el.to && navigate(el.to)}
+                    >
+                      <ListItemIconContainer>{el.icon}</ListItemIconContainer>
+                      <ListItemTitle title="Dashboard" primary={el.title} />
+                    </ListItemBtn>
+                  </>
+                )}
+              </div>
+            )
+          })}
+        </Collapse>
+      </Box>
     </>
   )
 }

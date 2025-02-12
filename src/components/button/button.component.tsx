@@ -59,13 +59,25 @@ interface ButtonCompProps extends ButtonProps {
   loading?: boolean
 }
 export function ButtonComp(props: ButtonCompProps) {
+  let loaderSize = 14
+  if (props.size === 'small') {
+    loaderSize = 12
+  } else if (props.size === 'large') {
+    loaderSize = 16
+  } else if (props.size === 'medium') {
+    loaderSize = 15
+  }
+
   return (
     <Button {...omit(props, 'loading')} disabled={props.loading}>
       <Stack direction="row" alignItems="center" gap={1}>
-        {props.loading ? (
-          <CircularProgress size={18} sx={{ color: colors.grey[500] }} />
-        ) : null}
         {props.children}
+        {props.loading ? (
+          <CircularProgress
+            size={loaderSize}
+            sx={{ color: colors.lightBlue[50] }}
+          />
+        ) : null}
       </Stack>
     </Button>
   )

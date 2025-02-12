@@ -19,9 +19,9 @@ export const Container = styled(Card)`
 
 export const ListItemTitle = styled(ListItemText)`
   span {
-    color: ${colors.grey[200]};
-    font-weight: bold;
-    font-size: 12px;
+    color: inherit;
+    font-weight: normal;
+    font-size: 14px;
   }
 `
 
@@ -59,17 +59,20 @@ export const ListContainer = styled(List)`
 `
 export const ListItemIconContainer = styled(ListItemIcon)`
   min-width: 40px;
-
+  color: inherit;
   svg {
     margin-top: -3px;
-    color: ${colors.grey[200]};
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
   }
 `
 export const ListItemBtn = styled(ListItemButton)`
+  margin: 0.5rem 1rem;
+  border-radius: 0.6rem;
+  color: ${colors.grey[400]};
   &:hover {
-    background: #0c253d7b;
+    background: #635bff;
+    color: white;
   }
 `
 export const ToggleIcon = styled(animated.div)`
