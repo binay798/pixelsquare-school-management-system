@@ -8,30 +8,38 @@ import Select, {
 const customStyles: StylesConfig = {
   control: (provided, state) => ({
     ...provided,
-    border: state.isFocused ? '1px solid #007BFF' : '1px solid #ddd',
-    boxShadow: state.isFocused ? '0 0 0 1px #007BFF' : 'none',
-    transition: 'all 0.2s ease',
+    border: '1px solid #ddd',
+
+    // boxShadow: state.isFocused ? '0 0 0 1px #007BFF' : 'none',
+    // transition: 'all 0.2s ease',
+    boxShadow: 'unset',
     fontSize: 14,
-    '&:hover': {
-      border: state.isFocused ? '1px solid #007BFF' : '1px solid #ccc',
-    },
+
+    outline: state.menuIsOpen ? '2px solid #007BFF' : 'unset',
+    outlineOffset: 3,
     cursor: 'pointer',
+    '&:hover': {
+      border: '1px solid #ddd',
+    },
   }),
   option: (provided, state) => ({
     ...provided,
     backgroundColor: state.isSelected
-      ? '#007BFF'
+      ? '#e6f7ff'
       : state.isFocused
       ? '#e6f7ff'
       : '#fff',
-    color: state.isSelected ? '#fff' : '#333',
+    color: '#333',
     cursor: 'pointer',
     padding: '10px',
     ':active': {
-      backgroundColor: '#007BFF',
+      backgroundColor: '#007bff8e',
       color: 'white',
     },
     fontSize: 14,
+    margin: '5px',
+    borderRadius: 8,
+    width: 'unset',
   }),
   menu: (provided) => ({
     ...provided,

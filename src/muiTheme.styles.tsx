@@ -5,9 +5,6 @@ import { CssBaseline } from '@mui/material'
 import { alpha } from '@mui/system'
 
 let theme = createTheme({
-  shape: {
-    borderRadius: 6,
-  },
   palette: {
     mode: 'light',
     primary: {
@@ -76,17 +73,16 @@ let theme = createTheme({
           fontSize: 14,
           background: alpha(colors.grey[100], 0.7),
           color: colors.grey[700],
-          borderRadius: 6,
+          // borderRadius: 6,
         },
       },
     },
     MuiButtonBase: {
       defaultProps: {
-        disableRipple: true,
         style: {
           boxShadow: 'none',
           textTransform: 'capitalize',
-          borderRadius: 6,
+          // borderRadius: 6,
         },
       },
     },
@@ -100,7 +96,7 @@ let theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          // borderRadius: 8,
           boxShadow:
             'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
           border: `1px solid`,
@@ -111,6 +107,9 @@ let theme = createTheme({
 })
 
 theme = createTheme({
+  shape: {
+    borderRadius: 7,
+  },
   components: {
     MuiButton: {
       defaultProps: {
@@ -121,8 +120,11 @@ theme = createTheme({
         root: {
           // Remove the box shadow in all states
           boxShadow: 'none',
+          // borderRadius: '0.4rem',
+          transition: '0.3s ease',
           '&:hover': {
             boxShadow: 'none',
+            opacity: 0.9,
           },
           '&:active': {
             boxShadow: 'none',
@@ -132,51 +134,92 @@ theme = createTheme({
           },
           textTransform: 'none',
         },
+        disabled: {
+          cursor: 'not-allowed',
+        },
         containedPrimary: {
+          background: 'linear-gradient(to bottom, #5f54fd 30%, #5038f6 90%)',
+          color: '#fff',
           '&.Mui-disabled': {
-            backgroundColor: alpha(theme.palette.primary.main, 0.6),
+            // background: alpha(theme.palette.primary.main, 0.6),
+            opacity: 0.7,
             color: alpha('#fff', 0.9),
           },
         },
         containedSecondary: {
+          background: 'linear-gradient(to bottom, #f50057 30%, #cc0249 90%)',
+          color: '#fff',
           '&.Mui-disabled': {
-            backgroundColor: alpha(theme.palette.secondary.main, 0.6),
+            opacity: 0.7,
             color: alpha('#fff', 0.9),
           },
         },
         containedError: {
+          background: 'linear-gradient(to bottom, #f44336 30%, #d03429 90%)',
+          color: '#fff',
           '&.Mui-disabled': {
-            backgroundColor: alpha(theme.palette.error.main, 0.6),
+            opacity: 0.7,
             color: alpha('#fff', 0.9),
           },
         },
         containedInfo: {
+          background: 'linear-gradient(to bottom, #2196f3 30%, #1b81d5 90%)',
           '&.Mui-disabled': {
-            backgroundColor: alpha(theme.palette.info.main, 0.6),
+            opacity: 0.7,
             color: alpha('#fff', 0.9),
           },
         },
         containedSuccess: {
+          background: 'linear-gradient(to bottom, #27ef2e 30%, #1cdf22 90%)',
+          color: '#fff',
           '&.Mui-disabled': {
-            backgroundColor: alpha(theme.palette.success.main, 0.6),
+            opacity: 0.7,
             color: alpha('#fff', 0.9),
           },
         },
         containedWarning: {
+          background: 'linear-gradient(to bottom, #ff9800 30%, #e58c06 90%)',
+          color: '#fff',
           '&.Mui-disabled': {
-            backgroundColor: alpha(theme.palette.warning.main, 0.6),
+            opacity: 0.7,
             color: alpha('#fff', 0.9),
           },
+        },
+
+        textPrimary: {
+          color: '#333',
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          margin: '0px 8px',
+          borderRadius: 8,
         },
       },
     },
     MuiMenu: {
+      defaultProps: {
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'right',
+        },
+        transformOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+      },
       styleOverrides: {
+        root: {
+          marginTop: 10,
+        },
         paper: {
           // Custom box shadow for the Menu's paper component
-          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+          boxShadow:
+            'rgba(0, 0, 0, 0.04) 0px 5px 22px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px',
           // You can also adjust the border radius if needed
-          borderRadius: 8,
+          // borderRadius: 8,
         },
       },
     },
@@ -188,6 +231,41 @@ theme = createTheme({
     MuiButtonBase: {
       defaultProps: {
         disableRipple: true,
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          boxShadow:
+            'rgba(0, 0, 0, 0.04) 0px 5px 22px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px',
+        },
+      },
+    },
+
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8, // Apply rounded corners
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#d3d3d3', // Purple border on focus
+            borderWidth: 1,
+          },
+          transition: 'border-color 0.3s ease, outline 0.1s ease', // Smooth transition for hover and focus
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#d3d3d3', // Slightly lighter purple on hover
+          },
+          '&.Mui-focused': {
+            outline: '2px solid #8142f5', // Outline when focused (light purple)
+            outlineOffset: '2px', // Separate the outline from the border
+          },
+        },
+        notchedOutline: {
+          borderColor: '#d3d3d3', // Default border color
+        },
+        input: {
+          padding: '10px 10px',
+          color: '#555',
+        },
       },
     },
   },

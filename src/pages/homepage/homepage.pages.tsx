@@ -1,12 +1,15 @@
-import { Paper, Stack, Typography } from '@mui/material'
+import { Card, Paper, Stack, Typography } from '@mui/material'
 import { AdminSidebar } from '@src/components/adminSidebar/sidebar.component'
-import { ButtonComp } from '@src/components/button/button.component'
+import { InputField } from '@src/components/input/input.component'
 import SpringModal from '@src/components/modal/modal.component'
 import { SelectField } from '@src/components/select/select.component'
 import { CustomSwitch } from '@src/components/switch/switch.component'
+import { TestButtonComponents } from '@src/test/testButtons'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { FaCirclePlus } from 'react-icons/fa6'
+import { IoEyeOutline } from 'react-icons/io5'
+import { FaUser } from 'react-icons/fa'
+import { TestMenu } from '@src/test/testMenu'
 
 export function Homepage() {
   const [open, setOpen] = useState(false)
@@ -46,25 +49,38 @@ export function Homepage() {
           {/* <Button variant="outlined" color="primary">
         Click me
       </Button> */}
-          <Stack spacing={2} m={2} direction={'row'} alignItems={'center'}>
-            <ButtonComp variant="outlined" size="large" color="primary">
-              Click me
-            </ButtonComp>
-            <ButtonComp disableElevation size="large" color="secondary">
-              Click me
-            </ButtonComp>
-            <ButtonComp color="error">Click me</ButtonComp>
-            <ButtonComp color="info">Click me</ButtonComp>
-            <ButtonComp variant="outlined" color="success">
-              Click me
-            </ButtonComp>
-            <ButtonComp startIcon={<FaCirclePlus />} color="warning">
-              Click me
-            </ButtonComp>
-          </Stack>
+          <TestButtonComponents />
+          <br />
+          <TestMenu />
+          <br />
 
-          <SelectField placeholder="Select products" />
+          <SelectField
+            // menuIsOpen
+            placeholder="Select products"
+            options={[
+              { value: 'car', label: 'Car' },
+              { label: 'Bike', value: 'bike' },
+            ]}
+          />
           {/* <Loader /> */}
+          <br />
+          <br />
+
+          <Card>Hello</Card>
+          <br />
+
+          <InputField
+            placeholder="Firstname"
+            endAdornment={<IoEyeOutline size={22} />}
+            startAdornment={<FaUser />}
+          />
+
+          <br />
+          <Typography color="textSecondary">
+            If you&apos;ve just made a payment, it may take a few hours for it
+            to appear in the table below.
+          </Typography>
+          <br />
 
           {/* <div>
         <ButtonComp
