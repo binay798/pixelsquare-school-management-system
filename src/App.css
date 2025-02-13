@@ -82,3 +82,12 @@ body {
   background-color: #eee !important;
   min-height: 100vh;
 }
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+#modal-portal {
+  position: relative;
+  z-index: 2;
+}

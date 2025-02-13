@@ -137,6 +137,9 @@ theme = createTheme({
         disabled: {
           cursor: 'not-allowed',
         },
+        textSecondary: {
+          color: '#333',
+        },
         containedPrimary: {
           background: 'linear-gradient(to bottom, #5f54fd 30%, #5038f6 90%)',
           color: '#fff',
@@ -147,7 +150,7 @@ theme = createTheme({
           },
         },
         containedSecondary: {
-          background: 'linear-gradient(to bottom, #f50057 30%, #cc0249 90%)',
+          background: 'linear-gradient(to bottom, #333 30%, #222 90%)',
           color: '#fff',
           '&.Mui-disabled': {
             opacity: 0.7,
@@ -265,6 +268,23 @@ theme = createTheme({
         input: {
           padding: '10px 10px',
           color: '#555',
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: 'capitalize',
+        },
+      },
+    },
+    MuiTabs: {
+      styleOverrides: {
+        indicator: {
+          backgroundColor: '#6a60eb',
+          height: 4,
+          borderTopLeftRadius: 4,
+          borderTopRightRadius: 4,
         },
       },
     },

@@ -10,9 +10,12 @@ import toast from 'react-hot-toast'
 import { IoEyeOutline } from 'react-icons/io5'
 import { FaUser } from 'react-icons/fa'
 import { TestMenu } from '@src/test/testMenu'
+import { TestTabs } from '@src/test/testTabs'
+import { ConfirmationModal } from '@src/components/confirmationModal/confirmationModal.component'
 
 export function Homepage() {
   const [open, setOpen] = useState(false)
+  const [openConfirmation, setOpenConfirmation] = useState(false)
   // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   // const open = Boolean(anchorEl)
   // const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -26,7 +29,14 @@ export function Homepage() {
     <Paper sx={{ width: '100vw', height: '100vh' }}>
       <Stack direction={'row'} spacing={2}>
         <AdminSidebar />
-        <div>
+        <div
+          style={{
+            overflowY: 'auto',
+            maxHeight: '100vh',
+            width: '100%',
+            padding: '0px 10px',
+          }}
+        >
           <button
             onClick={() => {
               toast.error('Hello there')
@@ -36,6 +46,19 @@ export function Homepage() {
             Make toast
           </button>
           <button onClick={() => setOpen(true)}>Open Modal</button>
+          <button onClick={() => setOpenConfirmation(true)}>
+            Open Confirmation Modal
+          </button>
+
+          <ConfirmationModal
+            open={openConfirmation}
+            onClose={() => {
+              setOpenConfirmation(false)
+            }}
+            onConfirmationClick={() => {}}
+          >
+            <div>Helo</div>
+          </ConfirmationModal>
 
           <SpringModal close={() => setOpen(false)} open={open}>
             <Typography color={'secondary'}>Hello there</Typography>
@@ -52,6 +75,8 @@ export function Homepage() {
           <TestButtonComponents />
           <br />
           <TestMenu />
+          <br />
+          <TestTabs />
           <br />
 
           <SelectField

@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react'
-import Modal from '@mui/material/Modal'
+import Modal, { ModalProps } from '@mui/material/Modal'
 import { useSpring, animated, config } from '@react-spring/web'
 import { AnimatedBox, BackdropContainer, CloseContainer } from './modal.styles'
 import { CloseBtn } from '../button/button.component'
-import { Card } from '@mui/material'
+import { Box, Card } from '@mui/material'
+import { omit } from 'lodash'
+import './modal.css'
 
 interface FadeProps {
   children: React.ReactElement
@@ -42,17 +44,19 @@ const Fade = React.forwardRef<HTMLDivElement, FadeProps>(
   }
 )
 
-interface ModalProps {
+const customContainer = document.getElementById('modal-portal')
+interface ModalMainProps extends ModalProps {
   noPadding?: boolean
-  disableOutsideClick?: boolean
   open: boolean
   close: () => void
-  children: React.ReactNode
+  children: React.ReactElement
+  size?: 'sm' | 'md' | 'lg' | 'xlg'
 }
 export default function SpringModal({
   noPadding = false,
+  size = 'sm',
   ...props
-}: ModalProps) {
+}: ModalMainProps) {
   const handleClose = () => {
     props.close()
   }
@@ -68,10 +72,12 @@ export default function SpringModal({
       <Modal
         aria-labelledby="spring-modal-title"
         aria-describedby="spring-modal-description"
-        open={props.open}
+        // open={props.open}
         onClose={handleClose}
         closeAfterTransition
         hideBackdrop={true}
+        container={customContainer}
+        {...omit(props, 'noPadding', 'close', 'size')}
       >
         <Fade in={props.open}>
           <BackdropContainer>
@@ -80,12 +86,16 @@ export default function SpringModal({
                 sx={{
                   padding: noPadding ? 0 : '20px',
                   borderColor: 'secondary.dark',
+                  maxHeight: '90vh',
+                  maxWidth: '90vw',
                 }}
               >
                 <CloseContainer>
                   <CloseBtn onClick={handleClose} />
                 </CloseContainer>
-                {props.children}
+                <Box className="custom-modal" sx={{ width: '100%' }}>
+                  <Box className={size}>{props.children}</Box>
+                </Box>
               </Card>
             </AnimatedBox>
           </BackdropContainer>

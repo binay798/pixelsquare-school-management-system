@@ -11,7 +11,7 @@ import { colors } from '@src/helpers/colors.helpers'
 
 export const Container = styled(Card)`
   height: 100vh;
-  width: 280px;
+  width: 380px;
   border-radius: 0px;
   background-color: #0f0b26;
   border: none;

@@ -1,0 +1,13 @@
+.custom-modal .xlg {
+  width: 90vw;
+}
+
+.custom-modal .sm {
+  width: 40rem;
+}
+.custom-modal .md {
+  width: 60rem;
+}
+.custom-modal .lg {
+  width: 80vw;
+}
