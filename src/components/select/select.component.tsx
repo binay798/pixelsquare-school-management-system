@@ -33,8 +33,8 @@ const customStyles: StylesConfig = {
     cursor: 'pointer',
     padding: '10px',
     ':active': {
-      backgroundColor: '#007bff8e',
-      color: 'white',
+      // backgroundColor: '#007bff8e',
+      // color: 'white',
     },
     fontSize: 14,
     margin: '5px',

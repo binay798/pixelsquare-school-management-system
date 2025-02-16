@@ -43,6 +43,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     style={{ objectFit: 'contain' }}
                   />
                 ),
+
                 style: {
                   border: '1px solid #d8d4d2ec',
                   padding: '14px',
@@ -55,7 +56,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 },
               },
 
-              position: 'bottom-right',
+              position: 'top-center',
             }}
           />
         </MuiThemeProvider>

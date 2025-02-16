@@ -3,12 +3,13 @@ import SpringModal from '../modal/modal.component'
 import { ConfirmationContainer } from './confirmationModal.styles'
 import { colors } from '@src/helpers/colors.helpers'
 import { ButtonComp } from '../button/button.component'
+import React from 'react'
 
 interface Props {
   open: boolean
-  children: React.ReactNode
+  children: React.ReactElement
   onClose: () => void
-  heading?: string
+  heading?: React.ReactNode
   onConfirmationClick: () => void
   confirmLoader?: boolean
 }

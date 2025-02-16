@@ -140,6 +140,10 @@ theme = createTheme({
         textSecondary: {
           color: '#333',
         },
+        outlinedSecondary: {
+          color: colors.grey[600],
+          borderColor: colors.grey[300],
+        },
         containedPrimary: {
           background: 'linear-gradient(to bottom, #5f54fd 30%, #5038f6 90%)',
           color: '#fff',

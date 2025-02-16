@@ -11,7 +11,6 @@ import { colors } from '@src/helpers/colors.helpers'
 
 export const Container = styled(Card)`
   height: 100vh;
-  width: 380px;
   border-radius: 0px;
   background-color: #0f0b26;
   border: none;
@@ -29,6 +28,7 @@ export const ListContainer = styled(List)`
   overflow-y: scroll;
   position: relative;
   height: 85vh;
+  overflow-x: hidden;
 
   &:hover::-webkit-scrollbar-thumb {
     opacity: 1;

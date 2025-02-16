@@ -1,4 +1,13 @@
-import { Box, Collapse, List, Typography } from '@mui/material'
+import {
+  Box,
+  Collapse,
+  IconButton,
+  List,
+  Stack,
+  Typography,
+} from '@mui/material'
+import { MdKeyboardArrowRight } from 'react-icons/md'
+import { animated } from '@react-spring/web'
 import {
   Container,
   ListContainer,
@@ -9,7 +18,7 @@ import {
 } from './sidebar.styles'
 import { colors } from '@src/helpers/colors.helpers'
 import { BiSolidDashboard } from 'react-icons/bi'
-import { MdKeyboardArrowRight } from 'react-icons/md'
+// import { MdKeyboardArrowRight } from 'react-icons/md'
 import React, { useState } from 'react'
 import { config, useSpring } from '@react-spring/web'
 import { GenerateAdminSidebarProps } from './sidebar.types'
@@ -25,8 +34,7 @@ import {
 } from 'react-icons/bs'
 import { RiCustomerService2Fill } from 'react-icons/ri'
 import { useNavigate } from 'react-router-dom'
-// import { GenerateAdminSidebarProps } from './sidebar.types'
-// import { isEmpty } from 'lodash'
+import { AdminSidebarContext, useAdminSidebar } from './adminSidebar.context'
 
 const sidebarItems: GenerateAdminSidebarProps[] = [
   {
@@ -121,15 +129,22 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
   },
 ]
 
-const renderNestedEl = (data?: GenerateAdminSidebarProps[]) => {
+const RenderNestedEl = ({ data }: { data?: GenerateAdminSidebarProps[] }) => {
   const navigate = useNavigate()
+  const { openSidebar } = useAdminSidebar()
+  const fadeStyle = useSpring({
+    from: { opacity: 1 },
+    to: {
+      opacity: openSidebar ? 1 : 0,
+    },
+  })
 
   return (
     <List>
       {data?.map((el, id) => {
         return (
           <div key={id}>
-            {!isEmpty(el.subItems) ? (
+            {!isEmpty(el.subItems) && openSidebar ? (
               <MemoizedCollapsableListItem data={el} />
             ) : (
               <>
@@ -138,7 +153,14 @@ const renderNestedEl = (data?: GenerateAdminSidebarProps[]) => {
                   disableRipple={false}
                 >
                   <ListItemIconContainer>{el.icon}</ListItemIconContainer>
-                  <ListItemTitle title="Dashboard" primary={el.title} />
+                  <animated.div style={{ ...fadeStyle }}>
+                    <ListItemTitle title="Dashboard" primary={el.title} />
+                  </animated.div>
+                  {/* {openSidebar ? (
+                    <ListItemTitle title="Dashboard" primary={el.title} />
+                  ) : (
+                    ''
+                  )} */}
                 </ListItemBtn>
                 {/* <Divider color={colors.grey[800]} /> */}
               </>
@@ -151,22 +173,65 @@ const renderNestedEl = (data?: GenerateAdminSidebarProps[]) => {
 }
 
 export function AdminSidebar() {
+  // function MainContainer(props: MainContainerProps) {
   return (
-    <Container>
-      <Typography
-        variant="h6"
-        textAlign={'center'}
-        padding={2}
-        color={colors.grey[300]}
-      >
-        Admin Panel
-      </Typography>
-      <ListContainer>{renderNestedEl(sidebarItems)}</ListContainer>
-    </Container>
+    <AdminSidebarContext>
+      <MainContainer />
+    </AdminSidebarContext>
+  )
+}
+
+export function MainContainer() {
+  const { openSidebar, toggleShowSidebar } = useAdminSidebar()
+  const springWidth = useSpring({
+    from: {
+      width: 380,
+    },
+    to: {
+      width: openSidebar ? 380 : 90,
+    },
+  })
+  const arrowRotate = useSpring({
+    from: {
+      rotate: '-180deg',
+    },
+    to: {
+      rotate: openSidebar ? '-180deg' : '0deg',
+    },
+  })
+
+  return (
+    <animated.div
+      style={{
+        // height: '100vh',
+        // borderRadius: 0,
+        // maxHeight: 'unset',
+        ...springWidth,
+      }}
+    >
+      <Container>
+        <AdminSidebarHeader />
+        <ListContainer>
+          <RenderNestedEl data={sidebarItems} />
+        </ListContainer>
+        <Stack direction={'row'} justifyContent={'flex-end'} pr={3.4}>
+          <IconButton
+            onClick={() => toggleShowSidebar?.(!openSidebar)}
+            style={{ width: 'fit-content' }}
+          >
+            {/* <AiOutlineMenuFold color={colors.grey[300]} /> */}
+            <animated.span style={arrowRotate}>
+              <MdKeyboardArrowRight size={30} color={colors.grey[300]} />
+            </animated.span>
+          </IconButton>
+        </Stack>
+      </Container>
+    </animated.div>
   )
 }
 
 function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
+  const { openSidebar } = useAdminSidebar()
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const handleClick = () => {
@@ -182,12 +247,14 @@ function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
     <>
       <ListItemBtn disableRipple={false} onClick={handleClick}>
         <ListItemIconContainer>{data.icon}</ListItemIconContainer>
-        <ListItemTitle primary={data.title} />
-        <ToggleIcon style={toggle}>
-          <ListItemIconContainer style={{ minWidth: 0 }}>
-            <MdKeyboardArrowRight style={{ width: 20, height: 20 }} />
-          </ListItemIconContainer>
-        </ToggleIcon>
+        {openSidebar ? <ListItemTitle primary={data.title} /> : null}
+        {openSidebar ? (
+          <ToggleIcon style={toggle}>
+            <ListItemIconContainer style={{ minWidth: 0 }}>
+              <MdKeyboardArrowRight style={{ width: 20, height: 20 }} />
+            </ListItemIconContainer>
+          </ToggleIcon>
+        ) : null}
       </ListItemBtn>
       {/* <Divider color={colors.grey[800]} /> */}
       <Box sx={{ marginLeft: 5 }}>
@@ -216,7 +283,9 @@ function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
                       onClick={() => el.to && navigate(el.to)}
                     >
                       <ListItemIconContainer>{el.icon}</ListItemIconContainer>
-                      <ListItemTitle title="Dashboard" primary={el.title} />
+                      {openSidebar ? (
+                        <ListItemTitle title="Dashboard" primary={el.title} />
+                      ) : null}
                     </ListItemBtn>
                   </>
                 )}
@@ -230,3 +299,54 @@ function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
 }
 
 const MemoizedCollapsableListItem = React.memo(CollapsableListItem)
+
+function AdminSidebarHeader() {
+  const { openSidebar } = useAdminSidebar()
+  const fadeLogoMainStyle = useSpring({
+    from: { opacity: 1 },
+    to: {
+      opacity: openSidebar ? 1 : 0,
+    },
+  })
+  const fadeLogoSecondaryStyle = useSpring({
+    from: { opacity: 1 },
+    to: { opacity: !openSidebar ? 1 : 0 },
+  })
+
+  return (
+    <Box>
+      <Stack
+        p={2}
+        pl={4}
+        direction={'row'}
+        // justifyContent={'space-between'}
+        alignItems={'center'}
+      >
+        <animated.div style={fadeLogoSecondaryStyle}>
+          <Typography
+            variant="h6"
+            textAlign={'center'}
+            color={colors.grey[300]}
+          >
+            AP
+          </Typography>
+        </animated.div>
+        <animated.div style={fadeLogoMainStyle}>
+          <Stack direction="row" spacing={1} justifyContent={'space-between'}>
+            <Typography
+              variant="h6"
+              textAlign={'center'}
+              color={colors.grey[300]}
+              sx={{ textWrap: 'nowrap' }}
+            >
+              Admin Panel
+            </Typography>
+            {/* <IconButton onClick={() => toggleShowSidebar?.(!openSidebar)}>
+              <AiOutlineMenuFold color={colors.grey[300]} />
+            </IconButton> */}
+          </Stack>
+        </animated.div>
+      </Stack>
+    </Box>
+  )
+}

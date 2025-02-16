@@ -12,6 +12,8 @@ import { FaUser } from 'react-icons/fa'
 import { TestMenu } from '@src/test/testMenu'
 import { TestTabs } from '@src/test/testTabs'
 import { ConfirmationModal } from '@src/components/confirmationModal/confirmationModal.component'
+import { Loader } from '@src/components/loader/loader.component'
+import { TableComp } from '@src/components/tableComp/tableComp.components'
 
 export function Homepage() {
   const [open, setOpen] = useState(false)
@@ -68,7 +70,53 @@ export function Homepage() {
           {/* <Button color="info">Helo</Button>
 
       <Box>Hello there</Box> */}
+          {/* name: string,
+  calories: number,
+  fat: number,
+  carbs: number,
+  protein: number */}
           <CustomSwitch />
+          <Loader />
+          <TableComp
+            columns={[
+              {
+                field: 'name',
+                name: 'Name',
+                render: (val) => <div>{val}</div>,
+              },
+              {
+                field: 'calories',
+                name: 'Calories',
+                render: (val) => <div>{val}</div>,
+              },
+              {
+                field: 'fat',
+                name: 'Fat',
+                render: (val) => <div>{val}</div>,
+              },
+              {
+                field: 'carbs',
+                name: 'Carbs',
+                render: (val) => <div>{val}</div>,
+              },
+              {
+                field: 'protein',
+                name: 'Protein',
+                render: (val) => <div>{val}</div>,
+              },
+            ]}
+            data={[
+              {
+                name: 'Frozen Yoghurt',
+                calories: '145',
+                fat: '45.66',
+                carbs: '44',
+                protein: '10',
+              },
+            ]}
+            actions={{ onDelete: () => {} }}
+          />
+          {/* <FullPageLoader /> */}
           {/* <Button variant="outlined" color="primary">
         Click me
       </Button> */}
