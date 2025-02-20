@@ -12,6 +12,7 @@ import {
   Box,
   ButtonGroup,
   IconButton,
+  Skeleton,
   Stack,
   TablePagination,
   Tooltip,
@@ -42,6 +43,7 @@ interface Props<T, K extends Extract<keyof T, string>> {
     onDelete?: (item: T) => void
     onView?: (item: T) => void
   }
+  loading?: boolean
 }
 
 export function TableComp<T, K extends Extract<keyof T, string>>(
@@ -60,21 +62,30 @@ export function TableComp<T, K extends Extract<keyof T, string>>(
             color="secondary"
             aria-label="Basic button group"
           >
-            <Tooltip title="Download PDF" placement="top">
-              <ButtonComp startIcon={<AiOutlineFilePdf />} size="small">
-                Pdf
-              </ButtonComp>
-            </Tooltip>
-            <Tooltip title="Download Excel" placement="top">
-              <ButtonComp startIcon={<AiOutlineFileExcel />} size="small">
-                Excel
-              </ButtonComp>
-            </Tooltip>
-            <Tooltip title="Download CSV" placement="top">
-              <ButtonComp startIcon={<PiFileCsvLight />} size="small">
-                CSV
-              </ButtonComp>
-            </Tooltip>
+            <ButtonComp
+              tooltipTitle="Download PDF"
+              tooltipPlacement="top"
+              startIcon={<AiOutlineFilePdf />}
+              size="small"
+            >
+              Pdf
+            </ButtonComp>
+            <ButtonComp
+              tooltipTitle="Download Excel"
+              tooltipPlacement="top"
+              startIcon={<AiOutlineFileExcel />}
+              size="small"
+            >
+              Excel
+            </ButtonComp>
+            <ButtonComp
+              tooltipTitle="Download CSV"
+              tooltipPlacement="top"
+              startIcon={<PiFileCsvLight />}
+              size="small"
+            >
+              CSV
+            </ButtonComp>
           </ButtonGroup>
           <InputField
             startAdornment={
@@ -129,35 +140,48 @@ export function TableComp<T, K extends Extract<keyof T, string>>(
                   }
                 })}
                 {!isEmpty(props.actions) ? (
-                  <Stack
-                    direction="row"
-                    justifyContent={'flex-end'}
-                    spacing={1}
-                    my={1}
-                    mr={1}
-                    flexShrink={0}
-                  >
-                    <Tooltip title="View" placement="top">
-                      <IconButton sx={{ flexShrink: 0 }}>
-                        {/* <MdEye size={20} /> */}
-                        <LuEye size={18} />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Edit" placement="top">
-                      <IconButton sx={{ flexShrink: 0 }}>
-                        <MdEdit size={18} />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Delete" placement="top">
-                      <IconButton sx={{ flexShrink: 0 }}>
-                        <IoTrashOutline size={18} />
-                      </IconButton>
-                    </Tooltip>
-                  </Stack>
+                  <TableCell>
+                    <Stack
+                      direction="row"
+                      justifyContent={'flex-end'}
+                      spacing={1}
+                      flexShrink={0}
+                    >
+                      <Tooltip title="View" placement="top">
+                        <IconButton sx={{ flexShrink: 0 }}>
+                          {/* <MdEye size={20} /> */}
+                          <LuEye size={18} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Edit" placement="top">
+                        <IconButton sx={{ flexShrink: 0 }}>
+                          <MdEdit size={18} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete" placement="top">
+                        <IconButton sx={{ flexShrink: 0 }}>
+                          <IoTrashOutline size={18} />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
+                  </TableCell>
                 ) : null}
               </TableRow>
             )
           })}
+
+          {props?.loading ? (
+            <TableRow>
+              {Object.values(props?.data?.[0] ?? {})?.map((_, id) => (
+                <TableCell key={id}>
+                  <Skeleton variant="rounded" height={25} />
+                </TableCell>
+              ))}
+              <TableCell align="right">
+                <Skeleton variant="rounded" height={25} />
+              </TableCell>
+            </TableRow>
+          ) : null}
         </TableBody>
       </Table>
       <TablePagination

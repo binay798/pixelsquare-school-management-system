@@ -1,3 +1,4 @@
+import { FullPageLoader } from '@src/components/loader/loader.component'
 import { privateRoutes, protectedRoutes, publicRoutes } from '@src/routes'
 import { createContext, useContext } from 'react'
 import { RouterProvider, createHashRouter, Navigate } from 'react-router-dom'
@@ -10,21 +11,21 @@ const combinedRoutes = [
 ]
 
 interface AuthType {
-  user: object
-  token: string
+  user: Api.Auth.Login | null
+  loading: boolean
 }
 const AuthContext = createContext<AuthType | null>(null)
 
 export function AuthRouter(props: { auth: AuthType | null; loading: boolean }) {
   const finalRoutes = props?.loading
-    ? [{ path: '*', element: <div>Loading...</div> }]
+    ? [{ path: '*', element: <FullPageLoader /> }]
     : combinedRoutes
 
   return (
     <AuthContext.Provider value={props.auth}>
       <RouterProvider
         router={createHashRouter(finalRoutes)}
-        fallbackElement={<div>Loading...</div>}
+        fallbackElement={<FullPageLoader />}
       ></RouterProvider>
     </AuthContext.Provider>
   )

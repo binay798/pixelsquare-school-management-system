@@ -5,6 +5,7 @@ import {
   PrivateRoute,
   ProtectedRouteComp,
 } from './components/auth/routes.component'
+import { Dashboard } from './pages/dashboard/dashboard.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -18,7 +19,7 @@ export const privateRoutes: RouteObject[] = [
   {
     path: '/',
     element: <PrivateRoute />,
-    children: [{ path: '/dashboard', element: <div>dashboard</div> }],
+    children: [{ path: '/dashboard', element: <Dashboard /> }],
   },
 ]
 

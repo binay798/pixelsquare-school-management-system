@@ -57,6 +57,8 @@ export function TooltipBtn(props: TooltipBtnProps) {
 
 interface ButtonCompProps extends ButtonProps {
   loading?: boolean
+  tooltipTitle?: string
+  tooltipPlacement?: TooltipProps['placement']
 }
 export function ButtonComp(props: ButtonCompProps) {
   let loaderSize = 14
@@ -69,17 +71,19 @@ export function ButtonComp(props: ButtonCompProps) {
   }
 
   return (
-    <Button {...omit(props, 'loading')} disabled={props.loading}>
-      <Stack direction="row" alignItems="center" gap={1}>
-        {props.children}
-        {props.loading ? (
-          <CircularProgress
-            size={loaderSize}
-            sx={{ color: colors.lightBlue[50] }}
-          />
-        ) : null}
-      </Stack>
-    </Button>
+    <Tooltip title={props.tooltipTitle} placement={props.tooltipPlacement}>
+      <Button {...omit(props, 'loading')} disabled={props.loading}>
+        <Stack direction="row" alignItems="center" gap={1}>
+          {props.children}
+          {props.loading ? (
+            <CircularProgress
+              size={loaderSize}
+              sx={{ color: colors.lightBlue[50] }}
+            />
+          ) : null}
+        </Stack>
+      </Button>
+    </Tooltip>
   )
 }
 

@@ -35,6 +35,9 @@ import {
 import { RiCustomerService2Fill } from 'react-icons/ri'
 import { useNavigate } from 'react-router-dom'
 import { AdminSidebarContext, useAdminSidebar } from './adminSidebar.context'
+import { ButtonComp } from '../button/button.component'
+import { useDispatch } from '@src/store/hooks.store'
+import { authSliceLogout } from '@src/store/redux/auth/auth.slice'
 
 const sidebarItems: GenerateAdminSidebarProps[] = [
   {
@@ -185,10 +188,10 @@ export function MainContainer() {
   const { openSidebar, toggleShowSidebar } = useAdminSidebar()
   const springWidth = useSpring({
     from: {
-      width: 380,
+      width: 320,
     },
     to: {
-      width: openSidebar ? 380 : 90,
+      width: openSidebar ? 320 : 90,
     },
   })
   const arrowRotate = useSpring({
@@ -199,6 +202,11 @@ export function MainContainer() {
       rotate: openSidebar ? '-180deg' : '0deg',
     },
   })
+  const dispatch = useDispatch()
+
+  const logoutHandler = () => {
+    dispatch(authSliceLogout({}))
+  }
 
   return (
     <animated.div
@@ -214,14 +222,22 @@ export function MainContainer() {
         <ListContainer>
           <RenderNestedEl data={sidebarItems} />
         </ListContainer>
-        <Stack direction={'row'} justifyContent={'flex-end'} pr={3.4}>
+        <Stack
+          direction={'row'}
+          justifyContent={'flex-end'}
+          alignItems={'center'}
+          pr={3.4}
+        >
+          <ButtonComp onClick={logoutHandler} color="error">
+            Logout
+          </ButtonComp>
           <IconButton
             onClick={() => toggleShowSidebar?.(!openSidebar)}
             style={{ width: 'fit-content' }}
           >
             {/* <AiOutlineMenuFold color={colors.grey[300]} /> */}
             <animated.span style={arrowRotate}>
-              <MdKeyboardArrowRight size={30} color={colors.grey[300]} />
+              <MdKeyboardArrowRight size={24} color={colors.grey[300]} />
             </animated.span>
           </IconButton>
         </Stack>
@@ -244,10 +260,19 @@ function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
   })
 
   return (
-    <>
-      <ListItemBtn disableRipple={false} onClick={handleClick}>
+    <div>
+      <ListItemBtn
+        disableRipple={false}
+        onClick={handleClick}
+        sx={{
+          marginBottom: '0px !important',
+        }}
+      >
         <ListItemIconContainer>{data.icon}</ListItemIconContainer>
         {openSidebar ? <ListItemTitle primary={data.title} /> : null}
+        {/* <animated.div style={hideText}>
+          <ListItemTitle primary={data.title} />
+        </animated.div> */}
         {openSidebar ? (
           <ToggleIcon style={toggle}>
             <ListItemIconContainer style={{ minWidth: 0 }}>
@@ -262,7 +287,9 @@ function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
           in={open}
           timeout={100}
           easing={'cubic-bezier(.57,.5,.84,.87)'}
-          sx={{ borderLeft: '0.5px solid #5a5858' }}
+          sx={{
+            borderLeft: '0.5px solid #5a5858',
+          }}
         >
           {data?.subItems?.map((el, id) => {
             return (
@@ -277,7 +304,7 @@ function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
                 {!isEmpty(el.subItems) ? (
                   <MemoizedCollapsableListItem data={el} />
                 ) : (
-                  <>
+                  <div>
                     <ListItemBtn
                       disableRipple={false}
                       onClick={() => el.to && navigate(el.to)}
@@ -287,14 +314,14 @@ function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
                         <ListItemTitle title="Dashboard" primary={el.title} />
                       ) : null}
                     </ListItemBtn>
-                  </>
+                  </div>
                 )}
               </div>
             )
           })}
         </Collapse>
       </Box>
-    </>
+    </div>
   )
 }
 

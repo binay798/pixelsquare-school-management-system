@@ -16,6 +16,7 @@ const instance: AxiosInstance = axios.create({
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 })
 
 // MARK: - interceptor
@@ -50,7 +51,13 @@ const getParsedUrl = (
 
 // MARK: api
 const api =
-  <ApiResponse, ApiParams extends { [key: string]: number | string }, ApiBody>(
+  <
+    ApiResponse,
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    ApiParams extends { [key: string]: number | string } = {},
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    ApiBody = {},
+  >(
     method: 'get' | 'delete' | 'head' | 'options' | 'post' | 'put' | 'patch'
   ) =>
   (

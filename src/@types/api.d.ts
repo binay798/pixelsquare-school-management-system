@@ -13,4 +13,11 @@ declare namespace Api {
     rows: Array<T>
     isLast: boolean
   }
+
+  namespace Auth {
+    interface Login {
+      user: Omit<User.IUser, 'password', 'completed_password_setup'>
+      userRoles: string[]
+    }
+  }
 }
