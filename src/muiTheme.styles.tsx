@@ -96,7 +96,7 @@ let theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          // borderRadius: 8,
+          // borderRadius: 22,
           boxShadow:
             'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
           border: `1px solid`,
@@ -203,6 +203,8 @@ theme = createTheme({
         root: {
           margin: '0px 8px',
           borderRadius: 8,
+          fontSize: 14,
+          padding: '8px 10px',
         },
       },
     },
@@ -243,6 +245,7 @@ theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
+          borderRadius: 18,
           boxShadow:
             'rgba(0, 0, 0, 0.04) 0px 5px 22px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px',
         },
@@ -252,6 +255,7 @@ theme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
+          fontSize: 14,
           borderRadius: 8, // Apply rounded corners
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
             borderColor: '#d3d3d3', // Purple border on focus
@@ -264,6 +268,9 @@ theme = createTheme({
           '&.Mui-focused': {
             outline: '2px solid #8142f5', // Outline when focused (light purple)
             outlineOffset: '2px', // Separate the outline from the border
+          },
+          '&.Mui-error': {
+            outlineColor: 'red',
           },
         },
         notchedOutline: {

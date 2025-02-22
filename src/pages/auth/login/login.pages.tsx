@@ -20,7 +20,11 @@ export function Login() {
     e.preventDefault()
     dispatch(
       authSliceLogin({
-        body: { email, password },
+        body: {
+          email,
+          password,
+          schoolId: Number(import.meta.env.VITE_APP_SCHOOL_URL),
+        },
         onSuccess: () => {},
       })
     )

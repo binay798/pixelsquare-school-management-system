@@ -1,13 +1,9 @@
-import {
-  Box,
-  Collapse,
-  IconButton,
-  List,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Box, Collapse, List, Stack, Typography } from '@mui/material'
 import { MdKeyboardArrowRight } from 'react-icons/md'
+import { FaSchool } from 'react-icons/fa'
 import { animated } from '@react-spring/web'
+import { IoSchool } from 'react-icons/io5'
+import { PiStudentFill } from 'react-icons/pi'
 import {
   Container,
   ListContainer,
@@ -18,118 +14,152 @@ import {
 } from './sidebar.styles'
 import { colors } from '@src/helpers/colors.helpers'
 import { BiSolidDashboard } from 'react-icons/bi'
+import { MdAdminPanelSettings } from 'react-icons/md'
 // import { MdKeyboardArrowRight } from 'react-icons/md'
 import React, { useState } from 'react'
 import { config, useSpring } from '@react-spring/web'
 import { GenerateAdminSidebarProps } from './sidebar.types'
 import { isEmpty } from 'lodash'
-import { CgComponents } from 'react-icons/cg'
-import { ImStatsDots } from 'react-icons/im'
-import { AiFillDatabase } from 'react-icons/ai'
-import {
-  BsBarChartFill,
-  BsFillChatDotsFill,
-  BsFillCalendarDayFill,
-  BsKanban,
-} from 'react-icons/bs'
-import { RiCustomerService2Fill } from 'react-icons/ri'
+
 import { useNavigate } from 'react-router-dom'
-import { AdminSidebarContext, useAdminSidebar } from './adminSidebar.context'
-import { ButtonComp } from '../button/button.component'
-import { useDispatch } from '@src/store/hooks.store'
-import { authSliceLogout } from '@src/store/redux/auth/auth.slice'
+import { useAdminSidebar } from './adminSidebar.context'
 
 const sidebarItems: GenerateAdminSidebarProps[] = [
   {
     title: 'Dashboard',
     icon: <BiSolidDashboard />,
+    to: '/dashboard',
+    // subItems: [
+    //   { title: 'Default', icon: <CgComponents /> },
+    //   {
+    //     title: 'Analytics',
+    //     icon: <BsBarChartFill />,
+    //     subItems: [
+    //       { title: 'Default', icon: <BiSolidDashboard /> },
+    //       { title: 'Analytics', icon: <BiSolidDashboard /> },
+    //     ],
+    //   },
+    // ],
+  },
+  {
+    title: 'Administrator',
+    icon: <MdAdminPanelSettings />,
+    to: '/dashboard/administrator',
     subItems: [
-      { title: 'Default', icon: <CgComponents /> },
       {
-        title: 'Analytics',
-        icon: <BsBarChartFill />,
-        subItems: [
-          { title: 'Default', icon: <BiSolidDashboard /> },
-          { title: 'Analytics', icon: <BiSolidDashboard /> },
-        ],
+        title: 'Manage School',
+        icon: <FaSchool />,
+        to: '/dashboard/administrator/manage-school',
+      },
+      {
+        title: 'Academic Year',
+        icon: <IoSchool />,
+        to: '/dashboard/administrator/academic-year',
       },
     ],
   },
   {
-    title: 'Components',
-    icon: <CgComponents />,
-  },
-  {
-    title: 'Statistics',
-    icon: <ImStatsDots size={20} />,
-  },
-  {
-    title: 'Data',
-    icon: <AiFillDatabase />,
-  },
-  {
-    title: 'Chart',
-    icon: <BsBarChartFill />,
-  },
-
-  {
-    title: 'Chat',
-    icon: <BsFillChatDotsFill />,
-  },
-  {
-    title: 'Calendar',
-    icon: <BsFillCalendarDayFill />,
-  },
-  {
-    title: 'Kanban',
-    icon: <BsKanban />,
-  },
-  {
-    title: 'Customer',
-    icon: <RiCustomerService2Fill />,
+    title: 'Manage Student',
+    icon: <PiStudentFill />,
+    to: '/dashboard/students',
     subItems: [
-      { title: 'List', icon: 'L' },
-      { title: 'Card', icon: 'C' },
+      {
+        title: 'Student Type',
+        icon: <FaSchool />,
+        to: '/dashboard/students/manage-school',
+      },
+      {
+        title: 'Student List',
+        icon: <IoSchool />,
+        to: '/dashboard/students/academic-year',
+      },
+      {
+        title: 'Admit Student',
+        icon: <FaSchool />,
+        to: '/dashboard/students/manage-school',
+      },
+      {
+        title: 'Bulk Admission',
+        icon: <IoSchool />,
+        to: '/dashboard/students/academic-year',
+      },
     ],
   },
-  // next
-  {
-    title: 'Components',
-    icon: <CgComponents />,
-  },
-  {
-    title: 'Statistics',
-    icon: <ImStatsDots size={20} />,
-  },
-  {
-    title: 'Data',
-    icon: <AiFillDatabase />,
-  },
-  {
-    title: 'Chart',
-    icon: <BsBarChartFill />,
-  },
+  // {
+  //   title: 'Components',
+  //   icon: <CgComponents />,
+  // },
+  // {
+  //   title: 'Statistics',
+  //   icon: <ImStatsDots size={20} />,
+  // },
+  // {
+  //   title: 'Data',
+  //   icon: <AiFillDatabase />,
+  // },
+  // {
+  //   title: 'Chart',
+  //   icon: <BsBarChartFill />,
+  // },
 
-  {
-    title: 'Chat',
-    icon: <BsFillChatDotsFill />,
-  },
-  {
-    title: 'Calendar',
-    icon: <BsFillCalendarDayFill />,
-  },
-  {
-    title: 'Kanban',
-    icon: <BsKanban />,
-  },
-  {
-    title: 'Customer',
-    icon: <RiCustomerService2Fill />,
-    subItems: [
-      { title: 'List', icon: 'L' },
-      { title: 'Card', icon: 'C' },
-    ],
-  },
+  // {
+  //   title: 'Chat',
+  //   icon: <BsFillChatDotsFill />,
+  // },
+  // {
+  //   title: 'Calendar',
+  //   icon: <BsFillCalendarDayFill />,
+  // },
+  // {
+  //   title: 'Kanban',
+  //   icon: <BsKanban />,
+  // },
+  // {
+  //   title: 'Customer',
+  //   icon: <RiCustomerService2Fill />,
+  //   subItems: [
+  //     { title: 'List', icon: 'L' },
+  //     { title: 'Card', icon: 'C' },
+  //   ],
+  // },
+  // // next
+  // {
+  //   title: 'Components',
+  //   icon: <CgComponents />,
+  // },
+  // {
+  //   title: 'Statistics',
+  //   icon: <ImStatsDots size={20} />,
+  // },
+  // {
+  //   title: 'Data',
+  //   icon: <AiFillDatabase />,
+  // },
+  // {
+  //   title: 'Chart',
+  //   icon: <BsBarChartFill />,
+  // },
+
+  // {
+  //   title: 'Chat',
+  //   icon: <BsFillChatDotsFill />,
+  // },
+  // {
+  //   title: 'Calendar',
+  //   icon: <BsFillCalendarDayFill />,
+  // },
+  // {
+  //   title: 'Kanban',
+  //   icon: <BsKanban />,
+  // },
+  // {
+  //   title: 'Customer',
+  //   icon: <RiCustomerService2Fill />,
+  //   subItems: [
+  //     { title: 'List', icon: 'L' },
+  //     { title: 'Card', icon: 'C' },
+  //   ],
+  // },
 ]
 
 const RenderNestedEl = ({ data }: { data?: GenerateAdminSidebarProps[] }) => {
@@ -177,36 +207,19 @@ const RenderNestedEl = ({ data }: { data?: GenerateAdminSidebarProps[] }) => {
 
 export function AdminSidebar() {
   // function MainContainer(props: MainContainerProps) {
-  return (
-    <AdminSidebarContext>
-      <MainContainer />
-    </AdminSidebarContext>
-  )
+  return <MainContainer />
 }
 
 export function MainContainer() {
-  const { openSidebar, toggleShowSidebar } = useAdminSidebar()
+  const { openSidebar } = useAdminSidebar()
   const springWidth = useSpring({
     from: {
-      width: 320,
+      width: 290,
     },
     to: {
-      width: openSidebar ? 320 : 90,
+      width: openSidebar ? 290 : 90,
     },
   })
-  const arrowRotate = useSpring({
-    from: {
-      rotate: '-180deg',
-    },
-    to: {
-      rotate: openSidebar ? '-180deg' : '0deg',
-    },
-  })
-  const dispatch = useDispatch()
-
-  const logoutHandler = () => {
-    dispatch(authSliceLogout({}))
-  }
 
   return (
     <animated.div
@@ -222,25 +235,6 @@ export function MainContainer() {
         <ListContainer>
           <RenderNestedEl data={sidebarItems} />
         </ListContainer>
-        <Stack
-          direction={'row'}
-          justifyContent={'flex-end'}
-          alignItems={'center'}
-          pr={3.4}
-        >
-          <ButtonComp onClick={logoutHandler} color="error">
-            Logout
-          </ButtonComp>
-          <IconButton
-            onClick={() => toggleShowSidebar?.(!openSidebar)}
-            style={{ width: 'fit-content' }}
-          >
-            {/* <AiOutlineMenuFold color={colors.grey[300]} /> */}
-            <animated.span style={arrowRotate}>
-              <MdKeyboardArrowRight size={24} color={colors.grey[300]} />
-            </animated.span>
-          </IconButton>
-        </Stack>
       </Container>
     </animated.div>
   )
@@ -288,7 +282,7 @@ function CollapsableListItem({ data }: { data: GenerateAdminSidebarProps }) {
           timeout={100}
           easing={'cubic-bezier(.57,.5,.84,.87)'}
           sx={{
-            borderLeft: '0.5px solid #5a5858',
+            borderLeft: '0.5px dashed #5a5858',
           }}
         >
           {data?.subItems?.map((el, id) => {

@@ -51,11 +51,12 @@ export function TableComp<T, K extends Extract<keyof T, string>>(
 ) {
   return (
     <TableContainer component={TablePaper}>
-      <Box p={1}>
+      <Box p={1} mt={1}>
         <Stack
           direction="row"
           alignItems={'center'}
           justifyContent={'space-between'}
+          gap={3}
         >
           <ButtonGroup
             variant="outlined"
@@ -92,6 +93,10 @@ export function TableComp<T, K extends Extract<keyof T, string>>(
               <MdOutlineSearch size={28} color={colors.grey[500]} />
             }
             placeholder="Search"
+            sx={{
+              width: 300,
+              marginLeft: 'auto',
+            }}
           />
         </Stack>
       </Box>
@@ -147,22 +152,28 @@ export function TableComp<T, K extends Extract<keyof T, string>>(
                       spacing={1}
                       flexShrink={0}
                     >
-                      <Tooltip title="View" placement="top">
-                        <IconButton sx={{ flexShrink: 0 }}>
-                          {/* <MdEye size={20} /> */}
-                          <LuEye size={18} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Edit" placement="top">
-                        <IconButton sx={{ flexShrink: 0 }}>
-                          <MdEdit size={18} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete" placement="top">
-                        <IconButton sx={{ flexShrink: 0 }}>
-                          <IoTrashOutline size={18} />
-                        </IconButton>
-                      </Tooltip>
+                      {props?.actions?.onView ? (
+                        <Tooltip title="View" placement="top">
+                          <IconButton sx={{ flexShrink: 0 }}>
+                            {/* <MdEye size={20} /> */}
+                            <LuEye size={18} />
+                          </IconButton>
+                        </Tooltip>
+                      ) : null}
+                      {props?.actions?.onEdit ? (
+                        <Tooltip title="Edit" placement="top">
+                          <IconButton sx={{ flexShrink: 0 }}>
+                            <MdEdit size={18} />
+                          </IconButton>
+                        </Tooltip>
+                      ) : null}
+                      {props?.actions?.onDelete ? (
+                        <Tooltip title="Delete" placement="top">
+                          <IconButton sx={{ flexShrink: 0 }}>
+                            <IoTrashOutline size={18} />
+                          </IconButton>
+                        </Tooltip>
+                      ) : null}
                     </Stack>
                   </TableCell>
                 ) : null}

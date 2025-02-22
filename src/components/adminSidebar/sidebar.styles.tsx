@@ -21,6 +21,7 @@ export const ListItemTitle = styled(ListItemText)`
     color: inherit;
     font-weight: normal;
     font-size: 14px;
+    white-space: nowrap;
   }
 `
 

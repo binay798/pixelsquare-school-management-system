@@ -1,4 +1,4 @@
-import { RouteObject } from 'react-router-dom'
+import { Outlet, RouteObject } from 'react-router-dom'
 import { Homepage } from './pages/homepage/homepage.pages'
 import { Login } from './pages/auth/login/login.pages'
 import {
@@ -6,6 +6,12 @@ import {
   ProtectedRouteComp,
 } from './components/auth/routes.component'
 import { Dashboard } from './pages/dashboard/dashboard.page'
+import { DashboardMain } from './pages/dashboard/pages/main/main.page'
+import { Administrator } from './pages/dashboard/pages/administrator/administrator.page'
+import { ManageSchool } from './pages/dashboard/pages/administrator/pages/manageSchool/manageSchool.page'
+import { AcademicYear } from './pages/dashboard/pages/administrator/pages/academicYear/academicYear.component'
+import { CreateAcademicYear } from './pages/dashboard/pages/administrator/pages/academicYear/pages/create/create.page'
+import { EditAcademicYear } from './pages/dashboard/pages/administrator/pages/academicYear/pages/edit/edit.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -19,7 +25,43 @@ export const privateRoutes: RouteObject[] = [
   {
     path: '/',
     element: <PrivateRoute />,
-    children: [{ path: '/dashboard', element: <Dashboard /> }],
+    children: [
+      {
+        path: '/dashboard',
+        element: <Dashboard />,
+        children: [
+          { path: '/dashboard', element: <DashboardMain /> },
+          {
+            path: '/dashboard/administrator',
+            element: <Administrator />,
+            children: [
+              {
+                path: '/dashboard/administrator/manage-school',
+                element: <ManageSchool />,
+              },
+              {
+                path: '/dashboard/administrator/academic-year',
+                element: <Outlet />,
+                children: [
+                  {
+                    path: '/dashboard/administrator/academic-year',
+                    element: <AcademicYear />,
+                  },
+                  {
+                    path: '/dashboard/administrator/academic-year/create',
+                    element: <CreateAcademicYear />,
+                  },
+                  {
+                    path: '/dashboard/administrator/academic-year/edit',
+                    element: <EditAcademicYear />,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
   },
 ]
 
