@@ -32,7 +32,18 @@ export function CustomDatePicker(props: Props) {
             openPickerIcon: BsCalendarDate,
           }}
           slotProps={{
+            yearButton: {
+              style: {
+                fontSize: 14,
+              },
+            },
             desktopPaper: {
+              sx: {
+                '*': {
+                  fontSize: 14,
+                },
+                height: 280,
+              },
               style: {
                 borderRadius: 18,
                 boxShadow:

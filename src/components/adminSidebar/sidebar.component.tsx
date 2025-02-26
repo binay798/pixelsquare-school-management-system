@@ -4,6 +4,8 @@ import { FaSchool } from 'react-icons/fa'
 import { animated } from '@react-spring/web'
 import { IoSchool } from 'react-icons/io5'
 import { PiStudentFill } from 'react-icons/pi'
+import { FaPersonCirclePlus } from 'react-icons/fa6'
+import { FaSitemap } from 'react-icons/fa'
 import {
   Container,
   ListContainer,
@@ -55,6 +57,23 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
         title: 'Academic Year',
         icon: <IoSchool />,
         to: '/dashboard/administrator/academic-year',
+      },
+    ],
+  },
+  {
+    title: 'Human Resource',
+    icon: <FaPersonCirclePlus />,
+    to: '/dashboard/human-resources',
+    subItems: [
+      {
+        title: 'Manage Designation',
+        icon: <FaSitemap />,
+        to: '/dashboard/human-resources',
+      },
+      {
+        title: 'Manage Employee',
+        icon: <IoSchool />,
+        to: '/dashboard/human-resources/manage-employee',
       },
     ],
   },
