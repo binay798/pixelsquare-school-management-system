@@ -14,6 +14,7 @@ import { CreateAcademicYear } from './pages/dashboard/pages/administrator/pages/
 import { EditAcademicYear } from './pages/dashboard/pages/administrator/pages/academicYear/pages/edit/edit.page'
 import { ManageDesignation } from './pages/dashboard/pages/humanResources/pages/manageDesignation/manageDesignation.page'
 import { ManageEmployee } from './pages/dashboard/pages/humanResources/pages/manageEmployee/manageEmployee.page'
+import { ListDesignation } from './pages/dashboard/pages/humanResources/pages/manageDesignation/pages/list/list.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -66,8 +67,14 @@ export const privateRoutes: RouteObject[] = [
             element: <Outlet />,
             children: [
               {
-                path: '/dashboard/human-resources',
+                path: '',
                 element: <ManageDesignation />,
+                children: [
+                  {
+                    path: '',
+                    element: <ListDesignation />,
+                  },
+                ],
               },
               {
                 path: '/dashboard/human-resources/manage-employee',

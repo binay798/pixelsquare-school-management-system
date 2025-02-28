@@ -1,5 +1,10 @@
 import { Box } from '@mui/material'
+import { Outlet } from 'react-router-dom'
 
 export function ManageDesignation() {
-  return <Box>Manage designation</Box>
+  return (
+    <Box>
+      <Outlet />
+    </Box>
+  )
 }
