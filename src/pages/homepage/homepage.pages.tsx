@@ -1,5 +1,5 @@
-import { ButtonComp } from '@src/components/button/button.component'
 import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 export function Homepage() {
   // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -12,15 +12,9 @@ export function Homepage() {
   // }
   const navigate = useNavigate()
 
-  return (
-    <div>
-      <ButtonComp
-        onClick={() => {
-          navigate('/login')
-        }}
-      >
-        Login
-      </ButtonComp>
-    </div>
-  )
+  useEffect(() => {
+    navigate('/login')
+  })
+
+  return <div></div>
 }
