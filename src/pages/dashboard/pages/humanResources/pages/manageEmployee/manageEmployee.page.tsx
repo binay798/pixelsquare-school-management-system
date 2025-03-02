@@ -1,5 +1,5 @@
-import { Box } from '@mui/material'
+import { Outlet } from 'react-router-dom'
 
 export function ManageEmployee() {
-  return <Box>Manage employee</Box>
+  return <Outlet />
 }

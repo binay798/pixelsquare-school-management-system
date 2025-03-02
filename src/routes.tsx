@@ -15,6 +15,8 @@ import { EditAcademicYear } from './pages/dashboard/pages/administrator/pages/ac
 import { ManageDesignation } from './pages/dashboard/pages/humanResources/pages/manageDesignation/manageDesignation.page'
 import { ManageEmployee } from './pages/dashboard/pages/humanResources/pages/manageEmployee/manageEmployee.page'
 import { ListDesignation } from './pages/dashboard/pages/humanResources/pages/manageDesignation/pages/list/list.page'
+import { ListEmployeesPage } from './pages/dashboard/pages/humanResources/pages/manageEmployee/pages/list/list.page'
+import { CreateEmployeePage } from './pages/dashboard/pages/humanResources/pages/manageEmployee/pages/create/create.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -79,6 +81,10 @@ export const privateRoutes: RouteObject[] = [
               {
                 path: '/dashboard/human-resources/manage-employee',
                 element: <ManageEmployee />,
+                children: [
+                  { path: '', element: <ListEmployeesPage /> },
+                  { path: 'create', element: <CreateEmployeePage /> },
+                ],
               },
             ],
           },

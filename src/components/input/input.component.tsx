@@ -10,6 +10,7 @@ import {
 } from '@mui/material'
 import { omit } from 'lodash'
 import { colors } from '@src/helpers/colors.helpers'
+import { BsEye } from 'react-icons/bs'
 
 interface Props extends OutlinedInputProps {
   helperText?: string
@@ -42,6 +43,9 @@ export function InputField(props: Props) {
       <OutlinedInput
         {...omit(props, 'helperText', 'formControlProps', 'labelDetail')}
         notched={false}
+        endAdornment={
+          props.type === 'password' ? <BsEye /> : props.endAdornment
+        }
       />
       <FormHelperText error={props.error}>{props.helperText}</FormHelperText>
     </FormControl>

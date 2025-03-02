@@ -42,7 +42,12 @@ export function CustomDatePicker(props: Props) {
                 '*': {
                   fontSize: 14,
                 },
-                height: 280,
+                // height: 300,
+                height:
+                  JSON.stringify(props?.views) ===
+                  JSON.stringify(['month', 'year'])
+                    ? 280
+                    : 'unset',
               },
               style: {
                 borderRadius: 18,
