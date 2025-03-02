@@ -26,7 +26,7 @@ function App() {
   return (
     <AuthRouter
       auth={{
-        user: { user: {}, userRoles: [] },
+        user: user.data,
         loading,
       }}
       loading={user.sessionLoading}

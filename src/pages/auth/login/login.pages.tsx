@@ -10,6 +10,7 @@ import { ButtonComp } from '@src/components/button/button.component'
 import { useState } from 'react'
 import { authSliceLogin } from '@src/store/redux/auth/auth.slice'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
+import school from '@src/assets/images/school.png'
 
 export function Login() {
   const [email, setEmail] = useState('')
@@ -30,13 +31,28 @@ export function Login() {
     )
   }
 
+  // const getGreeting = () => {
+  //   const hour = new Date().getHours()
+  //   if (hour < 12) return 'Good Morning! 🌞'
+  //   if (hour < 18) return 'Good Afternoon! 🌤️'
+  //   return 'Good Evening! 🌙'
+  // }
+
   return (
     <LoginContainer>
       <LoginCardContainer>
-        <LoginLeftContainer>Left</LoginLeftContainer>
+        <LoginLeftContainer>
+          <Typography mb={2} variant="h4" fontWeight={800}>
+            Hi, Welcome back 👋
+          </Typography>
+          <Typography variant="body1" mb={1}>
+            We&apos;re glad to have you here ! let&apos;s get started
+          </Typography>
+          <img src={school} alt="school" />
+        </LoginLeftContainer>
         <LoginRightContainer>
-          <Typography mb={1} variant="h5" fontWeight={600}>
-            Let&apos;s Get Started
+          <Typography mb={1} variant="h5" fontWeight={700}>
+            Let&apos;s Get Started 🚀
           </Typography>
           <Typography mb={4}>Login to get all features on dashboard</Typography>
           <form onSubmit={submitHandler}>
@@ -52,11 +68,19 @@ export function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
               />
-
               <ButtonComp
                 loading={authLoginStore.loading}
                 type="submit"
                 size="large"
+                sx={{
+                  background:
+                    'linear-gradient(to right,rgb(47, 58, 158),rgb(28, 22, 194))',
+                  color: 'white',
+                  borderRadius: '8px',
+                  '&:hover': {
+                    opacity: 0.9,
+                  },
+                }}
               >
                 Login
               </ButtonComp>
