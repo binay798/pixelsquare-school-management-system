@@ -7,36 +7,42 @@ import {
 } from './login.styles'
 import { InputField } from '@src/components/input/input.component'
 import { ButtonComp } from '@src/components/button/button.component'
-import { useState } from 'react'
 import { authSliceLogin } from '@src/store/redux/auth/auth.slice'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
 import school from '@src/assets/images/school.png'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
 export function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const authLoginStore = useSelector((store) => store.auth.user)
   const dispatch = useDispatch()
-  const submitHandler = (e: React.SyntheticEvent) => {
-    e.preventDefault()
-    dispatch(
-      authSliceLogin({
-        body: {
-          email,
-          password,
-          schoolId: Number(import.meta.env.VITE_APP_SCHOOL_URL),
-        },
-        onSuccess: () => {},
-      })
-    )
-  }
 
-  // const getGreeting = () => {
-  //   const hour = new Date().getHours()
-  //   if (hour < 12) return 'Good Morning! 🌞'
-  //   if (hour < 18) return 'Good Afternoon! 🌤️'
-  //   return 'Good Evening! 🌙'
-  // }
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email('Invalid email address')
+        .required('Email is Required'),
+      password: Yup.string()
+        .min(3, 'Password must be at least 6 characters')
+        .required('Password is Required'),
+    }),
+    onSubmit: (values) => {
+      dispatch(
+        authSliceLogin({
+          body: {
+            email: values.email,
+            password: values.password,
+            schoolId: Number(import.meta.env.VITE_APP_SCHOOL_URL),
+          },
+          onSuccess: () => {},
+        })
+      )
+    },
+  })
 
   return (
     <LoginContainer>
@@ -46,7 +52,7 @@ export function Login() {
             Hi, Welcome back 👋
           </Typography>
           <Typography variant="body1" mb={1}>
-            We&apos;re glad to have you here ! let&apos;s get started
+            We&apos;re glad to have you here! Let&apos;s get started
           </Typography>
           <img src={school} alt="school" />
         </LoginLeftContainer>
@@ -55,18 +61,32 @@ export function Login() {
             Let&apos;s Get Started 🚀
           </Typography>
           <Typography mb={4}>Login to get all features on dashboard</Typography>
-          <form onSubmit={submitHandler}>
+          <form onSubmit={formik.handleSubmit}>
             <Stack gap={2}>
               <InputField
                 placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                name="email"
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={
+                  formik.touched.email ? formik.errors.email : undefined
+                }
               />
               <InputField
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                name="password"
+                error={
+                  formik.touched.password && Boolean(formik.errors.password)
+                }
+                helperText={
+                  formik.touched.password ? formik.errors.password : undefined
+                }
               />
               <ButtonComp
                 loading={authLoginStore.loading}
