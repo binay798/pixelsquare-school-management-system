@@ -5,7 +5,7 @@ export const LoginContainer = styled.div`
   height: 100vh;
   background:
     linear-gradient(rgba(30, 27, 177, 0.5), rgba(5, 4, 75, 0.5)),
-    url('/src/assets/images/background-school.png') center/cover no-repeat;
+    url('/assets/images/background-school.png') center/cover no-repeat;
   background-size: cover;
   display: flex;
   align-items: center;
