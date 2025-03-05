@@ -4,6 +4,8 @@ import './helpers/api.helpers'
 import { useDispatch, useSelector } from './store/hooks.store'
 import { useEffect, useState } from 'react'
 import { authSliceGetUserSession } from './store/redux/auth/auth.slice'
+import { getSchoolDetailSlice } from './store/redux/dashboard/manageSchool/manageSchool.slice'
+import { isEmpty } from 'lodash'
 
 // TODO: Need to add ThemeProvider responsiveFontSizes(theme)
 function App() {
@@ -14,6 +16,12 @@ function App() {
   useEffect(() => {
     dispatch(authSliceGetUserSession({}))
   }, [])
+
+  useEffect(() => {
+    if (!isEmpty(user.data?.user)) {
+      dispatch(getSchoolDetailSlice({}))
+    }
+  }, [user.data?.user])
 
   useEffect(() => {
     if (user.loading || user.sessionLoading) {

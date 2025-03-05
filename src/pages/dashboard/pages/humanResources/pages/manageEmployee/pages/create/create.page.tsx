@@ -13,6 +13,8 @@ import { InputField } from '@src/components/input/input.component'
 import { SelectField } from '@src/components/select/select.component'
 import { colors } from '@src/helpers/colors.helpers'
 
+import { UploadAvatarComp } from '@src/pages/dashboard/components/uploadAvatarComp/uploadAvatar.component'
+
 export function CreateEmployeePage() {
   return (
     <Box>
@@ -30,95 +32,98 @@ export function CreateEmployeePage() {
       <Card sx={{ p: 2 }}>
         <form>
           <FormBlock title="Basic Information">
-            <Stack spacing={2}>
-              <Stack spacing={2} direction="row">
-                <InputField
-                  placeholder="Firtname"
-                  labelDetail={{ text: 'Firstname', required: true }}
-                />
-                <InputField
-                  placeholder="Middlename"
-                  labelDetail={{ text: 'Middlename', required: true }}
-                />
-                <InputField
-                  placeholder="Lastname"
-                  labelDetail={{ text: 'Lastname', required: true }}
-                />
-              </Stack>
-              <Stack spacing={2} direction="row">
-                <InputField
-                  placeholder="National ID"
-                  labelDetail={{ text: 'National ID', required: true }}
-                />
-                <FormControl fullWidth required>
-                  <FormLabel
-                    sx={{
-                      fontSize: 13,
-                      mb: 1,
-                      color: colors.grey[600],
-                    }}
-                  >
-                    Designation
-                  </FormLabel>
-                  <SelectField
-                    placeholder="Select employee designation"
-                    options={[
-                      { label: 'Accountant', value: 'Accountant' },
-                      { label: 'Receptionist', value: 'Receptionist' },
-                      { label: 'Librarian', value: 'librarian' },
-                    ]}
+            <Box>
+              <UploadAvatarComp onImageSelect={() => {}} />
+              <Stack spacing={2}>
+                <Stack spacing={2} direction="row">
+                  <InputField
+                    placeholder="Firtname"
+                    labelDetail={{ text: 'Firstname', required: true }}
                   />
-                </FormControl>
-                <InputField
-                  placeholder="Phone no."
-                  labelDetail={{ text: 'Phone no.', required: true }}
-                />
-              </Stack>
-              <Stack spacing={2} direction="row">
-                <FormControl fullWidth required>
-                  <FormLabel
-                    sx={{
-                      fontSize: 13,
-                      mb: 1,
-                      color: colors.grey[600],
-                    }}
-                  >
-                    Gender
-                  </FormLabel>
-                  <SelectField
-                    placeholder="Select gender"
-                    options={[
-                      { label: 'Male', value: 'male' },
-                      { label: 'Female', value: 'female' },
-                      { label: 'Other', value: 'other' },
-                    ]}
+                  <InputField
+                    placeholder="Middlename"
+                    labelDetail={{ text: 'Middlename', required: true }}
                   />
-                </FormControl>
-                <InputField
-                  placeholder="Blood group"
-                  labelDetail={{ text: 'Blood Group', required: true }}
-                />
-                <InputField
-                  placeholder="Religion"
-                  labelDetail={{ text: 'Religion', required: true }}
-                />
+                  <InputField
+                    placeholder="Lastname"
+                    labelDetail={{ text: 'Lastname', required: true }}
+                  />
+                </Stack>
+                <Stack spacing={2} direction="row">
+                  <InputField
+                    placeholder="National ID"
+                    labelDetail={{ text: 'National ID', required: true }}
+                  />
+                  <FormControl fullWidth required>
+                    <FormLabel
+                      sx={{
+                        fontSize: 13,
+                        mb: 1,
+                        color: colors.grey[600],
+                      }}
+                    >
+                      Designation
+                    </FormLabel>
+                    <SelectField
+                      placeholder="Select employee designation"
+                      options={[
+                        { label: 'Accountant', value: 'Accountant' },
+                        { label: 'Receptionist', value: 'Receptionist' },
+                        { label: 'Librarian', value: 'librarian' },
+                      ]}
+                    />
+                  </FormControl>
+                  <InputField
+                    placeholder="Phone no."
+                    labelDetail={{ text: 'Phone no.', required: true }}
+                  />
+                </Stack>
+                <Stack spacing={2} direction="row">
+                  <FormControl fullWidth required>
+                    <FormLabel
+                      sx={{
+                        fontSize: 13,
+                        mb: 1,
+                        color: colors.grey[600],
+                      }}
+                    >
+                      Gender
+                    </FormLabel>
+                    <SelectField
+                      placeholder="Select gender"
+                      options={[
+                        { label: 'Male', value: 'male' },
+                        { label: 'Female', value: 'female' },
+                        { label: 'Other', value: 'other' },
+                      ]}
+                    />
+                  </FormControl>
+                  <InputField
+                    placeholder="Blood group"
+                    labelDetail={{ text: 'Blood Group', required: true }}
+                  />
+                  <InputField
+                    placeholder="Religion"
+                    labelDetail={{ text: 'Religion', required: true }}
+                  />
+                </Stack>
+                <Stack spacing={2} direction="row">
+                  <CustomDatePicker
+                    // label={'"month" and "year"'}
+                    views={['day', 'month', 'year']}
+                    labelDetail={{ text: 'Date of Birth', required: true }}
+                  />
+                  <InputField
+                    placeholder="Permanent Address"
+                    labelDetail={{ text: 'Permanent Address', required: true }}
+                  />
+                  <InputField
+                    placeholder="Temporary Address"
+                    labelDetail={{ text: 'Temporary Address', required: true }}
+                  />
+                </Stack>
               </Stack>
-              <Stack spacing={2} direction="row">
-                <CustomDatePicker
-                  // label={'"month" and "year"'}
-                  views={['day', 'month', 'year']}
-                  labelDetail={{ text: 'Date of Birth', required: true }}
-                />
-                <InputField
-                  placeholder="Permanent Address"
-                  labelDetail={{ text: 'Permanent Address', required: true }}
-                />
-                <InputField
-                  placeholder="Temporary Address"
-                  labelDetail={{ text: 'Temporary Address', required: true }}
-                />
-              </Stack>
-            </Stack>
+            </Box>
           </FormBlock>
           <FormBlock title="Academic Information">
             <Stack spacing={2}>

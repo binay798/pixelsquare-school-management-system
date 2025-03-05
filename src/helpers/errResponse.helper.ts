@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios'
-import { isEmpty } from 'lodash'
+import { capitalize, isEmpty } from 'lodash'
 
 export function errResponse(
   err: AxiosError<{ data: { message: string } }> | unknown,
@@ -18,7 +18,7 @@ export function errResponse(
         const errors = err?.response?.data.data.data
         const errorMessageArr = errors?.map(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (el: any) => `${el?.param}: ${el?.message}`
+          (el: any) => `${modifySnakeCase(el?.param)}: ${el?.message} \n`
         )
         if (isEmpty(toastDetails?.failureMsg)) {
           return errorMessageArr
@@ -32,4 +32,13 @@ export function errResponse(
   } else {
     return 'Something went wrong'
   }
+}
+
+function modifySnakeCase(val: string) {
+  const arr = val
+    .split('_')
+    ?.map((el) => capitalize(el))
+    .join(' ')
+
+  return arr
 }
