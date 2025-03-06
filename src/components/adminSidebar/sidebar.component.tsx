@@ -6,6 +6,11 @@ import { IoSchool } from 'react-icons/io5'
 import { PiStudentFill } from 'react-icons/pi'
 import { FaPersonCirclePlus } from 'react-icons/fa6'
 import { FaSitemap } from 'react-icons/fa'
+import { PiBooksFill } from 'react-icons/pi'
+import { SiGoogleclassroom } from 'react-icons/si'
+import { BsFillSignIntersectionSideFill } from 'react-icons/bs'
+import { GiBookmarklet } from 'react-icons/gi'
+import { RiParentFill } from 'react-icons/ri'
 import {
   Container,
   ListContainer,
@@ -76,6 +81,33 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
         to: '/dashboard/human-resources/manage-employee',
       },
     ],
+  },
+  {
+    title: 'Academics',
+    icon: <PiBooksFill />,
+    to: '/dashboard/human-resources',
+    subItems: [
+      {
+        title: 'Classes',
+        icon: <SiGoogleclassroom />,
+        to: '/dashboard/human-resources',
+      },
+      {
+        title: 'Sections',
+        icon: <BsFillSignIntersectionSideFill />,
+        to: '/dashboard/human-resources/manage-employee',
+      },
+      {
+        title: 'Subjects',
+        icon: <GiBookmarklet />,
+        to: '/dashboard/human-resources/manage-employee',
+      },
+    ],
+  },
+  {
+    title: 'Guardian',
+    icon: <RiParentFill />,
+    to: '/dashboard/human-resources',
   },
   {
     title: 'Manage Student',
