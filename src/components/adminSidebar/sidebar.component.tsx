@@ -11,6 +11,8 @@ import { SiGoogleclassroom } from 'react-icons/si'
 import { BsFillSignIntersectionSideFill } from 'react-icons/bs'
 import { GiBookmarklet } from 'react-icons/gi'
 import { RiParentFill } from 'react-icons/ri'
+import { GiTeacher } from 'react-icons/gi'
+import { HiUserAdd } from 'react-icons/hi'
 import {
   Container,
   ListContainer,
@@ -79,6 +81,18 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
         title: 'Manage Employee',
         icon: <IoSchool />,
         to: '/dashboard/human-resources/manage-employee',
+      },
+    ],
+  },
+  {
+    title: 'Teachers',
+    icon: <GiTeacher />,
+    to: '/dashboard/human-resources',
+    subItems: [
+      {
+        title: 'Manage Teachers',
+        icon: <HiUserAdd />,
+        to: '/dashboard/human-resources',
       },
     ],
   },
