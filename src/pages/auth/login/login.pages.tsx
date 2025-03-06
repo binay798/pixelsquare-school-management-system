@@ -11,7 +11,7 @@ import { authSliceLogin } from '@src/store/redux/auth/auth.slice'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
 import school from '@src/assets/images/school.png'
 import { useFormik } from 'formik'
-import * as Yup from 'yup'
+import { loginValidationSchema } from './login.schema'
 
 export function Login() {
   const authLoginStore = useSelector((store) => store.auth.user)
@@ -22,14 +22,7 @@ export function Login() {
       email: '',
       password: '',
     },
-    validationSchema: Yup.object({
-      email: Yup.string()
-        .email('Invalid email address')
-        .required('Email is Required'),
-      password: Yup.string()
-        .min(3, 'Password must be at least 6 characters')
-        .required('Password is Required'),
-    }),
+    validationSchema: loginValidationSchema,
     onSubmit: (values) => {
       dispatch(
         authSliceLogin({
