@@ -50,7 +50,7 @@ interface ModalMainProps extends ModalProps {
   open: boolean
   close: () => void
   children: React.ReactElement
-  size?: 'sm' | 'md' | 'lg' | 'xlg'
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xlg'
 }
 export default function SpringModal({
   noPadding = false,

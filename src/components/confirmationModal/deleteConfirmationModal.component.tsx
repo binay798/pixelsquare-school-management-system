@@ -16,8 +16,8 @@ interface Props {
   cancelText?: string
 }
 
-export function ConfirmationModal({
-  heading = 'Are you sure want to proceed ?',
+export function DeleteConfirmationModal({
+  heading = 'Are you sure want to delete ?',
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   ...props
@@ -34,7 +34,7 @@ export function ConfirmationModal({
             color={colors.red[600]}
           >
             {/* <RiErrorWarningLine size={90} /> */}
-            <InfoImage src="/icons/info.png" alt="Info" />
+            <InfoImage src="/icons/delete.png" alt="Info" />
             <Typography
               variant="body1"
               color="textPrimary"
@@ -70,7 +70,7 @@ export function ConfirmationModal({
               onClick={props.onConfirmationClick}
               size="medium"
               sx={{ flex: 1 }}
-              color="secondary"
+              color="error"
             >
               {confirmText}
             </ButtonComp>

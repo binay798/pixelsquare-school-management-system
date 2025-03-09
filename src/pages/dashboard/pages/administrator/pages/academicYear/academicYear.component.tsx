@@ -3,9 +3,26 @@ import { GoPlus } from 'react-icons/go'
 import { ButtonComp } from '@src/components/button/button.component'
 import { TableComp } from '@src/components/tableComp/tableComp.components'
 import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from '@src/store/hooks.store'
+import { getAcademicYearListSlice } from '@src/store/redux/dashboard/academicYear/academicYear.slice'
+import moment from 'moment'
+import { CustomChip } from '@src/components/chip/chip.component'
+import { ConfirmationModal } from '@src/components/confirmationModal/confirmationModal.component'
+import { DeleteConfirmationModal } from '@src/components/confirmationModal/deleteConfirmationModal.component'
 
 export function AcademicYear() {
+  const [openActivateModal, setOpenActivateModal] = useState(false)
+  const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { data, loading } = useSelector(
+    (store) => store.academicYear.academicYearList
+  )
+
+  useEffect(() => {
+    dispatch(getAcademicYearListSlice({ query: { page: 1, limit: 10 } }))
+  }, [])
 
   return (
     <Box>
@@ -40,64 +57,95 @@ export function AcademicYear() {
         <TableComp
           columns={[
             { field: 'name', name: 'Name' },
-            { field: 'session_start_at', name: 'Session Start' },
-            { field: 'session_end_at', name: 'Session End' },
+            {
+              field: 'session_start_at',
+              name: 'Session Start',
+              render: (_, item) => (
+                <span>
+                  {moment(item.session_start_at).format('YYYY-MM-DD')}
+                </span>
+              ),
+            },
+            {
+              field: 'session_end_at',
+              name: 'Session End',
+              render: (_, item) => (
+                <span>{moment(item.session_end_at).format('YYYY-MM-DD')}</span>
+              ),
+            },
             { field: 'note', name: 'Note' },
             {
               field: 'is_active',
-              name: 'Is Running',
+              name: 'Status',
               render: (_, item) => (
-                <span>{item.is_active ? 'True' : 'False'}</span>
+                <span>
+                  <CustomChip
+                    label={item?.is_active ? 'Active' : 'In active'}
+                    type={item?.is_active ? 'success' : 'error'}
+                  />
+                </span>
+              ),
+            },
+            {
+              field: 'custom',
+              name: 'Change Active Status',
+              render: (_, item) => (
+                <Stack direction={'row'} spacing={1} justifyContent={'center'}>
+                  {!item?.is_active ? (
+                    <ButtonComp
+                      color="success"
+                      onClick={() => setOpenActivateModal(true)}
+                    >
+                      Activate
+                    </ButtonComp>
+                  ) : (
+                    <ButtonComp color="error" variant="contained">
+                      Deactivate
+                    </ButtonComp>
+                  )}
+                </Stack>
               ),
             },
           ]}
-          data={[
-            {
-              name: 'Summer 2023',
-              session_start_at: '2023-06',
-              session_end_at: '2023-08',
-              note: 'Short summer session',
-              is_active: false,
+          data={data ?? []}
+          actions={{
+            onEdit: (item) => {
+              navigate(`/dashboard/administrator/academic-year/${item.id}/edit`)
             },
-            {
-              name: 'Fall 2024',
-              session_start_at: '2024-09',
-              session_end_at: '2024-12',
-              note: 'Fall semester',
-              is_active: true,
+            onDelete: () => {
+              setOpenDeleteModal(true)
             },
-            {
-              name: 'Winter 2025',
-              session_start_at: '2025-01',
-              session_end_at: '2025-03',
-              note: 'Winter term',
-              is_active: false,
-            },
-            {
-              name: '2026',
-              session_start_at: '2026',
-              session_end_at: '2027',
-              note: 'Future session',
-              is_active: false,
-            },
-            {
-              name: 'Spring 2027',
-              session_start_at: '2027-03',
-              session_end_at: '2027-06',
-              note: 'Spring semester',
-              is_active: false,
-            },
-            {
-              name: '2028',
-              session_start_at: '2028',
-              session_end_at: '2029',
-              note: 'Distant future',
-              is_active: false,
-            },
-          ]}
-          actions={{ onEdit: () => {}, onDelete: () => {} }}
+          }}
+          loading={loading}
+          showPagination={false}
         ></TableComp>
         {/* </Card> */}
+        <ConfirmationModal
+          onClose={() => {
+            setOpenActivateModal(false)
+          }}
+          onConfirmationClick={() => {}}
+          open={openActivateModal}
+          confirmText="Activate"
+        >
+          <Typography>
+            This will activate new academic year which will then be used as a
+            base for latest data.
+          </Typography>
+        </ConfirmationModal>
+        <DeleteConfirmationModal
+          onClose={() => {
+            setOpenDeleteModal(false)
+          }}
+          onConfirmationClick={() => {}}
+          open={openDeleteModal}
+          confirmText="Delete"
+        >
+          <Typography>
+            This will activate new academic year which will then be used as a
+            base for latest data.
+          </Typography>
+        </DeleteConfirmationModal>
       </Box>
     </Box>
   )

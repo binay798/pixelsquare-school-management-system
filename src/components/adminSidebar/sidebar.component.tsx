@@ -13,6 +13,7 @@ import { GiBookmarklet } from 'react-icons/gi'
 import { RiParentFill } from 'react-icons/ri'
 import { GiTeacher } from 'react-icons/gi'
 import { HiUserAdd } from 'react-icons/hi'
+import { MdOutlineDashboardCustomize } from 'react-icons/md'
 import {
   Container,
   ListContainer,
@@ -89,6 +90,11 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
     icon: <GiTeacher />,
     to: '/dashboard/human-resources',
     subItems: [
+      {
+        title: 'Manage Departments',
+        icon: <MdOutlineDashboardCustomize />,
+        to: '/dashboard/human-resources',
+      },
       {
         title: 'Manage Teachers',
         icon: <HiUserAdd />,

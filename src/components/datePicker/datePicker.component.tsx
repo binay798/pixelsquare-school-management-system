@@ -1,4 +1,9 @@
-import { FormControl, FormLabel } from '@mui/material'
+import {
+  FormControl,
+  FormLabel,
+  SlotComponentProps,
+  TextField,
+} from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker, DatePickerProps } from '@mui/x-date-pickers/DatePicker'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
@@ -11,6 +16,8 @@ interface Props extends DatePickerProps<PickerValidDate> {
     text: string
     required: boolean
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
+  textFieldProps?: SlotComponentProps<typeof TextField, {}, Record<string, any>>
 }
 export function CustomDatePicker(props: Props) {
   return (
@@ -37,17 +44,18 @@ export function CustomDatePicker(props: Props) {
                 fontSize: 14,
               },
             },
+            textField: props.textFieldProps,
             desktopPaper: {
               sx: {
                 '*': {
                   fontSize: 14,
                 },
                 // height: 300,
-                height:
-                  JSON.stringify(props?.views) ===
-                  JSON.stringify(['month', 'year'])
-                    ? 280
-                    : 'unset',
+                // height:
+                //   JSON.stringify(props?.views) ===
+                //   JSON.stringify(['month', 'year'])
+                //     ? 280
+                //     : 'unset',
               },
               style: {
                 borderRadius: 18,

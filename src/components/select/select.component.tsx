@@ -27,7 +27,7 @@ const customStyles: StylesConfig = {
     backgroundColor: state.isSelected
       ? '#e6f7ff'
       : state.isFocused
-      ? '#e6f7ff'
+      ? 'transparent'
       : '#fff',
     color: '#333',
     cursor: 'pointer',
@@ -35,6 +35,9 @@ const customStyles: StylesConfig = {
     ':active': {
       // backgroundColor: '#007bff8e',
       // color: 'white',
+    },
+    ':hover': {
+      backgroundColor: '#e6f7ff',
     },
     fontSize: 14,
     margin: '5px',
@@ -73,19 +76,3 @@ export const SelectField = (props: SelectProps) => {
     />
   )
 }
-
-// function App() {
-//   return (
-//     <div style={{ width: '300px', margin: '100px auto' }}>
-//       <Select
-//         options={customOptions}
-//         styles={customStyles}
-//         theme={customTheme}
-//         components={{ Option: CustomOption }} // Override the default Option component.
-//         placeholder="Select a fruit..."
-//       />
-//     </div>
-//   )
-// }
-
-// export default App

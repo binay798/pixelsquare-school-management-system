@@ -28,7 +28,7 @@ import { LuEye } from 'react-icons/lu'
 
 interface Props<T, K extends Extract<keyof T, string>> {
   columns: Array<{
-    field: K
+    field: K | 'custom'
     name: string | React.ReactNode
     colStyle?: React.CSSProperties
     render?: (
@@ -44,11 +44,23 @@ interface Props<T, K extends Extract<keyof T, string>> {
     onView?: (item: T) => void
   }
   loading?: boolean
+  showPagination?: boolean
+  count?: number
+  rowsPerPage?: number
+  page?: number
+  onPageChange?: (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    page: number
+  ) => void
+  onRowsPerPageChange?: React.ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  >
 }
 
-export function TableComp<T, K extends Extract<keyof T, string>>(
-  props: Props<T, K>
-) {
+export function TableComp<T, K extends Extract<keyof T, string>>({
+  showPagination = true,
+  ...props
+}: Props<T, K>) {
   return (
     <TableContainer component={TablePaper}>
       <Box p={1} mt={1}>
@@ -130,7 +142,7 @@ export function TableComp<T, K extends Extract<keyof T, string>>(
                     return (
                       <TableCell key={index} align="left">
                         {col.render(
-                          col.field ? (dt[col.field] as string) : 'N/A',
+                          col.field ? (dt[col.field as K] as string) : 'N/A',
                           dt,
                           dtIndex
                         )}
@@ -139,7 +151,7 @@ export function TableComp<T, K extends Extract<keyof T, string>>(
                   } else {
                     return (
                       <TableCell key={index} align="left">
-                        {col.field ? (dt[col.field] as string) : 'N/A'}
+                        {col.field ? (dt[col.field as K] as string) : 'N/A'}
                       </TableCell>
                     )
                   }
@@ -154,7 +166,12 @@ export function TableComp<T, K extends Extract<keyof T, string>>(
                     >
                       {props?.actions?.onView ? (
                         <Tooltip title="View" placement="top">
-                          <IconButton sx={{ flexShrink: 0 }}>
+                          <IconButton
+                            onClick={() => {
+                              props?.actions?.onView?.(dt)
+                            }}
+                            sx={{ flexShrink: 0 }}
+                          >
                             {/* <MdEye size={20} /> */}
                             <LuEye size={18} />
                           </IconButton>
@@ -162,14 +179,24 @@ export function TableComp<T, K extends Extract<keyof T, string>>(
                       ) : null}
                       {props?.actions?.onEdit ? (
                         <Tooltip title="Edit" placement="top">
-                          <IconButton sx={{ flexShrink: 0 }}>
+                          <IconButton
+                            onClick={() => {
+                              props?.actions?.onEdit?.(dt)
+                            }}
+                            sx={{ flexShrink: 0 }}
+                          >
                             <MdEdit size={18} />
                           </IconButton>
                         </Tooltip>
                       ) : null}
                       {props?.actions?.onDelete ? (
                         <Tooltip title="Delete" placement="top">
-                          <IconButton sx={{ flexShrink: 0 }}>
+                          <IconButton
+                            onClick={() => {
+                              props?.actions?.onDelete?.(dt)
+                            }}
+                            sx={{ flexShrink: 0 }}
+                          >
                             <IoTrashOutline size={18} />
                           </IconButton>
                         </Tooltip>
@@ -183,11 +210,13 @@ export function TableComp<T, K extends Extract<keyof T, string>>(
 
           {props?.loading ? (
             <TableRow>
-              {Object.values(props?.data?.[0] ?? {})?.map((_, id) => (
-                <TableCell key={id}>
-                  <Skeleton variant="rounded" height={25} />
-                </TableCell>
-              ))}
+              {Array(props?.columns?.length)
+                .fill(0)
+                ?.map((_, id) => (
+                  <TableCell key={id}>
+                    <Skeleton variant="rounded" height={25} />
+                  </TableCell>
+                ))}
               <TableCell align="right">
                 <Skeleton variant="rounded" height={25} />
               </TableCell>
@@ -195,15 +224,18 @@ export function TableComp<T, K extends Extract<keyof T, string>>(
           ) : null}
         </TableBody>
       </Table>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={100}
-        rowsPerPage={5}
-        page={1}
-        onPageChange={() => {}}
-        onRowsPerPageChange={() => {}}
-      />
+      {showPagination ? (
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={100}
+          rowsPerPage={5}
+          page={1}
+          // @ts-ignore
+          onPageChange={props.onPageChange}
+          onRowsPerPageChange={props.onRowsPerPageChange}
+        />
+      ) : null}
     </TableContainer>
   )
 }

@@ -57,7 +57,7 @@ export const privateRoutes: RouteObject[] = [
                     element: <CreateAcademicYear />,
                   },
                   {
-                    path: '/dashboard/administrator/academic-year/edit',
+                    path: '/dashboard/administrator/academic-year/:academicYearId/edit',
                     element: <EditAcademicYear />,
                   },
                 ],

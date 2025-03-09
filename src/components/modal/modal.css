@@ -2,6 +2,9 @@
   width: 90vw;
 }
 
+.custom-modal .xs {
+  width: 30rem;
+}
 .custom-modal .sm {
   width: 40rem;
 }
