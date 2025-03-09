@@ -3,7 +3,7 @@ import { CmnOmit } from '@src/@types/base'
 import { api } from '@src/helpers/api.helpers'
 
 export interface CreateAcademicYearDto
-  extends CmnOmit<AcademicYear.IAcademicYear> {}
+  extends CmnOmit<AcademicYear.IAcademicYear, 'is_active'> {}
 
 export const createAcademicYear = async (data: CreateAcademicYearDto) => {
   const res = await api<Api.Base<object>>('post')(
