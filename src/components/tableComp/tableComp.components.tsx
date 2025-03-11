@@ -16,15 +16,17 @@ import {
   Stack,
   TablePagination,
   Tooltip,
+  Typography,
 } from '@mui/material'
 import { TablePaper, THeadCell } from './tableComp.styles'
 import { colors } from '@src/helpers/colors.helpers'
 import { InputField } from '../input/input.component'
 import { ButtonComp } from '../button/button.component'
-import React from 'react'
+import React, { useState } from 'react'
 import { isEmpty } from 'lodash'
 import { IoTrashOutline } from 'react-icons/io5'
 import { LuEye } from 'react-icons/lu'
+import { DeleteConfirmationModal } from '../confirmationModal/deleteConfirmationModal.component'
 
 interface Props<T, K extends Extract<keyof T, string>> {
   columns: Array<{
@@ -55,12 +57,16 @@ interface Props<T, K extends Extract<keyof T, string>> {
   onRowsPerPageChange?: React.ChangeEventHandler<
     HTMLInputElement | HTMLTextAreaElement
   >
+  deleteConfirmationModalDescription?: string
 }
 
 export function TableComp<T, K extends Extract<keyof T, string>>({
   showPagination = true,
   ...props
 }: Props<T, K>) {
+  const [openDeleteModal, setOpenDeleteModal] = useState(false)
+  const [selectedRow, setSelectedRow] = useState<T | null>(null)
+
   return (
     <TableContainer component={TablePaper}>
       <Box p={1} mt={1}>
@@ -193,7 +199,8 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
                         <Tooltip title="Delete" placement="top">
                           <IconButton
                             onClick={() => {
-                              props?.actions?.onDelete?.(dt)
+                              setSelectedRow(dt)
+                              setOpenDeleteModal(true)
                             }}
                             sx={{ flexShrink: 0 }}
                           >
@@ -228,14 +235,29 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={100}
-          rowsPerPage={5}
-          page={1}
+          count={Number(props?.count || 1)}
+          rowsPerPage={Number(props?.rowsPerPage || 10)}
+          page={Number(props?.page || 1)}
           // @ts-ignore
           onPageChange={props.onPageChange}
           onRowsPerPageChange={props.onRowsPerPageChange}
         />
       ) : null}
+      {/* DELETE CONFIRMATION MODAL */}
+      <DeleteConfirmationModal
+        onClose={() => {
+          setOpenDeleteModal(false)
+        }}
+        onConfirmationClick={() => {
+          if (selectedRow) {
+            props?.actions?.onDelete?.(selectedRow)
+          }
+        }}
+        open={openDeleteModal}
+        confirmText="Delete"
+      >
+        <Typography>{props.deleteConfirmationModalDescription}</Typography>
+      </DeleteConfirmationModal>
     </TableContainer>
   )
 }

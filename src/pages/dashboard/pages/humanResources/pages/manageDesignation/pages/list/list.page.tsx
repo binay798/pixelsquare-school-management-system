@@ -1,10 +1,13 @@
 import { Box, Stack, Typography } from '@mui/material'
 import { ButtonComp } from '@src/components/button/button.component'
 import { TableComp } from '@src/components/tableComp/tableComp.components'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { GoPlus } from 'react-icons/go'
 // import { useNavigate } from 'react-router-dom'
 import { CreateDesignationModal } from '../../components/createDesignationModal/createDesignationModal.component'
+import { usePage } from '@src/helpers/getPageParams.helper'
+import { useDispatch, useSelector } from '@src/store/hooks.store'
+import { listDesignationAction } from '@src/store/redux/dashboard/humanResources/designations/designations.slice'
 
 export function ListDesignation() {
   // const navigate = useNavigate()
@@ -12,6 +15,14 @@ export function ListDesignation() {
   const toggleOpenCreateModal = (val: boolean) => {
     setOpenCreateModal(val)
   }
+  const { page, limit } = usePage()
+  const dispatch = useDispatch()
+  const { data: designationList, loading: listDesignationLoading } =
+    useSelector((store) => store.designations.designationList)
+
+  useEffect(() => {
+    dispatch(listDesignationAction({ payload: { page, limit } }))
+  }, [page, limit])
 
   return (
     <Box>
@@ -54,39 +65,13 @@ export function ListDesignation() {
           { field: 'created_at', name: 'Created At' },
           { field: 'updated_at', name: 'Updated At' },
         ]}
-        data={[
-          {
-            designation: 'Summer 2023',
-            created_at: '2023-06',
-            updated_at: '2023-08',
-          },
-          {
-            designation: 'Fall 2024',
-            created_at: '2024-09',
-            updated_at: '2024-12',
-          },
-          {
-            designation: 'Winter 2025',
-            created_at: '2025-01',
-            updated_at: '2025-03',
-          },
-          {
-            designation: '2026',
-            created_at: '2026',
-            updated_at: '2027',
-          },
-          {
-            designation: 'Spring 2027',
-            created_at: '2027-03',
-            updated_at: '2027-06',
-          },
-          {
-            designation: '2028',
-            created_at: '2028',
-            updated_at: '2029',
-          },
-        ]}
+        data={designationList?.rows ?? []}
         actions={{ onEdit: () => {}, onDelete: () => {} }}
+        loading={listDesignationLoading}
+        count={Number(designationList?.total)}
+        page={page}
+        rowsPerPage={limit}
+        showPagination={true}
       ></TableComp>
     </Box>
   )

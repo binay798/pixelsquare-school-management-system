@@ -5,24 +5,51 @@ import { TableComp } from '@src/components/tableComp/tableComp.components'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
-import { getAcademicYearListSlice } from '@src/store/redux/dashboard/academicYear/academicYear.slice'
+import {
+  getAcademicYearListSlice,
+  toggleActivationOfAcademicYear,
+} from '@src/store/redux/dashboard/academicYear/academicYear.slice'
 import moment from 'moment'
 import { CustomChip } from '@src/components/chip/chip.component'
 import { ConfirmationModal } from '@src/components/confirmationModal/confirmationModal.component'
-import { DeleteConfirmationModal } from '@src/components/confirmationModal/deleteConfirmationModal.component'
 
 export function AcademicYear() {
   const [openActivateModal, setOpenActivateModal] = useState(false)
-  const [openDeleteModal, setOpenDeleteModal] = useState(false)
+  const [selectedAcademicYearId, setSelectedAcademicYearId] = useState<
+    number | null
+  >(null)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { data, loading } = useSelector(
     (store) => store.academicYear.academicYearList
   )
+  const { loading: toggleActivationLoading } = useSelector(
+    (store) => store.academicYear.toggleActivation
+  )
 
   useEffect(() => {
-    dispatch(getAcademicYearListSlice({ query: { page: 1, limit: 10 } }))
+    dispatch(getAcademicYearListSlice({ query: { page: 1, limit: 100 } }))
   }, [])
+
+  const toggleActivationHandler = (isActive: boolean) => {
+    if (selectedAcademicYearId) {
+      dispatch(
+        toggleActivationOfAcademicYear({
+          payload: {
+            academicYearId: selectedAcademicYearId,
+            is_active: isActive,
+          },
+          onSuccess: () => {
+            setOpenActivateModal(false)
+            setSelectedAcademicYearId(null)
+            dispatch(
+              getAcademicYearListSlice({ query: { page: 1, limit: 100 } })
+            )
+          },
+        })
+      )
+    }
+  }
 
   return (
     <Box>
@@ -94,7 +121,10 @@ export function AcademicYear() {
                   {!item?.is_active ? (
                     <ButtonComp
                       color="success"
-                      onClick={() => setOpenActivateModal(true)}
+                      onClick={() => {
+                        setOpenActivateModal(true)
+                        setSelectedAcademicYearId(item.id)
+                      }}
                     >
                       Activate
                     </ButtonComp>
@@ -109,12 +139,10 @@ export function AcademicYear() {
           ]}
           data={data ?? []}
           actions={{
-            onEdit: (item) => {
-              navigate(`/dashboard/administrator/academic-year/${item.id}/edit`)
-            },
-            onDelete: () => {
-              setOpenDeleteModal(true)
-            },
+            // onEdit: (item) => {
+            //   navigate(`/dashboard/administrator/academic-year/${item.id}/edit`)
+            // },
+            onDelete: () => {},
           }}
           loading={loading}
           showPagination={false}
@@ -124,28 +152,18 @@ export function AcademicYear() {
           onClose={() => {
             setOpenActivateModal(false)
           }}
-          onConfirmationClick={() => {}}
+          onConfirmationClick={() => {
+            toggleActivationHandler(true)
+          }}
           open={openActivateModal}
           confirmText="Activate"
+          confirmLoader={toggleActivationLoading}
         >
           <Typography>
             This will activate new academic year which will then be used as a
             base for latest data.
           </Typography>
         </ConfirmationModal>
-        <DeleteConfirmationModal
-          onClose={() => {
-            setOpenDeleteModal(false)
-          }}
-          onConfirmationClick={() => {}}
-          open={openDeleteModal}
-          confirmText="Delete"
-        >
-          <Typography>
-            This will activate new academic year which will then be used as a
-            base for latest data.
-          </Typography>
-        </DeleteConfirmationModal>
       </Box>
     </Box>
   )

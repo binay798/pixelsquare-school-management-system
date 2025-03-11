@@ -1,0 +1,88 @@
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { catchAsync } from '@src/helpers/catchAsync.helpers'
+import * as services from './designations.service'
+
+interface InitialState {
+  createDesignation: {
+    loading: boolean
+  }
+  designationList: {
+    data: Api.IDesignationList | null
+    loading: boolean
+  }
+}
+const initialState: InitialState = {
+  createDesignation: {
+    loading: false,
+  },
+  designationList: {
+    data: null,
+    loading: false,
+  },
+}
+
+export const createDesignationAction = createAsyncThunk(
+  'designations/create',
+  catchAsync(
+    async (data: {
+      payload: { designation: string }
+      onSuccess?: () => void
+    }) => {
+      const res = await services.createDesignation(data.payload)
+      data?.onSuccess?.()
+
+      return res
+    },
+    true,
+    undefined,
+    'Designation creation successfull'
+  )
+)
+
+export const listDesignationAction = createAsyncThunk(
+  'designations/list',
+  catchAsync(
+    async (data: {
+      payload: { page?: number; limit?: number }
+      onSuccess?: () => void
+    }) => {
+      const res = await services.listDesignations(
+        data.payload?.page,
+        data.payload?.limit
+      )
+
+      return res
+    }
+  )
+)
+
+export const designationSlice = createSlice({
+  name: 'designations',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    // CREATE DESIGNATION
+    builder.addCase(createDesignationAction.pending, (state) => {
+      state.createDesignation.loading = true
+    })
+    builder.addCase(createDesignationAction.fulfilled, (state) => {
+      state.createDesignation.loading = false
+    })
+    builder.addCase(createDesignationAction.rejected, (state) => {
+      state.createDesignation.loading = false
+    })
+    // LIST DESIGNATIONS
+    builder.addCase(listDesignationAction.pending, (state) => {
+      state.designationList.loading = true
+    })
+    builder.addCase(listDesignationAction.fulfilled, (state, action) => {
+      state.designationList.loading = false
+      state.designationList.data = action.payload.data
+    })
+    builder.addCase(listDesignationAction.rejected, (state) => {
+      state.designationList.loading = false
+    })
+  },
+})
+
+export default designationSlice.reducer

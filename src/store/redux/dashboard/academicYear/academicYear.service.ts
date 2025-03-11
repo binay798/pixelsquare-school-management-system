@@ -31,3 +31,24 @@ export const getAcademicYearList = async (
 
   return res.data.data
 }
+
+export const toggleActiveStatusOfAcademicYear = async (
+  academicYearId: number,
+  activeStatue: boolean
+) => {
+  const res = await api<Api.Base<object>>('patch')(
+    `schools/academic-years/${academicYearId}/toggle-activation`,
+    undefined,
+    { is_active: activeStatue }
+  )
+
+  return res.data.data
+}
+
+export const getAcademicYearDetails = async (academicYearId: number) => {
+  const res = await api<Api.Base<AcademicYear.IAcademicYear>>('get')(
+    `schools/academic-years/${academicYearId}`
+  )
+
+  return res.data.data
+}

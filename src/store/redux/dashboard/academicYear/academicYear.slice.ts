@@ -12,6 +12,13 @@ interface InitialState {
     data: AcademicYear.IAcademicYear[] | null
     loading: boolean
   }
+  toggleActivation: {
+    loading: boolean
+  }
+  selectedAcademicYearDetails: {
+    loading: boolean
+    data: AcademicYear.IAcademicYear | null
+  }
 }
 
 const initialState: InitialState = {
@@ -21,6 +28,13 @@ const initialState: InitialState = {
   academicYearList: {
     data: null,
     loading: false,
+  },
+  toggleActivation: {
+    loading: false,
+  },
+  selectedAcademicYearDetails: {
+    loading: false,
+    data: null,
   },
 }
 
@@ -63,6 +77,39 @@ export const getAcademicYearListSlice = createAsyncThunk(
   )
 )
 
+export const toggleActivationOfAcademicYear = createAsyncThunk(
+  'academicYear/toggle-activation',
+  catchAsync(
+    async (data: {
+      payload: { is_active: boolean; academicYearId: number }
+      onSuccess?: () => void
+    }) => {
+      const res = await services.toggleActiveStatusOfAcademicYear(
+        data.payload.academicYearId,
+        data.payload.is_active
+      )
+      data?.onSuccess?.()
+
+      return res
+    },
+    true,
+    false,
+    'Activation successful',
+    'Activation failed'
+  )
+)
+
+export const getAcademicYearDetailsSlice = createAsyncThunk(
+  'academic-year/getById',
+  catchAsync(async (data: { payload: { academicYearId: number } }) => {
+    const res = await services.getAcademicYearDetails(
+      data.payload.academicYearId
+    )
+
+    return res
+  })
+)
+
 const academicYearSlice = createSlice({
   name: 'academicYear',
   initialState: initialState,
@@ -88,6 +135,27 @@ const academicYearSlice = createSlice({
     })
     builder.addCase(getAcademicYearListSlice.rejected, (state) => {
       state.academicYearList.loading = false
+    })
+    // TOGGLE ACTIVATION OF ACADEMIC YEAR
+    builder.addCase(toggleActivationOfAcademicYear.pending, (state) => {
+      state.toggleActivation.loading = true
+    })
+    builder.addCase(toggleActivationOfAcademicYear.fulfilled, (state) => {
+      state.toggleActivation.loading = false
+    })
+    builder.addCase(toggleActivationOfAcademicYear.rejected, (state) => {
+      state.toggleActivation.loading = false
+    })
+    // GET ACADEMIC YEAR DETAILS
+    builder.addCase(getAcademicYearDetailsSlice.pending, (state) => {
+      state.selectedAcademicYearDetails.loading = true
+    })
+    builder.addCase(getAcademicYearDetailsSlice.fulfilled, (state, action) => {
+      state.selectedAcademicYearDetails.loading = false
+      state.selectedAcademicYearDetails.data = action.payload.data
+    })
+    builder.addCase(getAcademicYearDetailsSlice.rejected, (state) => {
+      state.selectedAcademicYearDetails.loading = false
     })
   },
 })

@@ -28,6 +28,7 @@ export function AcademicYearForm() {
       note: '',
     },
     onSubmit: (values) => {
+      // CREATE
       dispatch(
         createAcademicYearSlice({
           payload: values,
@@ -39,6 +40,7 @@ export function AcademicYearForm() {
       )
     },
     validationSchema: CREATE_ACADEMIC_YEAR_SCHEMA,
+    enableReinitialize: true,
   })
 
   return (
@@ -86,6 +88,7 @@ export function AcademicYearForm() {
                     }
                   }}
                   textFieldProps={{
+                    value: moment(formik.values?.session_start_at),
                     onBlur: formik.handleBlur,
                     error:
                       formik.touched.session_start_at &&
@@ -112,6 +115,7 @@ export function AcademicYearForm() {
                     'month'
                   )}
                   textFieldProps={{
+                    value: moment(formik.values?.session_end_at),
                     onBlur: formik.handleBlur,
                     error:
                       formik.touched.session_end_at &&

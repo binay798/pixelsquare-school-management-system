@@ -52,4 +52,8 @@ declare namespace Api {
     linkedin_link: string
     instagram_link: string
   }
+
+  interface IDesignationList extends PaginatedData<HumanResource.IDesignation> {
+    total: string
+  }
 }
