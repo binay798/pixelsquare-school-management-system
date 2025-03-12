@@ -8,10 +8,12 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import { IoWarningOutline } from 'react-icons/io5'
 import {
   Box,
   Button,
   ButtonGroup,
+  Card,
   IconButton,
   Menu,
   MenuItem,
@@ -61,7 +63,7 @@ interface Props<T, K extends Extract<keyof T, string>> {
   onRowsPerPageChange?: React.ChangeEventHandler<
     HTMLInputElement | HTMLTextAreaElement
   >
-  deleteConfirmationModalDescription?: string
+  deleteConfirmationModalDescription?: React.ReactElement
   deleteConfirmLoader?: boolean
   deleteCancelText?: string
   limits?: number[]
@@ -359,7 +361,34 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
         cancelText={props.deleteCancelText}
         confirmLoader={props.deleteConfirmLoader}
       >
-        <Typography>{props.deleteConfirmationModalDescription}</Typography>
+        {props.deleteConfirmationModalDescription ? (
+          props.deleteConfirmationModalDescription
+        ) : (
+          <Card
+            sx={{
+              p: 2,
+              background: '#fefcea',
+              border: `1px solid ${colors.grey[400]}`,
+            }}
+          >
+            <Stack
+              direction={'row'}
+              spacing={1}
+              alignItems={'center'}
+              justifyContent={'center'}
+              mb={1}
+            >
+              <IoWarningOutline color={colors.red[400]} size={22} />
+              <Typography fontWeight={600} color="error">
+                Warning
+              </Typography>
+            </Stack>
+            <Typography color="error" fontWeight={500}>
+              This action is permanent and cannot be undone. Once deleted, the
+              data will be lost and cannot be recovered
+            </Typography>
+          </Card>
+        )}
       </DeleteConfirmationModal>
     </TableContainer>
   )

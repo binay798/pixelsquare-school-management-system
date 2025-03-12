@@ -7,7 +7,7 @@ import React from 'react'
 
 interface Props {
   open: boolean
-  children: React.ReactElement
+  children: React.ReactNode
   onClose: () => void
   heading?: React.ReactNode
   onConfirmationClick: () => void
@@ -46,7 +46,13 @@ export function DeleteConfirmationModal({
             </Typography>
           </Stack>
         </Box>
-        <Box maxHeight={'90vh'} mb={6} textAlign={'center'} overflow={'auto'}>
+        <Box
+          maxHeight={'90vh'}
+          mt={2}
+          mb={6}
+          textAlign={'center'}
+          overflow={'auto'}
+        >
           {props.children}
         </Box>
         <Box mt={2}>
