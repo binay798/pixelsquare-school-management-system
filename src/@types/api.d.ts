@@ -80,4 +80,16 @@ declare namespace Api {
     }> {
     total: string
   }
+
+  interface IEmployeeDetails {
+    employee_details: Pick<
+      HumanResource.IEmployee,
+      'id' | 'national_id' | 'joining_date'
+    >
+    user_profile_details: User.IUserProfile
+    user_details: Pick<User.IUser, 'email' | 'id'>
+    designation_details: Pick<HumanResource.IDesignation, 'id' | 'designation'>
+    user_roles: Pick<User.IUserRole, 'id' | 'role'>[]
+    profile_pic_details: Asset.IAsset | null
+  }
 }

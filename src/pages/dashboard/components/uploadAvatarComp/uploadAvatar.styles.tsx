@@ -39,7 +39,10 @@ export const ProfilePicInput = styled('input')`
   display: none;
 `
 export const ProfilePicSelectBtn = styled('span')`
-  display: inline-block;
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.3rem 0.8rem;
   background-image: linear-gradient(to bottom, #333 30%, #222 90%);
   cursor: pointer;

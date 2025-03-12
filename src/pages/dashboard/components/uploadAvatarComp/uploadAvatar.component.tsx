@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import {
   ProfilePicCircle,
   ProfilePicContainer,
@@ -10,12 +10,21 @@ import {
 import { IoCameraOutline } from 'react-icons/io5'
 import { colors } from '@src/helpers/colors.helpers'
 import { isEmpty } from 'lodash'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { IoIosCamera } from 'react-icons/io'
+import { IoSave } from 'react-icons/io5'
+import { ButtonComp } from '@src/components/button/button.component'
 
 interface Props {
   onImageSelect: (file: File) => void
+  editMode?: {
+    imgUrl?: string
+    onSave?: (onClose?: () => void) => void
+    saveBtnLoading?: boolean
+  }
 }
 export function UploadAvatarComp(props: Props) {
+  const [showSaveBtn, setShowSaveBtn] = useState(false)
   const [imgUrl, setImgUrl] = React.useState<string | null>(null)
   const randomString = Math.random().toString(36).substring(7)
 
@@ -35,8 +44,17 @@ export function UploadAvatarComp(props: Props) {
 
       // Read the file as a Data URL (base64)
       reader.readAsDataURL(file)
+      if (props?.editMode) {
+        setShowSaveBtn(true)
+      }
     }
   }
+
+  useEffect(() => {
+    if (!isEmpty(props?.editMode?.imgUrl)) {
+      setImgUrl(props?.editMode?.imgUrl as string)
+    }
+  }, [props?.editMode?.imgUrl])
 
   return (
     <Box>
@@ -66,12 +84,33 @@ export function UploadAvatarComp(props: Props) {
             accept="image/png, image/jpeg"
             onChange={handleChange}
           />
-          <label htmlFor={`profile-${randomString}`}>
-            {/* <ButtonComp color="secondary">Select</ButtonComp> */}
-            {/* <button type="button">Select</button>
-             */}
-            <ProfilePicSelectBtn>Select</ProfilePicSelectBtn>
-          </label>
+          <Stack direction={'row'} spacing={2} alignItems={'center'}>
+            <label htmlFor={`profile-${randomString}`}>
+              {/* <ButtonComp color="secondary">Select</ButtonComp> */}
+              {/* <button type="button">Select</button>
+               */}
+              <ProfilePicSelectBtn>
+                <IoIosCamera size={20} />
+                <span>
+                  {!isEmpty(props?.editMode) ? 'Change Photo' : 'Choose Photo'}
+                </span>
+              </ProfilePicSelectBtn>
+            </label>
+            {showSaveBtn ? (
+              <ButtonComp
+                onClick={() =>
+                  props?.editMode?.onSave?.(() => {
+                    setShowSaveBtn(false)
+                  })
+                }
+                startIcon={<IoSave />}
+                color="success"
+                loading={props?.editMode?.saveBtnLoading}
+              >
+                Save
+              </ButtonComp>
+            ) : null}
+          </Stack>
         </Box>
       </ProfilePicContainer>
     </Box>

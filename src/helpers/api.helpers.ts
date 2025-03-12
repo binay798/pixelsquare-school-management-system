@@ -8,6 +8,7 @@ const baseURL =
     ? import.meta.env.VITE_APP_DEV_URL
     : import.meta.env.VITE_APP_PROD_URL
 const API_URL = `${baseURL}/api`
+export const STATIC_URL = `${baseURL}/static`
 
 // MARK: - instance
 const instance: AxiosInstance = axios.create({

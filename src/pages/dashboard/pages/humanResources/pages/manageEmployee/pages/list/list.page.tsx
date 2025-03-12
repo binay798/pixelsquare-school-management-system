@@ -75,7 +75,14 @@ export function ListEmployeesPage() {
         ]}
         loading={employeeListLoading}
         data={remappedEmployeeList() ?? []}
-        actions={{ onEdit: () => {}, onDelete: () => {} }}
+        actions={{
+          onEdit: (item) => {
+            navigate(
+              `/dashboard/human-resources/manage-employee/edit/${item.employee_id}`
+            )
+          },
+          onDelete: () => {},
+        }}
         count={Math.ceil(Number(employeeList?.total) / Number(limit))}
         page={page}
         rowsPerPage={limit}

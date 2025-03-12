@@ -38,3 +38,44 @@ export const getEmployeeList = async (
 
   return res.data.data
 }
+
+export const getEmployeeDetails = async (employeeId: number) => {
+  const res = await api<Api.Base<Api.IEmployeeDetails>>('get')(
+    `human-resources/employees/${employeeId}`
+  )
+
+  return res.data.data
+}
+
+export const changeEmployeeProfilePic = async (
+  employeeId: number,
+  file: File
+) => {
+  const fd = new FormData()
+  fd.append('image', file)
+  const res = await api<Api.Base<object>>('patch')(
+    `human-resources/employees/${employeeId}/change-profile-pic`,
+    undefined,
+    fd,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  )
+
+  return res.data.data
+}
+
+export const updateEmployee = async (
+  employeeId: number,
+  data: Service.ManageEmployee.UpdateEmployee
+) => {
+  const res = await api<Api.Base<object>>('patch')(
+    `human-resources/employees/${employeeId}`,
+    undefined,
+    data
+  )
+
+  return res.data.data
+}

@@ -20,5 +20,17 @@ declare namespace Service {
         'employee_designation_id' | 'joining_date' | 'national_id'
       > & { role: string }
     }
+
+    interface UpdateEmployee {
+      user_profile: Partial<
+        Omit<User.IUserProfile, 'id' | 'created_at' | 'updated_at' | 'user_id'>
+      >
+      employee_profile: Partial<
+        Pick<
+          HumanResource.IEmployee,
+          'employee_designation_id' | 'joining_date' | 'national_id'
+        > & { role: string }
+      >
+    }
   }
 }
