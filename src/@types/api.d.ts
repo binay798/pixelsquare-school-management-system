@@ -56,4 +56,28 @@ declare namespace Api {
   interface IDesignationList extends PaginatedData<HumanResource.IDesignation> {
     total: string
   }
+
+  interface IEmployeeList
+    extends PaginatedData<{
+      employee_details: {
+        id: number
+      }
+      user_profile_details: {
+        id: number
+        firstname: string
+        lastname: string
+        gender: string
+        mobile: string
+      }
+      user_details: {
+        id: number
+        email: string
+      }
+      designation_details: {
+        id: number
+        designation: string
+      }
+    }> {
+    total: string
+  }
 }

@@ -7,11 +7,18 @@ import { GoPlus } from 'react-icons/go'
 import { CreateDesignationModal } from '../../components/createDesignationModal/createDesignationModal.component'
 import { usePage } from '@src/helpers/getPageParams.helper'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
-import { listDesignationAction } from '@src/store/redux/dashboard/humanResources/designations/designations.slice'
+import {
+  deleteDesignationAction,
+  listDesignationAction,
+} from '@src/store/redux/dashboard/humanResources/designations/designations.slice'
+import { EditDesignationModal } from '../../components/editDesignationModal/editDesignationModal.component'
+import { isEmpty } from 'lodash'
 
 export function ListDesignation() {
   // const navigate = useNavigate()
   const [openCreateModal, setOpenCreateModal] = useState(false)
+  const [selectedDesignation, setSelectedDesignation] =
+    useState<HumanResource.IDesignation | null>(null)
   const toggleOpenCreateModal = (val: boolean) => {
     setOpenCreateModal(val)
   }
@@ -19,6 +26,9 @@ export function ListDesignation() {
   const dispatch = useDispatch()
   const { data: designationList, loading: listDesignationLoading } =
     useSelector((store) => store.designations.designationList)
+  const { loading: deleteLoading } = useSelector(
+    (store) => store.designations.deleteDesignation
+  )
 
   useEffect(() => {
     dispatch(listDesignationAction({ payload: { page, limit } }))
@@ -66,13 +76,38 @@ export function ListDesignation() {
           { field: 'updated_at', name: 'Updated At' },
         ]}
         data={designationList?.rows ?? []}
-        actions={{ onEdit: () => {}, onDelete: () => {} }}
+        actions={{
+          onEdit: (item) => {
+            setSelectedDesignation(item)
+          },
+          onDelete: (item, onClose) => {
+            dispatch(
+              deleteDesignationAction({
+                payload: { designationId: item.id },
+                onSuccess: () => {
+                  onClose?.()
+                  dispatch(listDesignationAction({ payload: { page, limit } }))
+                },
+              })
+            )
+          },
+        }}
         loading={listDesignationLoading}
         count={Number(designationList?.total)}
         page={page}
         rowsPerPage={limit}
         showPagination={true}
+        deleteConfirmLoader={deleteLoading}
       ></TableComp>
+
+      {/* EDIT DESIGNATION MODAL */}
+      <EditDesignationModal
+        open={!isEmpty(selectedDesignation)}
+        onClose={() => {
+          setSelectedDesignation(null)
+        }}
+        designation={selectedDesignation}
+      />
     </Box>
   )
 }

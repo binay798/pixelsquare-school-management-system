@@ -2,7 +2,9 @@ import Select, {
   StylesConfig,
   ThemeConfig,
   Props as ReactSelectProps,
+  GroupBase,
 } from 'react-select'
+import AsyncSelect, { AsyncProps } from 'react-select/async'
 
 // Custom styles for the react-select component.
 const customStyles: StylesConfig = {
@@ -71,6 +73,21 @@ export const SelectField = (props: SelectProps) => {
       options={props.options}
       styles={customStyles}
       theme={customTheme}
+      placeholder={props.placeholder}
+      {...props}
+    />
+  )
+}
+
+interface AsyncSelectProps
+  extends AsyncProps<unknown, false, GroupBase<unknown>> {}
+
+export const AsyncSelectField = (props: AsyncSelectProps) => {
+  return (
+    <AsyncSelect
+      styles={customStyles}
+      theme={customTheme}
+      // placeholder={props}
       placeholder={props.placeholder}
       {...props}
     />

@@ -10,23 +10,30 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import {
   Box,
+  Button,
   ButtonGroup,
   IconButton,
+  Menu,
+  MenuItem,
+  Pagination,
   Skeleton,
   Stack,
-  TablePagination,
   Tooltip,
   Typography,
 } from '@mui/material'
+import { IoIosArrowDown } from 'react-icons/io'
 import { TablePaper, THeadCell } from './tableComp.styles'
 import { colors } from '@src/helpers/colors.helpers'
 import { InputField } from '../input/input.component'
 import { ButtonComp } from '../button/button.component'
-import React, { useState } from 'react'
-import { isEmpty } from 'lodash'
+import React, { useEffect, useState } from 'react'
+import { isEmpty, isNumber } from 'lodash'
 import { IoTrashOutline } from 'react-icons/io5'
 import { LuEye } from 'react-icons/lu'
 import { DeleteConfirmationModal } from '../confirmationModal/deleteConfirmationModal.component'
+import { updateSearchParams } from '@src/helpers/getPageParams.helper'
+import { DEFAULT_PAGE_LIMIT } from '@src/constants/table.constants'
+import { useDebounceValue } from '@src/hooks/useDebounceValue.hooks'
 
 interface Props<T, K extends Extract<keyof T, string>> {
   columns: Array<{
@@ -42,7 +49,7 @@ interface Props<T, K extends Extract<keyof T, string>> {
   data: Array<T>
   actions?: {
     onEdit?: (item: T) => void
-    onDelete?: (item: T) => void
+    onDelete?: (item: T, onClose?: () => void) => void
     onView?: (item: T) => void
   }
   loading?: boolean
@@ -50,22 +57,49 @@ interface Props<T, K extends Extract<keyof T, string>> {
   count?: number
   rowsPerPage?: number
   page?: number
-  onPageChange?: (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    page: number
-  ) => void
+  onPageChange?: (page: number) => void
   onRowsPerPageChange?: React.ChangeEventHandler<
     HTMLInputElement | HTMLTextAreaElement
   >
   deleteConfirmationModalDescription?: string
+  deleteConfirmLoader?: boolean
+  deleteCancelText?: string
+  limits?: number[]
+  search?: (val: string) => void
 }
 
 export function TableComp<T, K extends Extract<keyof T, string>>({
   showPagination = true,
+  limits = [5, 10, 15],
   ...props
 }: Props<T, K>) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [selectedRow, setSelectedRow] = useState<T | null>(null)
+  const [searchText, setSearchText] = useState('')
+  const searchVal = useDebounceValue(searchText)
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const [selectedLimit, setSelectedLimit] = useState(limits[0])
+  const handleClose = (limitVal: number) => {
+    if (isNumber(limitVal)) {
+      setSelectedLimit(limitVal)
+    }
+    setAnchorEl(null)
+  }
+
+  useEffect(() => {
+    if (isNumber(Number(selectedLimit))) {
+      updateSearchParams('limit', String(selectedLimit))
+    }
+  }, [selectedLimit])
+
+  useEffect(() => {
+    props?.search?.(searchVal)
+  }, [searchVal])
 
   return (
     <TableContainer component={TablePaper}>
@@ -111,6 +145,7 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
               <MdOutlineSearch size={28} color={colors.grey[500]} />
             }
             placeholder="Search"
+            onChange={(e) => setSearchText(e.target.value)}
             sx={{
               width: 300,
               marginLeft: 'auto',
@@ -232,16 +267,80 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
         </TableBody>
       </Table>
       {showPagination ? (
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={Number(props?.count || 1)}
-          rowsPerPage={Number(props?.rowsPerPage || 10)}
-          page={Number(props?.page || 1)}
-          // @ts-ignore
-          onPageChange={props.onPageChange}
-          onRowsPerPageChange={props.onRowsPerPageChange}
-        />
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems={'center'}
+          justifyContent={'flex-end'}
+          color="GrayText"
+          p={2}
+        >
+          <Stack direction="row" alignItems={'center'} spacing={1}>
+            <Typography variant="body2">Rows per page</Typography>
+            <Box>
+              <Button
+                id="demo-positioned-button-pagination"
+                aria-controls={open ? 'demo-positioned-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                onClick={handleClick}
+                variant="outlined"
+                color="secondary"
+                endIcon={<IoIosArrowDown size={14} color={colors.grey[500]} />}
+              >
+                {selectedLimit}
+              </Button>
+              <Menu
+                id="demo-positioned-menu"
+                aria-labelledby="demo-positioned-button-pagination"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+              >
+                {limits?.map((el, id) => {
+                  return (
+                    <MenuItem
+                      key={id}
+                      onClick={() => {
+                        if (isNumber(el)) {
+                          handleClose(el)
+                        }
+                      }}
+                    >
+                      {el}
+                    </MenuItem>
+                  )
+                })}
+              </Menu>
+            </Box>
+          </Stack>
+          <Pagination
+            count={Math.ceil(
+              Number(props?.count || 1) / Number(props?.rowsPerPage || 1)
+            )}
+            variant="outlined"
+            shape="rounded"
+            page={Number(props?.page)}
+            onChange={(_, page) => {
+              props.onPageChange?.(page)
+              updateSearchParams('page', String(Number(page || 1)))
+              if (isNumber(Number(props?.rowsPerPage))) {
+                updateSearchParams(
+                  'limit',
+                  String(Number(props?.rowsPerPage || DEFAULT_PAGE_LIMIT))
+                )
+              }
+            }}
+          />
+        </Stack>
       ) : null}
       {/* DELETE CONFIRMATION MODAL */}
       <DeleteConfirmationModal
@@ -250,11 +349,15 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
         }}
         onConfirmationClick={() => {
           if (selectedRow) {
-            props?.actions?.onDelete?.(selectedRow)
+            props?.actions?.onDelete?.(selectedRow, () => {
+              setOpenDeleteModal(false)
+            })
           }
         }}
         open={openDeleteModal}
         confirmText="Delete"
+        cancelText={props.deleteCancelText}
+        confirmLoader={props.deleteConfirmLoader}
       >
         <Typography>{props.deleteConfirmationModalDescription}</Typography>
       </DeleteConfirmationModal>

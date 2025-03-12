@@ -1,11 +1,38 @@
 import { Box, Stack, Typography } from '@mui/material'
 import { ButtonComp } from '@src/components/button/button.component'
 import { TableComp } from '@src/components/tableComp/tableComp.components'
+import { usePage } from '@src/helpers/getPageParams.helper'
+import { useDispatch, useSelector } from '@src/store/hooks.store'
+import { getEmployeeListAction } from '@src/store/redux/dashboard/humanResources/manageEmployee/manageEmployee.slice'
+import { useCallback, useEffect } from 'react'
 import { GoPlus } from 'react-icons/go'
 import { useNavigate } from 'react-router-dom'
 
 export function ListEmployeesPage() {
   const navigate = useNavigate()
+  const { page, limit } = usePage()
+  const dispatch = useDispatch()
+  const { data: employeeList, loading: employeeListLoading } = useSelector(
+    (store) => store.employees.employeeList
+  )
+  const remappedEmployeeList = useCallback(() => {
+    return employeeList?.rows?.map((el) => ({
+      employee_id: el.employee_details.id,
+      name: `${el.user_profile_details.firstname} ${el.user_profile_details.lastname}`,
+      email: el.user_details.email,
+      designation: el.designation_details.designation,
+      mobile: el.user_profile_details.mobile,
+      gender: el.user_profile_details.gender,
+    }))
+  }, [employeeList])
+
+  useEffect(() => {
+    dispatch(getEmployeeListAction({ payload: { page, limit } }))
+  }, [page, limit])
+
+  const handleSearchEmployee = (search: string) => {
+    dispatch(getEmployeeListAction({ payload: { page, limit, search } }))
+  }
 
   return (
     <Box>
@@ -40,43 +67,22 @@ export function ListEmployeesPage() {
       </Box>
       <TableComp
         columns={[
-          { field: 'designation', name: 'Designation Name' },
-          { field: 'created_at', name: 'Created At' },
-          { field: 'updated_at', name: 'Updated At' },
+          { field: 'name', name: 'Name' },
+          { field: 'email', name: 'Email Address' },
+          { field: 'mobile', name: 'Mobile' },
+          { field: 'designation', name: 'Designation' },
+          { field: 'gender', name: 'Gender' },
         ]}
-        data={[
-          {
-            designation: 'Summer 2023',
-            created_at: '2023-06',
-            updated_at: '2023-08',
-          },
-          {
-            designation: 'Fall 2024',
-            created_at: '2024-09',
-            updated_at: '2024-12',
-          },
-          {
-            designation: 'Winter 2025',
-            created_at: '2025-01',
-            updated_at: '2025-03',
-          },
-          {
-            designation: '2026',
-            created_at: '2026',
-            updated_at: '2027',
-          },
-          {
-            designation: 'Spring 2027',
-            created_at: '2027-03',
-            updated_at: '2027-06',
-          },
-          {
-            designation: '2028',
-            created_at: '2028',
-            updated_at: '2029',
-          },
-        ]}
+        loading={employeeListLoading}
+        data={remappedEmployeeList() ?? []}
         actions={{ onEdit: () => {}, onDelete: () => {} }}
+        count={Math.ceil(Number(employeeList?.total) / Number(limit))}
+        page={page}
+        rowsPerPage={limit}
+        showPagination={true}
+        search={(txt) => {
+          handleSearchEmployee(txt)
+        }}
       ></TableComp>
     </Box>
   )

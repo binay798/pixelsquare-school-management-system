@@ -10,7 +10,9 @@ import {
 } from '@mui/material'
 import { omit } from 'lodash'
 import { colors } from '@src/helpers/colors.helpers'
-import { BsEye } from 'react-icons/bs'
+import { TfiEye } from 'react-icons/tfi'
+import { RxEyeClosed } from 'react-icons/rx'
+import { useState } from 'react'
 
 interface Props extends OutlinedInputProps {
   helperText?: string
@@ -21,6 +23,8 @@ interface Props extends OutlinedInputProps {
   }
 }
 export function InputField(props: Props) {
+  const [showPassword, setShowPassword] = useState(false)
+
   return (
     <FormControl
       {...props.formControlProps}
@@ -43,8 +47,33 @@ export function InputField(props: Props) {
       <OutlinedInput
         {...omit(props, 'helperText', 'formControlProps', 'labelDetail')}
         notched={false}
+        type={
+          props.type === 'password'
+            ? showPassword
+              ? 'text'
+              : 'password'
+            : props.type
+        }
         endAdornment={
-          props.type === 'password' ? <BsEye /> : props.endAdornment
+          props.type === 'password' ? (
+            showPassword ? (
+              <TfiEye
+                style={{ cursor: 'pointer' }}
+                onClick={() => setShowPassword(false)}
+                size={20}
+                color={colors.grey[500]}
+              />
+            ) : (
+              <RxEyeClosed
+                style={{ cursor: 'pointer' }}
+                size={20}
+                color={colors.grey[500]}
+                onClick={() => setShowPassword(true)}
+              />
+            )
+          ) : (
+            props.endAdornment
+          )
         }
       />
       <FormHelperText error={props.error}>{props.helperText}</FormHelperText>
