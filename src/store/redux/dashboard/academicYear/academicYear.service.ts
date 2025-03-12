@@ -52,3 +52,11 @@ export const getAcademicYearDetails = async (academicYearId: number) => {
 
   return res.data.data
 }
+
+export const getActiveAcademicYearOfSchool = async () => {
+  const res = await api<Api.Base<AcademicYear.IAcademicYear>>('get')(
+    'schools/academic-years/active'
+  )
+
+  return res.data.data
+}

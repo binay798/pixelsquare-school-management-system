@@ -18,6 +18,7 @@ import { ListDesignation } from './pages/dashboard/pages/humanResources/pages/ma
 import { ListEmployeesPage } from './pages/dashboard/pages/humanResources/pages/manageEmployee/pages/list/list.page'
 import { CreateEmployeePage } from './pages/dashboard/pages/humanResources/pages/manageEmployee/pages/create/create.page'
 import { EditEmployeePage } from './pages/dashboard/pages/humanResources/pages/manageEmployee/pages/edit/edit.page'
+import { DepartmentPage } from './pages/dashboard/pages/teachers/pages/departments/departments.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -89,6 +90,11 @@ export const privateRoutes: RouteObject[] = [
                 ],
               },
             ],
+          },
+          {
+            path: 'teachers',
+            element: <Outlet />,
+            children: [{ path: 'departments', element: <DepartmentPage /> }],
           },
         ],
       },

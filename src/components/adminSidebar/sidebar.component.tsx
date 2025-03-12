@@ -88,12 +88,12 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
   {
     title: 'Teachers',
     icon: <GiTeacher />,
-    to: '/dashboard/human-resources',
+    to: '/dashboard/teachers',
     subItems: [
       {
         title: 'Manage Departments',
         icon: <MdOutlineDashboardCustomize />,
-        to: '/dashboard/human-resources',
+        to: '/dashboard/teachers/departments',
       },
       {
         title: 'Manage Teachers',

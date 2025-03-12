@@ -22,8 +22,9 @@ const initialState: InitialState = {
 }
 export const getSchoolDetailSlice = createAsyncThunk(
   'manageSchool/getSchoolDetail',
-  catchAsync(async () => {
+  catchAsync(async (data: { onSuccess?: () => void }) => {
     const res = await services.getSchoolDetails()
+    data?.onSuccess?.()
 
     return res
   })

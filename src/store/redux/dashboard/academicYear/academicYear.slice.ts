@@ -19,6 +19,10 @@ interface InitialState {
     loading: boolean
     data: AcademicYear.IAcademicYear | null
   }
+  activeAcademicYearOfSchool: {
+    data: AcademicYear.IAcademicYear | null
+    loading: boolean
+  }
 }
 
 const initialState: InitialState = {
@@ -35,6 +39,10 @@ const initialState: InitialState = {
   selectedAcademicYearDetails: {
     loading: false,
     data: null,
+  },
+  activeAcademicYearOfSchool: {
+    data: null,
+    loading: false,
   },
 }
 
@@ -110,6 +118,15 @@ export const getAcademicYearDetailsSlice = createAsyncThunk(
   })
 )
 
+export const getActiveAcademicYearAction = createAsyncThunk(
+  'academic-year/get-active',
+  catchAsync(async () => {
+    const res = await services.getActiveAcademicYearOfSchool()
+
+    return res
+  })
+)
+
 const academicYearSlice = createSlice({
   name: 'academicYear',
   initialState: initialState,
@@ -156,6 +173,17 @@ const academicYearSlice = createSlice({
     })
     builder.addCase(getAcademicYearDetailsSlice.rejected, (state) => {
       state.selectedAcademicYearDetails.loading = false
+    })
+    // GET ACTIVE ACADEMIC YEAR OF SCHOOL
+    builder.addCase(getActiveAcademicYearAction.pending, (state) => {
+      state.activeAcademicYearOfSchool.loading = true
+    })
+    builder.addCase(getActiveAcademicYearAction.fulfilled, (state, action) => {
+      state.activeAcademicYearOfSchool.loading = false
+      state.activeAcademicYearOfSchool.data = action.payload.data
+    })
+    builder.addCase(getActiveAcademicYearAction.rejected, (state) => {
+      state.activeAcademicYearOfSchool.loading = false
     })
   },
 })

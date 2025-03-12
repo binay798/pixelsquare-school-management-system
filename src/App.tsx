@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { authSliceGetUserSession } from './store/redux/auth/auth.slice'
 import { getSchoolDetailSlice } from './store/redux/dashboard/manageSchool/manageSchool.slice'
 import { isEmpty } from 'lodash'
+import { getActiveAcademicYearAction } from './store/redux/dashboard/academicYear/academicYear.slice'
 
 // TODO: Need to add ThemeProvider responsiveFontSizes(theme)
 function App() {
@@ -19,7 +20,13 @@ function App() {
 
   useEffect(() => {
     if (!isEmpty(user.data?.user)) {
-      dispatch(getSchoolDetailSlice({}))
+      dispatch(
+        getSchoolDetailSlice({
+          onSuccess: () => {
+            dispatch(getActiveAcademicYearAction({}))
+          },
+        })
+      )
     }
   }, [user.data?.user])
 

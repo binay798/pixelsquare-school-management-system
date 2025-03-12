@@ -92,4 +92,8 @@ declare namespace Api {
     user_roles: Pick<User.IUserRole, 'id' | 'role'>[]
     profile_pic_details: Asset.IAsset | null
   }
+
+  interface IDepartmentList extends PaginatedData<School.IDepartment> {
+    total: string
+  }
 }
