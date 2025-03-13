@@ -98,7 +98,7 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
       {
         title: 'Manage Teachers',
         icon: <HiUserAdd />,
-        to: '/dashboard/human-resources',
+        to: '/dashboard/teachers',
       },
     ],
   },

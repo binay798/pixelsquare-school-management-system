@@ -21,3 +21,13 @@ export const getDepartmentList = async (page?: number, limit?: number) => {
 
   return res.data.data
 }
+
+export const updateDepartment = async (departmentId: number, name: string) => {
+  const res = await api<Api.Base<object>>('patch')(
+    `schools/departments/${departmentId}`,
+    undefined,
+    { name }
+  )
+
+  return res.data.data
+}

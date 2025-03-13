@@ -10,9 +10,15 @@ interface InitialState {
     data: Api.IDepartmentList | null
     loading: boolean
   }
+  updateDepartment: {
+    loading: boolean
+  }
 }
 const initialState: InitialState = {
   createDepartment: {
+    loading: false,
+  },
+  updateDepartment: {
     loading: false,
   },
   departmentList: {
@@ -48,6 +54,25 @@ export const getDepartmentListAction = createAsyncThunk(
   })
 )
 
+export const updateDepartmentAction = createAsyncThunk(
+  'departments/update',
+  catchAsync(
+    async (data: {
+      payload: { departmentId: number; name: string }
+      onSuccess?: () => void
+    }) => {
+      const res = await services.updateDepartment(
+        data.payload.departmentId,
+        data.payload.name
+      )
+      data?.onSuccess?.()
+
+      return res
+    },
+    true
+  )
+)
+
 export const departmentSlice = createSlice({
   name: 'departments',
   initialState,
@@ -73,6 +98,16 @@ export const departmentSlice = createSlice({
     })
     builder.addCase(getDepartmentListAction.rejected, (state) => {
       state.departmentList.loading = false
+    })
+    // UPDATE DEPARTMENT
+    builder.addCase(updateDepartmentAction.pending, (state) => {
+      state.updateDepartment.loading = true
+    })
+    builder.addCase(updateDepartmentAction.fulfilled, (state) => {
+      state.updateDepartment.loading = false
+    })
+    builder.addCase(updateDepartmentAction.rejected, (state) => {
+      state.updateDepartment.loading = false
     })
   },
 })
