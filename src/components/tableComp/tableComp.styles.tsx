@@ -9,5 +9,5 @@ export const TablePaper = styled(Paper)`
   border-radius: 16px;
 `
 export const THeadCell = styled(TableCell)`
-  color: ${colors.grey[700]};
+  color: ${colors.grey[300]};
 `

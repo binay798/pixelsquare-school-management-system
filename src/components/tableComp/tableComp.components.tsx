@@ -159,7 +159,7 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
         sx={{ minWidth: 650, borderTop: '1px solid ' + colors.grey[300] }}
         aria-label="simple table"
       >
-        <TableHead sx={{ backgroundColor: colors.grey[100] }}>
+        <TableHead sx={{ backgroundColor: '#0f0b26' }}>
           <TableRow>
             {props.columns.map((el, i) => {
               return (
