@@ -21,6 +21,7 @@ import { EditEmployeePage } from './pages/dashboard/pages/humanResources/pages/m
 import { DepartmentPage } from './pages/dashboard/pages/teachers/pages/departments/departments.page'
 import { TeacherPage } from './pages/dashboard/pages/teachers/pages/teachers/teachers.page'
 import { CreateTeacherPage } from './pages/dashboard/pages/teachers/pages/teachers/pages/create/create.page'
+import { StudentAttendancePage } from './pages/dashboard/pages/attendance/pages/studentAttendance/studentAttendance.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -104,6 +105,12 @@ export const privateRoutes: RouteObject[] = [
               { path: 'create', element: <CreateTeacherPage /> },
               { path: 'departments', element: <DepartmentPage /> },
             ],
+          },
+
+          {
+            path: 'attendance',
+            element: <Outlet />,
+            children: [{ path: 'student', element: <StudentAttendancePage /> }],
           },
         ],
       },

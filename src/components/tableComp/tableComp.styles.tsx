@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Paper, TableCell } from '@mui/material'
+import { Paper, TableCell, TableRow } from '@mui/material'
 import { colors } from '@src/helpers/colors.helpers'
 
 export const TablePaper = styled(Paper)`
@@ -11,3 +11,13 @@ export const TablePaper = styled(Paper)`
 export const THeadCell = styled(TableCell)`
   color: ${colors.grey[300]};
 `
+
+export const StyledTableRow = styled(TableRow)(() => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: colors.grey[100],
+  },
+  // Optional: Define styles for even rows if desired
+  // '&:nth-of-type(even)': {
+  //   backgroundColor: theme.palette.action.selected,
+  // },
+}))
