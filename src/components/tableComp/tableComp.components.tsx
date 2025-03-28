@@ -368,7 +368,8 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
             sx={{
               p: 2,
               background: '#fefcea',
-              border: `1px solid ${colors.grey[400]}`,
+              border: `0.5px solid ${colors.grey[300]}`,
+              borderRadius: 2,
             }}
           >
             <Stack

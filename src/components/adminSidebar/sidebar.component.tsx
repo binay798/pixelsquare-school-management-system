@@ -17,6 +17,7 @@ import { MdOutlineDashboardCustomize } from 'react-icons/md'
 import { VscChecklist } from 'react-icons/vsc'
 import { FaChalkboardTeacher } from 'react-icons/fa'
 import { FaUsersGear } from 'react-icons/fa6'
+import { GrTableAdd } from 'react-icons/gr'
 import {
   Container,
   ListContainer,
@@ -124,6 +125,11 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
         title: 'Subjects',
         icon: <GiBookmarklet />,
         to: '/dashboard/human-resources/manage-employee',
+      },
+      {
+        title: 'Class Routines',
+        icon: <GrTableAdd />,
+        to: '/dashboard/human-resources',
       },
     ],
   },
