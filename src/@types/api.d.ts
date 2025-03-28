@@ -96,4 +96,8 @@ declare namespace Api {
   interface IDepartmentList extends PaginatedData<School.IDepartment> {
     total: string
   }
+
+  interface IStudentTypeList extends PaginatedData<Student.IStudentType> {
+    total: string
+  }
 }

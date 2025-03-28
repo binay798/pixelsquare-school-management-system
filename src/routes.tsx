@@ -19,6 +19,10 @@ import { ListEmployeesPage } from './pages/dashboard/pages/humanResources/pages/
 import { CreateEmployeePage } from './pages/dashboard/pages/humanResources/pages/manageEmployee/pages/create/create.page'
 import { EditEmployeePage } from './pages/dashboard/pages/humanResources/pages/manageEmployee/pages/edit/edit.page'
 import { DepartmentPage } from './pages/dashboard/pages/teachers/pages/departments/departments.page'
+// import { ManageStudent } from './pages/dashboard/pages/manageStudent/manageStudent.page'
+import { ListStudentType } from './pages/dashboard/pages/manageStudent/pages/studentType/pages/list/list.page'
+import { CreateStudentType } from './pages/dashboard/pages/manageStudent/pages/studentType/pages/create/create.page'
+import { EditStudentType } from './pages/dashboard/pages/manageStudent/pages/studentType/pages/edit/edit.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -95,6 +99,16 @@ export const privateRoutes: RouteObject[] = [
             path: 'teachers',
             element: <Outlet />,
             children: [{ path: 'departments', element: <DepartmentPage /> }],
+          },
+          {
+            path: 'manage-student',
+            element: <Outlet />,
+            children: [
+              // { path: 'studenttype', element: <ManageStudent /> },
+              { path: 'Type', element: <ListStudentType /> },
+              { path: 'create', element: <CreateStudentType /> },
+              { path: 'edit/:studentTypeId', element: <EditStudentType /> },
+            ],
           },
         ],
       },

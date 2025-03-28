@@ -15,7 +15,6 @@ import {
   SelectField,
 } from '@src/components/select/select.component'
 import { colors } from '@src/helpers/colors.helpers'
-
 import { UploadAvatarComp } from '@src/pages/dashboard/components/uploadAvatarComp/uploadAvatar.component'
 import { useFormik } from 'formik'
 import { createEmployeeSchema } from './create.schema'

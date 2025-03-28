@@ -10,6 +10,9 @@ interface InitialState {
     data: Api.IDepartmentList | null
     loading: boolean
   }
+  // deleteDepartment: {
+  //   loading: boolean
+  // }
 }
 const initialState: InitialState = {
   createDepartment: {
@@ -19,6 +22,9 @@ const initialState: InitialState = {
     data: null,
     loading: false,
   },
+  // deleteDepartment: {
+  //   loading: false,
+  // },
 }
 
 export const createDepartmentAction = createAsyncThunk(
@@ -48,6 +54,14 @@ export const getDepartmentListAction = createAsyncThunk(
   })
 )
 
+// export const deleteDepartmentAction = createAsyncThunk(
+//   'departments/delete',
+//   catchAsync(async (data: { payload: { departmentId: number } }) => {
+//     await services.deleteDepartment(data.payload.departmentId)
+//     return data.payload.departmentId
+//   })
+// )
+
 export const departmentSlice = createSlice({
   name: 'departments',
   initialState,
@@ -74,6 +88,19 @@ export const departmentSlice = createSlice({
     builder.addCase(getDepartmentListAction.rejected, (state) => {
       state.departmentList.loading = false
     })
+    //DELETE DEPARTMENT
+    // builder.addCase(deleteDepartmentAction.pending, (state) => {
+    //   state.deleteDepartment.loading = true
+    // })
+    // builder.addCase(deleteDepartmentAction.fulfilled, (state, action) => {
+    //   state.deleteDepartment.loading = false
+    //   state.departmentList.data = state.departmentList.data?.filter(
+    //     (department) => department.id !== action.payload
+    //   )
+    // })
+    // builder.addCase(deleteDepartmentAction.rejected, (state) => {
+    //   state.deleteDepartment.loading = false
+    // })
   },
 })
 

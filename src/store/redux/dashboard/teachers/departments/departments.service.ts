@@ -21,3 +21,11 @@ export const getDepartmentList = async (page?: number, limit?: number) => {
 
   return res.data.data
 }
+
+// export const deleteDepartment = async (departmentId: number) => {
+//   const res = await api<Api.Base<object>>('delete')(
+//     `schools/departments/${departmentId}`
+//   )
+
+//   return res.data.data
+// }

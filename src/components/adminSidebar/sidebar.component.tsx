@@ -137,7 +137,7 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
       {
         title: 'Student Type',
         icon: <FaSchool />,
-        to: '/dashboard/students/manage-school',
+        to: '/dashboard/manage-student/type',
       },
       {
         title: 'Student List',

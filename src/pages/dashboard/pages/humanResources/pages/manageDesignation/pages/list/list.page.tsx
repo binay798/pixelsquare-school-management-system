@@ -26,6 +26,7 @@ export function ListDesignation() {
   const dispatch = useDispatch()
   const { data: designationList, loading: listDesignationLoading } =
     useSelector((store) => store.designations.designationList)
+
   const { loading: deleteLoading } = useSelector(
     (store) => store.designations.deleteDesignation
   )
