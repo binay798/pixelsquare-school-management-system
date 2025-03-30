@@ -5,6 +5,7 @@ import academicYearReducer from './redux/dashboard/academicYear/academicYear.sli
 import designationReducer from './redux/dashboard/humanResources/designations/designations.slice'
 import manageEmployeeReducer from './redux/dashboard/humanResources/manageEmployee/manageEmployee.slice'
 import departmentReducer from './redux/dashboard/teachers/departments/departments.slice'
+import classReducer from './redux/dashboard/academics/classes/classes.slice'
 
 export const store = configureStore({
   reducer: {
@@ -14,5 +15,6 @@ export const store = configureStore({
     designations: designationReducer,
     employees: manageEmployeeReducer,
     departments: departmentReducer,
+    classes: classReducer,
   },
 })

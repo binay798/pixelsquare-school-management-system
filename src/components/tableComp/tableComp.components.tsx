@@ -24,7 +24,12 @@ import {
   Typography,
 } from '@mui/material'
 import { IoIosArrowDown } from 'react-icons/io'
-import { StyledTableRow, TablePaper, THeadCell } from './tableComp.styles'
+import {
+  EmptyImg,
+  StyledTableRow,
+  TablePaper,
+  THeadCell,
+} from './tableComp.styles'
 import { colors } from '@src/helpers/colors.helpers'
 import { InputField } from '../input/input.component'
 import { ButtonComp } from '../button/button.component'
@@ -268,6 +273,19 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
           ) : null}
         </TableBody>
       </Table>
+      {isEmpty(props?.data) && !props.loading ? (
+        <Stack
+          sx={{ width: '100%', p: 2, minHeight: 300 }}
+          direction={'row'}
+          justifyContent={'center'}
+          alignItems={'center'}
+        >
+          <Stack direction={'column'} alignItems={'center'} spacing={1}>
+            <EmptyImg src="/assets/images/empty.png" alt="Empty data" />
+            <Typography color="textDisabled">No data</Typography>
+          </Stack>
+        </Stack>
+      ) : null}
       {showPagination ? (
         <Stack
           direction="row"

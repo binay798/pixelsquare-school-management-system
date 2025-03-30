@@ -22,6 +22,10 @@ import { DepartmentPage } from './pages/dashboard/pages/teachers/pages/departmen
 import { TeacherPage } from './pages/dashboard/pages/teachers/pages/teachers/teachers.page'
 import { CreateTeacherPage } from './pages/dashboard/pages/teachers/pages/teachers/pages/create/create.page'
 import { StudentAttendancePage } from './pages/dashboard/pages/attendance/pages/studentAttendance/studentAttendance.page'
+import { ClassesPage } from './pages/dashboard/pages/academics/pages/classes/classes.page'
+import { ClassSectionsPage } from './pages/dashboard/pages/academics/pages/sections/sections.page'
+import { ClassRoutinesPage } from './pages/dashboard/pages/academics/pages/classRoutines/classRoutines.page'
+import { ClassSubjectsPage } from './pages/dashboard/pages/academics/pages/subjects/subjects.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -111,6 +115,16 @@ export const privateRoutes: RouteObject[] = [
             path: 'attendance',
             element: <Outlet />,
             children: [{ path: 'student', element: <StudentAttendancePage /> }],
+          },
+          {
+            path: 'academics',
+            element: <Outlet />,
+            children: [
+              { path: 'classes', element: <ClassesPage /> },
+              { path: 'class-sections', element: <ClassSectionsPage /> },
+              { path: 'class-routines', element: <ClassRoutinesPage /> },
+              { path: 'class-subjects', element: <ClassSubjectsPage /> },
+            ],
           },
         ],
       },

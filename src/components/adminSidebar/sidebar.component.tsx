@@ -114,22 +114,22 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
       {
         title: 'Classes',
         icon: <SiGoogleclassroom />,
-        to: '/dashboard/human-resources',
+        to: '/dashboard/academics/classes',
       },
       {
         title: 'Sections',
         icon: <BsFillSignIntersectionSideFill />,
-        to: '/dashboard/human-resources/manage-employee',
+        to: '/dashboard/academics/class-sections',
       },
       {
         title: 'Subjects',
         icon: <GiBookmarklet />,
-        to: '/dashboard/human-resources/manage-employee',
+        to: '/dashboard/academics/class-subjects',
       },
       {
         title: 'Class Routines',
         icon: <GrTableAdd />,
-        to: '/dashboard/human-resources',
+        to: '/dashboard/academics/class-routines',
       },
     ],
   },

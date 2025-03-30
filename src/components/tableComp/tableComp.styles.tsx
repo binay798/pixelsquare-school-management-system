@@ -21,3 +21,11 @@ export const StyledTableRow = styled(TableRow)(() => ({
   //   backgroundColor: theme.palette.action.selected,
   // },
 }))
+
+export const EmptyImg = styled.img`
+  display: block;
+  object-fit: contain;
+  width: 6rem;
+  height: 6rem;
+  opacity: 0.5;
+`
