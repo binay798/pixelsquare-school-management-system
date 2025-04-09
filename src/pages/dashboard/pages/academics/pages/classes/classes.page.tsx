@@ -22,7 +22,7 @@ export function ClassesPage() {
   }
 
   useEffect(() => {
-    dispatch(getClassListAction({}))
+    dispatch(getClassListAction({ onSuccess: () => {} }))
   }, [])
 
   const remappedClassList = useCallback(() => {

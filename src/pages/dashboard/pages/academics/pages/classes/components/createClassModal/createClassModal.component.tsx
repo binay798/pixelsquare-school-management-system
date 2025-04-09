@@ -48,7 +48,7 @@ export function CreateClassModal(props: Props) {
             onSuccess: () => {
               props.onClose()
               formik.resetForm()
-              dispatch(getClassListAction({}))
+              dispatch(getClassListAction({ onSuccess: () => {} }))
             },
           })
         )
@@ -64,7 +64,7 @@ export function CreateClassModal(props: Props) {
               },
               onSuccess: () => {
                 props.onClose()
-                dispatch(getClassListAction({}))
+                dispatch(getClassListAction({ onSuccess: () => {} }))
                 formik.resetForm()
               },
             })

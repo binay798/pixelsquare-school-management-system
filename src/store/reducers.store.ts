@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './redux/auth/auth.slice'
 import manageSchoolReducer from './redux/dashboard/manageSchool/manageSchool.slice'
+import classSectionReducer from './redux/dashboard/academics/classSections/sections.slice'
 import academicYearReducer from './redux/dashboard/academicYear/academicYear.slice'
 import designationReducer from './redux/dashboard/humanResources/designations/designations.slice'
 import manageEmployeeReducer from './redux/dashboard/humanResources/manageEmployee/manageEmployee.slice'
@@ -16,5 +17,6 @@ export const store = configureStore({
     employees: manageEmployeeReducer,
     departments: departmentReducer,
     classes: classReducer,
+    classSections: classSectionReducer,
   },
 })

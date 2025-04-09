@@ -46,8 +46,9 @@ export const createClassAction = createAsyncThunk(
 
 export const getClassListAction = createAsyncThunk(
   'classSlice/getList',
-  catchAsync(async () => {
+  catchAsync(async (data: { onSuccess: (val: Api.IClassList) => void }) => {
     const res = await services.getClassList()
+    data.onSuccess(res.data)
 
     return res
   })

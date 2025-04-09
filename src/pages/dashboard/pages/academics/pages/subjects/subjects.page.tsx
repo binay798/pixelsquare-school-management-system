@@ -1,8 +1,15 @@
 import { Box, Stack, Typography } from '@mui/material'
 import { ButtonComp } from '@src/components/button/button.component'
 import { GoPlus } from 'react-icons/go'
+import { CreateSubjectModal } from './components/createSubjectModal/createSubjectModal.component'
+import { useState } from 'react'
 
 export function ClassSubjectsPage() {
+  const [openCreateSubject, setOpenCreateSubject] = useState(false)
+  const toggleCloseCreateSubject = (val: boolean) => {
+    setOpenCreateSubject(val)
+  }
+
   return (
     <Box>
       <Stack
@@ -27,6 +34,7 @@ export function ClassSubjectsPage() {
             // navigate('/dashboard/teachers/create')
             // toggleOpenCreateModal(true)
             // setOpenCreateDepartment(true)
+            toggleCloseCreateSubject(true)
           }}
           startIcon={<GoPlus />}
           size="medium"
@@ -34,6 +42,12 @@ export function ClassSubjectsPage() {
           Create
         </ButtonComp>
       </Stack>
+      {/* CREATE SUBJECT MODAL */}
+      <CreateSubjectModal
+        open={openCreateSubject}
+        onClose={() => toggleCloseCreateSubject(false)}
+        details={null}
+      />
     </Box>
   )
 }

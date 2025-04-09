@@ -7,7 +7,12 @@ import Select, {
 import AsyncSelect, { AsyncProps } from 'react-select/async'
 
 // Custom styles for the react-select component.
-const customStyles: StylesConfig = {
+export const customReactSelectStyles: StylesConfig = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  menuPortal: (base: any) => ({
+    ...base,
+    zIndex: 9999, // Increase this to a higher value if needed
+  }),
   control: (provided, state) => ({
     ...provided,
     border: '1px solid #ddd',
@@ -71,7 +76,7 @@ export const SelectField = (props: SelectProps) => {
     <Select
       // options={customOptions}
       options={props.options}
-      styles={customStyles}
+      styles={customReactSelectStyles}
       theme={customTheme}
       placeholder={props.placeholder}
       {...props}
@@ -80,12 +85,15 @@ export const SelectField = (props: SelectProps) => {
 }
 
 interface AsyncSelectProps
-  extends AsyncProps<unknown, false, GroupBase<unknown>> {}
+  extends AsyncProps<unknown, false, GroupBase<unknown>> {
+  styles?: StylesConfig
+  menuListHeight?: number
+}
 
 export const AsyncSelectField = (props: AsyncSelectProps) => {
   return (
     <AsyncSelect
-      styles={customStyles}
+      styles={{ ...customReactSelectStyles, ...props?.styles }}
       theme={customTheme}
       // placeholder={props}
       placeholder={props.placeholder}
