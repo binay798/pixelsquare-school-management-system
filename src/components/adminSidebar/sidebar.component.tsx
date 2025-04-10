@@ -14,6 +14,9 @@ import { RiParentFill } from 'react-icons/ri'
 import { GiTeacher } from 'react-icons/gi'
 import { HiUserAdd } from 'react-icons/hi'
 import { MdOutlineDashboardCustomize } from 'react-icons/md'
+import { VscChecklist } from 'react-icons/vsc'
+import { FaChalkboardTeacher } from 'react-icons/fa'
+import { FaUsersGear } from 'react-icons/fa6'
 import {
   Container,
   ListContainer,
@@ -98,7 +101,7 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
       {
         title: 'Manage Teachers',
         icon: <HiUserAdd />,
-        to: '/dashboard/human-resources',
+        to: '/dashboard/teachers',
       },
     ],
   },
@@ -154,6 +157,19 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
         icon: <IoSchool />,
         to: '/dashboard/students/academic-year',
       },
+    ],
+  },
+  {
+    title: 'Attendance',
+    icon: <VscChecklist />,
+    subItems: [
+      {
+        title: 'Student Attendance',
+        icon: <PiStudentFill />,
+        to: '/dashboard/attendance/student',
+      },
+      { title: 'Teacher Attendance', icon: <FaChalkboardTeacher /> },
+      { title: 'Employee Attendance', icon: <FaUsersGear /> },
     ],
   },
   // {

@@ -24,7 +24,7 @@ import {
   Typography,
 } from '@mui/material'
 import { IoIosArrowDown } from 'react-icons/io'
-import { TablePaper, THeadCell } from './tableComp.styles'
+import { StyledTableRow, TablePaper, THeadCell } from './tableComp.styles'
 import { colors } from '@src/helpers/colors.helpers'
 import { InputField } from '../input/input.component'
 import { ButtonComp } from '../button/button.component'
@@ -159,7 +159,7 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
         sx={{ minWidth: 650, borderTop: '1px solid ' + colors.grey[300] }}
         aria-label="simple table"
       >
-        <TableHead sx={{ backgroundColor: colors.grey[100] }}>
+        <TableHead sx={{ backgroundColor: '#0f0b26' }}>
           <TableRow>
             {props.columns.map((el, i) => {
               return (
@@ -176,7 +176,7 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
         <TableBody>
           {props.data.map((dt, dtIndex) => {
             return (
-              <TableRow
+              <StyledTableRow
                 key={dtIndex}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
@@ -248,12 +248,12 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
                     </Stack>
                   </TableCell>
                 ) : null}
-              </TableRow>
+              </StyledTableRow>
             )
           })}
 
           {props?.loading ? (
-            <TableRow>
+            <StyledTableRow>
               {Array(props?.columns?.length)
                 .fill(0)
                 ?.map((_, id) => (
@@ -264,7 +264,7 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
               <TableCell align="right">
                 <Skeleton variant="rounded" height={25} />
               </TableCell>
-            </TableRow>
+            </StyledTableRow>
           ) : null}
         </TableBody>
       </Table>

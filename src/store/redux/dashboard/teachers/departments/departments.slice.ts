@@ -10,21 +10,21 @@ interface InitialState {
     data: Api.IDepartmentList | null
     loading: boolean
   }
-  // deleteDepartment: {
-  //   loading: boolean
-  // }
+  updateDepartment: {
+    loading: boolean
+  }
 }
 const initialState: InitialState = {
   createDepartment: {
+    loading: false,
+  },
+  updateDepartment: {
     loading: false,
   },
   departmentList: {
     data: null,
     loading: false,
   },
-  // deleteDepartment: {
-  //   loading: false,
-  // },
 }
 
 export const createDepartmentAction = createAsyncThunk(
@@ -54,13 +54,24 @@ export const getDepartmentListAction = createAsyncThunk(
   })
 )
 
-// export const deleteDepartmentAction = createAsyncThunk(
-//   'departments/delete',
-//   catchAsync(async (data: { payload: { departmentId: number } }) => {
-//     await services.deleteDepartment(data.payload.departmentId)
-//     return data.payload.departmentId
-//   })
-// )
+export const updateDepartmentAction = createAsyncThunk(
+  'departments/update',
+  catchAsync(
+    async (data: {
+      payload: { departmentId: number; name: string }
+      onSuccess?: () => void
+    }) => {
+      const res = await services.updateDepartment(
+        data.payload.departmentId,
+        data.payload.name
+      )
+      data?.onSuccess?.()
+
+      return res
+    },
+    true
+  )
+)
 
 export const departmentSlice = createSlice({
   name: 'departments',
@@ -88,19 +99,16 @@ export const departmentSlice = createSlice({
     builder.addCase(getDepartmentListAction.rejected, (state) => {
       state.departmentList.loading = false
     })
-    //DELETE DEPARTMENT
-    // builder.addCase(deleteDepartmentAction.pending, (state) => {
-    //   state.deleteDepartment.loading = true
-    // })
-    // builder.addCase(deleteDepartmentAction.fulfilled, (state, action) => {
-    //   state.deleteDepartment.loading = false
-    //   state.departmentList.data = state.departmentList.data?.filter(
-    //     (department) => department.id !== action.payload
-    //   )
-    // })
-    // builder.addCase(deleteDepartmentAction.rejected, (state) => {
-    //   state.deleteDepartment.loading = false
-    // })
+    // UPDATE DEPARTMENT
+    builder.addCase(updateDepartmentAction.pending, (state) => {
+      state.updateDepartment.loading = true
+    })
+    builder.addCase(updateDepartmentAction.fulfilled, (state) => {
+      state.updateDepartment.loading = false
+    })
+    builder.addCase(updateDepartmentAction.rejected, (state) => {
+      state.updateDepartment.loading = false
+    })
   },
 })
 

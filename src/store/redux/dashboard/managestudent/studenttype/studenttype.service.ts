@@ -20,12 +20,19 @@ export const getStudentTypeList = async (page?: number, limit?: number) => {
 
 export const editStudentType = async (
   studentTypeId: number,
-  data: { studentType: string }
+  data: { name: string }
 ) => {
   const res = await api<Api.Base<object>>('patch')(
     `students/types/${studentTypeId}`,
     undefined,
     data
+  )
+  return res.data.data
+}
+
+export const deleteStudentType = async (studentTypeId: number) => {
+  const res = await api<Api.Base<object>>('delete')(
+    `students/types/${studentTypeId}`
   )
   return res.data.data
 }

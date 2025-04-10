@@ -14,6 +14,9 @@ interface InitialState {
   editStudentType: {
     loading: boolean
   }
+  deleteStudentType: {
+    loading: boolean
+  }
 }
 
 const initialState: InitialState = {
@@ -26,6 +29,9 @@ const initialState: InitialState = {
     loading: false,
   },
   editStudentType: {
+    loading: false,
+  },
+  deleteStudentType: {
     loading: false,
   },
 }
@@ -64,7 +70,7 @@ export const editStudentTypeAction = createAsyncThunk(
       onSuccess?: () => void
     }) => {
       const res = await services.editStudentType(data.payload.studentTypeId, {
-        studentType: data.payload.studentType,
+        name: data.payload.studentType,
       })
       data?.onSuccess?.()
 
@@ -72,6 +78,22 @@ export const editStudentTypeAction = createAsyncThunk(
     },
     true,
     undefined
+  )
+)
+
+export const deleteStudentTypeAction = createAsyncThunk(
+  'studentTypes/delete',
+  catchAsync(
+    async (data: {
+      payload: { studentTypeId: number }
+      onSuccess?: () => void
+    }) => {
+      const res = await services.deleteStudentType(data.payload.studentTypeId)
+      return res
+    },
+    true,
+    undefined,
+    'Successfully deleted student type'
   )
 )
 
@@ -114,6 +136,17 @@ const studentTypeSlice = createSlice({
     })
     builder.addCase(editStudentTypeAction.rejected, (state) => {
       state.editStudentType.loading = false
+    })
+
+    //DELETE STUDENTTYPE
+    builder.addCase(deleteStudentTypeAction.pending, (state) => {
+      state.deleteStudentType.loading = true
+    })
+    builder.addCase(deleteStudentTypeAction.fulfilled, (state) => {
+      state.deleteStudentType.loading = false
+    })
+    builder.addCase(deleteStudentTypeAction.rejected, (state) => {
+      state.deleteStudentType.loading = false
     })
   },
 })

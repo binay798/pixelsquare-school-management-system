@@ -7,10 +7,13 @@ import { useEffect, useState } from 'react'
 import { usePage } from '@src/helpers/getPageParams.helper'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { getDepartmentListAction } from '@src/store/redux/dashboard/teachers/departments/departments.slice'
+import { isEmpty } from 'lodash'
 
 export function DepartmentPage() {
   const [openCreateDepartment, setOpenCreateDepartment] = useState(false)
   const { page, limit } = usePage()
+  const [selectedDepartment, setSelectedDepartment] =
+    useState<School.IDepartment | null>(null)
   const dispatch = useDispatch()
   const { loading: departmentListLoading, data: departmentList } = useSelector(
     (store) => store.departments.departmentList
@@ -57,6 +60,17 @@ export function DepartmentPage() {
         open={openCreateDepartment}
         onClose={() => setOpenCreateDepartment(false)}
       />
+      {/* EDIT DEPARTMENT MODAL */}
+      <CreateDepartmentModal
+        open={!isEmpty(selectedDepartment)}
+        onClose={() => setSelectedDepartment(null)}
+        editMode={{
+          data: selectedDepartment,
+          onClose: () => {
+            setSelectedDepartment(null)
+          },
+        }}
+      />
       <TableComp
         columns={[
           { field: 'name', name: 'Name' },
@@ -66,7 +80,8 @@ export function DepartmentPage() {
         loading={departmentListLoading}
         data={departmentList?.rows ?? []}
         actions={{
-          onEdit: () => {
+          onEdit: (item) => {
+            setSelectedDepartment(item)
             // navigate(
             //   `/dashboard/human-resources/manage-employee/edit/${item.employee_id}`
             // )

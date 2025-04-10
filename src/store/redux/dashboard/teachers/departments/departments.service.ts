@@ -22,10 +22,12 @@ export const getDepartmentList = async (page?: number, limit?: number) => {
   return res.data.data
 }
 
-// export const deleteDepartment = async (departmentId: number) => {
-//   const res = await api<Api.Base<object>>('delete')(
-//     `schools/departments/${departmentId}`
-//   )
+export const updateDepartment = async (departmentId: number, name: string) => {
+  const res = await api<Api.Base<object>>('patch')(
+    `schools/departments/${departmentId}`,
+    undefined,
+    { name }
+  )
 
-//   return res.data.data
-// }
+  return res.data.data
+}
