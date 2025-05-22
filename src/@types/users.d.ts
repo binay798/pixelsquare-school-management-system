@@ -22,6 +22,7 @@ declare namespace User {
   }
 
   interface IUserRole extends BaseAttribute {
+    id: number
     user_id: number
     role: string
     is_active: boolean

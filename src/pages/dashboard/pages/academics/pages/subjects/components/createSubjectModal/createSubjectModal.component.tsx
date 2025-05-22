@@ -12,18 +12,28 @@ import {
 } from '@mui/material'
 import SpringModal from '@src/components/modal/modal.component'
 // import { useDispatch } from '@src/store/hooks.store'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { colors } from '@src/helpers/colors.helpers'
 import { getClassList } from '@src/store/redux/dashboard/academics/classes/classes.service'
 import {
   AsyncSelectField,
   customReactSelectStyles,
+  SelectField,
 } from '@src/components/select/select.component'
 import { StylesConfig } from 'react-select'
 import { useFormik } from 'formik'
 import { createSubjectSchema } from './createSubjectModal.schema'
 import { ButtonComp } from '@src/components/button/button.component'
 import { InputField } from '@src/components/input/input.component'
+import { useDispatch, useSelector } from '@src/store/hooks.store'
+import {
+  createSubjectAction,
+  getSubjectListAction,
+  getTeacherList,
+  updateSubjectAction,
+} from '@src/store/redux/dashboard/academics/subjects/subjects.slice'
+import { isEmpty } from 'lodash'
+import { IndivSubject } from '../../subjects.page'
 
 const classReactSelectStyles: StylesConfig = {
   ...customReactSelectStyles,
@@ -35,11 +45,24 @@ const classReactSelectStyles: StylesConfig = {
 interface Props {
   open: boolean
   onClose: () => void
-  details: object | null
+  details: IndivSubject | null
 }
 export function CreateSubjectModal(props: Props) {
   const [editMode, setEditMode] = useState(false)
-  // const dispatch = useDispatch()
+  const dispatch = useDispatch()
+  const { data: teacherList } = useSelector(
+    (store) => store.subjects.createSubject.teachers
+  )
+  const { loading: createSubjectLoading } = useSelector(
+    (store) => store.subjects.createSubject
+  )
+  const selectedClass = useSelector(
+    (store) => store.subjects.subjectList.selectedClass
+  )
+
+  const { loading: updateSubjectLoading } = useSelector(
+    (store) => store.subjects.updateSubject
+  )
 
   useEffect(() => {
     if (props?.details) {
@@ -49,25 +72,91 @@ export function CreateSubjectModal(props: Props) {
     }
   }, [props.details])
 
+  useEffect(() => {
+    dispatch(getTeacherList({}))
+  }, [])
+  const remapTeacherList = useCallback(() => {
+    const res = teacherList?.rows?.map((el) => ({
+      label: `T${el.teacher_details.id} ${el.user_profile_details?.firstname} ${el.user_profile_details?.lastname}`,
+      value: el.teacher_details.id,
+    }))
+
+    return res
+  }, [teacherList])
+
   const remappedClassList = async () => {
     const data = await getClassList()
 
-    return data.data.rows?.map((el) => ({
+    const classData = data.data.rows?.map((el) => ({
       label: el.class_details?.name,
       value: el.class_details?.id,
     }))
+
+    return classData
   }
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      class_id: 0,
-      type: '',
-      teacherIds: [],
+      name: props.details?.name ?? '',
+      class_id: props.details?.classDetails ?? { label: '', value: 0 },
+      type: props?.details?.type ?? '',
+      teacherIds: props?.details?.teachers ?? [],
+      author: props?.details?.author ?? '',
     },
     enableReinitialize: true,
 
-    onSubmit: () => {},
+    onSubmit: (values) => {
+      if (isEmpty(props.details)) {
+        dispatch(
+          createSubjectAction({
+            body: {
+              name: values.name,
+              teacherIds: values.teacherIds?.map((el) => el.value),
+              type: values.type,
+              author: values.author,
+            },
+            classId: values.class_id.value,
+            onSuccess: () => {
+              props.onClose()
+              if (selectedClass) {
+                dispatch(
+                  getSubjectListAction({
+                    body: {},
+                    classId: selectedClass?.value,
+                  })
+                )
+              }
+            },
+          })
+        )
+      } else {
+        const details = formik.values
+        dispatch(
+          updateSubjectAction({
+            subjectId: props.details.id,
+            classId: props.details.classDetails.value,
+            body: {
+              author: details.author ?? '',
+              name: details.name,
+              teacherIds: details.teacherIds?.map((el) => el.value),
+              type: details.type,
+            },
+            onSuccess: () => {
+              props.onClose()
+              if (selectedClass) {
+                dispatch(
+                  getSubjectListAction({
+                    body: {},
+                    classId: selectedClass?.value,
+                  })
+                )
+              }
+            },
+          })
+        )
+      }
+    },
+
     validationSchema: createSubjectSchema,
   })
 
@@ -111,11 +200,12 @@ export function CreateSubjectModal(props: Props) {
                 placeholder="Select class"
                 loadOptions={() => remappedClassList()}
                 defaultOptions
+                value={formik.values.class_id}
+                // isDisabled={isEmpty(remapTeacherList())}
+                isDisabled={!isEmpty(props.details)}
                 onChange={(e) => {
-                  formik.setFieldValue(
-                    'class_id',
-                    (e as { value: string }).value
-                  )
+                  // setClassDefaultValue(e)
+                  formik.setFieldValue('class_id', e)
                 }}
                 styles={{
                   ...classReactSelectStyles,
@@ -124,7 +214,55 @@ export function CreateSubjectModal(props: Props) {
             </FormControl>
           </Stack>
           <Stack direction={'row'} spacing={2} mt={2}>
-            <FormControl>
+            <FormControl fullWidth required>
+              <FormLabel
+                sx={{
+                  fontSize: 13,
+                  mb: 1,
+                  color: colors.grey[600],
+                }}
+              >
+                Assign Teacher
+              </FormLabel>
+              {!isEmpty(remapTeacherList()) ? (
+                <SelectField
+                  menuPlacement="top"
+                  isMulti
+                  placeholder="Select class"
+                  value={formik.values.teacherIds}
+                  onChange={(e) => {
+                    // if (isArray(e)) {
+                    //   const ids = e?.map((el) => el.value)
+                    //   formik.setFieldValue('teacherIds', ids)
+                    // }
+                    formik.setFieldValue('teacherIds', e)
+                  }}
+                  options={remapTeacherList() ?? []}
+                  styles={{
+                    ...classReactSelectStyles,
+                  }}
+                />
+              ) : null}
+            </FormControl>
+
+            <InputField
+              placeholder="Author name"
+              labelDetail={{ text: 'Author', required: false }}
+              value={formik.values.author}
+              onChange={formik.handleChange}
+              name="author"
+              onBlur={formik.handleBlur}
+              error={formik.touched.author && Boolean(formik.errors.author)}
+              helperText={
+                formik.touched.author ? formik.errors.author : undefined
+              }
+            />
+          </Stack>
+          <Stack>
+            <FormControl
+              fullWidth
+              error={formik.touched.type && Boolean(formik.errors.type)}
+            >
               <FormLabel
                 id="demo-row-radio-buttons-group-label"
                 sx={{
@@ -138,7 +276,9 @@ export function CreateSubjectModal(props: Props) {
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
+                name="type"
+                onChange={formik.handleChange}
+                value={formik.values.type}
               >
                 <FormControlLabel
                   value="mandatory"
@@ -159,7 +299,7 @@ export function CreateSubjectModal(props: Props) {
             </ButtonComp>
             {editMode ? (
               <ButtonComp
-                // loading={editClassLoading}
+                loading={updateSubjectLoading}
                 type="submit"
                 size="medium"
                 disabled={!formik.dirty}
@@ -168,7 +308,7 @@ export function CreateSubjectModal(props: Props) {
               </ButtonComp>
             ) : (
               <ButtonComp
-                // loading={createClassLoading}
+                loading={createSubjectLoading}
                 type="submit"
                 size="medium"
                 disabled={!formik.dirty}

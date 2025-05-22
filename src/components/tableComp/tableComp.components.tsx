@@ -73,6 +73,7 @@ interface Props<T, K extends Extract<keyof T, string>> {
   deleteCancelText?: string
   limits?: number[]
   search?: (val: string) => void
+  headerEl?: React.ReactNode
 }
 
 export function TableComp<T, K extends Extract<keyof T, string>>({
@@ -117,36 +118,39 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
           justifyContent={'space-between'}
           gap={3}
         >
-          <ButtonGroup
-            variant="outlined"
-            color="secondary"
-            aria-label="Basic button group"
-          >
-            <ButtonComp
-              tooltipTitle="Download PDF"
-              tooltipPlacement="top"
-              startIcon={<AiOutlineFilePdf />}
-              size="small"
+          <Stack direction="row" gap={2} alignItems={'center'}>
+            <ButtonGroup
+              variant="outlined"
+              color="secondary"
+              aria-label="Basic button group"
             >
-              Pdf
-            </ButtonComp>
-            <ButtonComp
-              tooltipTitle="Download Excel"
-              tooltipPlacement="top"
-              startIcon={<AiOutlineFileExcel />}
-              size="small"
-            >
-              Excel
-            </ButtonComp>
-            <ButtonComp
-              tooltipTitle="Download CSV"
-              tooltipPlacement="top"
-              startIcon={<PiFileCsvLight />}
-              size="small"
-            >
-              CSV
-            </ButtonComp>
-          </ButtonGroup>
+              <ButtonComp
+                tooltipTitle="Download PDF"
+                tooltipPlacement="top"
+                startIcon={<AiOutlineFilePdf />}
+                size="small"
+              >
+                Pdf
+              </ButtonComp>
+              <ButtonComp
+                tooltipTitle="Download Excel"
+                tooltipPlacement="top"
+                startIcon={<AiOutlineFileExcel />}
+                size="small"
+              >
+                Excel
+              </ButtonComp>
+              <ButtonComp
+                tooltipTitle="Download CSV"
+                tooltipPlacement="top"
+                startIcon={<PiFileCsvLight />}
+                size="small"
+              >
+                CSV
+              </ButtonComp>
+            </ButtonGroup>
+            <Box>{props?.headerEl}</Box>
+          </Stack>
           <InputField
             startAdornment={
               <MdOutlineSearch size={28} color={colors.grey[500]} />
