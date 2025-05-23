@@ -2,6 +2,7 @@ import { Box, Stack, Typography } from '@mui/material'
 import { ButtonComp } from '@src/components/button/button.component'
 import { GoPlus } from 'react-icons/go'
 import { useNavigate } from 'react-router-dom'
+import { TeacherList } from './components/teacherList/teacherList.component'
 
 export function TeacherPage() {
   const navigate = useNavigate()
@@ -39,6 +40,7 @@ export function TeacherPage() {
           </ButtonComp>
         </Stack>
       </Box>
+      <TeacherList />
     </Box>
   )
 }

@@ -11,45 +11,178 @@ import { InputField } from '@src/components/input/input.component'
 import { UploadAvatarComp } from '@src/pages/dashboard/components/uploadAvatarComp/uploadAvatar.component'
 import { useFormik } from 'formik'
 import { colors } from '@src/helpers/colors.helpers'
-import {
-  AsyncSelectField,
-  SelectField,
-} from '@src/components/select/select.component'
+import { SelectField } from '@src/components/select/select.component'
 import { capitalize, isEmpty } from 'lodash'
-import { EMPLOYEE_ROLE } from '@src/constants/users.constants'
 import { CustomDatePicker } from '@src/components/datePicker/datePicker.component'
 import moment from 'moment'
 import { ButtonComp } from '@src/components/button/button.component'
+import { createTeacherSchema } from './createTeacher.schema'
+import { useDispatch, useSelector } from '@src/store/hooks.store'
+import { useCallback, useEffect, useState } from 'react'
+import { getDepartmentListAction } from '@src/store/redux/dashboard/teachers/departments/departments.slice'
+import {
+  createTeacherAction,
+  editTeacherDetailAction,
+} from '@src/store/redux/dashboard/teachers/teachers.slice'
+import toast from 'react-hot-toast'
+import { useNavigate, useParams } from 'react-router-dom'
+import { TUpdateTeacherDetailDto } from '@src/store/redux/dashboard/teachers/teachers.service'
 
 export function CreateTeacherComp() {
+  const { teacherId } = useParams()
+  const dispatch = useDispatch()
+  const [editMode, setEditMode] = useState(false)
+  const [profilePic, setProfilePic] = useState<File | null>(null)
+  const { data: teacherDetail } = useSelector(
+    (store) => store.teachers.teacherDetail
+  )
+  const { data: departmentList, loading: departmentListLoading } = useSelector(
+    (store) => store.departments.departmentList
+  )
+  const { loading: createTeacherLoading } = useSelector(
+    (store) => store.teachers.createTeacher
+  )
+  const { loading: editTeacherLoading } = useSelector(
+    (store) => store.teachers.editTeacher
+  )
+
+  useEffect(() => {
+    if (!isEmpty(teacherDetail)) {
+      setEditMode(true)
+    } else {
+      setEditMode(false)
+    }
+  }, [teacherDetail])
+
+  useEffect(() => {
+    dispatch(getDepartmentListAction({ payload: { page: 1, limit: 1000 } }))
+  }, [])
+  const navigate = useNavigate()
   const formik = useFormik({
     initialValues: {
-      firstname: '',
-      middlename: '',
-      lastname: '',
-      mobile: '',
-      temporary_address: '',
-      permanent_address: '',
-      religion: '',
-      blood_group: '',
-      date_of_birth: '',
-      gender: '',
-      nationality: '',
-      email: '',
-      password: '',
-      employee_designation_id: { label: '', value: '' },
-      national_id: '',
-      joining_date: '',
-      role: '',
+      firstname: teacherDetail?.user_profile_details?.firstname ?? '',
+      middlename: teacherDetail?.user_profile_details?.middlename ?? '',
+      lastname: teacherDetail?.user_profile_details?.lastname ?? '',
+      mobile: teacherDetail?.user_profile_details?.mobile ?? '',
+      temporary_address:
+        teacherDetail?.user_profile_details?.temporary_address ?? '',
+      permanent_address:
+        teacherDetail?.user_profile_details?.permanent_address ?? '',
+      religion: teacherDetail?.user_profile_details?.religion ?? '',
+      blood_group: teacherDetail?.user_profile_details?.blood_group ?? '',
+      date_of_birth: teacherDetail?.user_profile_details?.date_of_birth ?? '',
+      gender: teacherDetail?.user_profile_details?.gender ?? '',
+      nationality: teacherDetail?.user_profile_details?.nationality ?? '',
+      email: teacherDetail?.user_details?.email ?? '',
+      password: editMode ? '***' : '',
+      department: {
+        label: teacherDetail?.teacher_details?.school_department_id ?? '',
+        value: teacherDetail?.teacher_details?.school_department_id ?? 0,
+      },
+      national_id: teacherDetail?.teacher_details?.national_id ?? '',
+      joining_date: teacherDetail?.teacher_details?.joining_date ?? '',
     },
-    onSubmit: () => {},
-    // validationSchema: createEmployeeSchema,
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      const {
+        blood_group,
+        date_of_birth,
+        department,
+        email,
+        firstname,
+        gender,
+        joining_date,
+        lastname,
+        middlename,
+        mobile,
+        national_id,
+        nationality,
+        password,
+        permanent_address,
+        religion,
+        temporary_address,
+      } = values
+      if (!editMode) {
+        if (profilePic) {
+          dispatch(
+            createTeacherAction({
+              body: {
+                profilePic: profilePic,
+                user_profile: {
+                  firstname,
+                  blood_group,
+                  date_of_birth,
+                  gender,
+                  lastname,
+                  mobile,
+                  nationality,
+                  permanent_address,
+                  religion,
+                  temporary_address,
+                  middlename,
+                },
+                teacher_profile: {
+                  joining_date,
+                  national_id,
+                  school_department_id: department.value,
+                },
+                user_credential: {
+                  email,
+                  password,
+                },
+              },
+              onSuccess: () => {
+                navigate('/dashboard/teachers')
+              },
+            })
+          )
+        } else {
+          toast.error('Provide valid profile picture.')
+        }
+      } else {
+        // EDIT TEACHER DETAILS
+        const data: TUpdateTeacherDetailDto = {
+          user_profile: {
+            firstname,
+            lastname,
+            middlename,
+            blood_group,
+            date_of_birth,
+            gender,
+            mobile: String(mobile),
+            nationality,
+            permanent_address,
+            religion,
+            temporary_address,
+          },
+          teacher_profile: {
+            joining_date,
+            national_id,
+            school_department_id: department.value,
+          },
+        }
+        if (teacherId) {
+          dispatch(
+            editTeacherDetailAction({
+              body: data,
+              teacherId: Number(teacherId),
+            })
+          )
+        }
+      }
+    },
+    validationSchema: createTeacherSchema,
   })
+
+  const remappedDepartmentList = useCallback(() => {
+    return departmentList?.rows?.map((el) => ({ label: el.name, value: el.id }))
+  }, [departmentList])
+
   return (
     <Box>
       <Box mb={3}>
         <Typography variant="h5" fontWeight={600}>
-          Create Teacher
+          {editMode ? 'Edit' : 'Create'} Teacher
         </Typography>
 
         <Typography variant="body2" mt={1}>
@@ -62,8 +195,8 @@ export function CreateTeacherComp() {
           <FormBlock title="Basic Information">
             <Box>
               <UploadAvatarComp
-                onImageSelect={() => {
-                  // setProfilePic(file)
+                onImageSelect={(file) => {
+                  setProfilePic(file)
                 }}
               />
               <Stack spacing={2}>
@@ -145,52 +278,20 @@ export function CreateTeacherComp() {
                         color: colors.grey[600],
                       }}
                     >
-                      Designation
+                      Department
                     </FormLabel>
-                    <AsyncSelectField
-                      placeholder="Select employee designation"
-                      // defaultOptions={[
-                      //   { label: 'Accountant', value: 'Accountant' },
-                      //   { label: 'Receptionist', value: 'Receptionist' },
-                      //   { label: 'Librarian', value: 'librarian' },
-                      // ]}
-                      defaultOptions
-                      // loadOptions={() =>
-                      //   new Promise((resolve) => {
-                      //     loadDesignations().then((res) => {
-                      //       resolve(res)
-                      //     })
-                      //   })
-                      // }
+                    <SelectField
+                      placeholder={
+                        departmentListLoading
+                          ? 'Please wait...'
+                          : 'Select department'
+                      }
+                      options={remappedDepartmentList() ?? []}
                       onChange={(e) => {
-                        formik.setFieldValue('employee_designation_id', e)
+                        formik.setFieldValue('department', e)
                       }}
-                      // defaultValue={formik.values.school_type}
-
-                      value={formik.values.employee_designation_id}
+                      value={formik.values.department}
                     />
-                    {/* <SelectField
-                      placeholder="Select employee designation"
-                      options={[
-                        { label: 'Accountant', value: 'Accountant' },
-                        { label: 'Receptionist', value: 'Receptionist' },
-                        { label: 'Librarian', value: 'librarian' },
-                      ]}
-                      onChange={(e) => {
-                        formik.setFieldValue(
-                          'employee_designation_id',
-                          (e as { value: string }).value
-                        )
-                      }}
-                      // defaultValue={formik.values.school_type}
-
-                      value={{
-                        label: capitalize(
-                          formik.values.employee_designation_id
-                        ),
-                        value: formik.values.employee_designation_id,
-                      }}
-                    /> */}
                   </FormControl>
                   <InputField
                     placeholder="Phone no."
@@ -231,8 +332,6 @@ export function CreateTeacherComp() {
                           (e as { value: string }).value
                         )
                       }}
-                      // defaultValue={formik.values.school_type}
-
                       value={{
                         label: capitalize(formik.values.gender),
                         value: formik.values.gender,
@@ -336,6 +435,7 @@ export function CreateTeacherComp() {
                   placeholder="Email Address"
                   labelDetail={{ text: 'Email Address', required: true }}
                   type="email"
+                  disabled={editMode}
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   name="email"
@@ -349,6 +449,7 @@ export function CreateTeacherComp() {
                   placeholder="Password"
                   labelDetail={{ text: 'Password', required: true }}
                   type="password"
+                  disabled={editMode}
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   name="password"
@@ -360,40 +461,9 @@ export function CreateTeacherComp() {
                     formik.touched.password ? formik.errors.password : undefined
                   }
                 />
-                <FormControl fullWidth required>
-                  <FormLabel
-                    sx={{
-                      fontSize: 13,
-                      mb: 1,
-                      color: colors.grey[600],
-                    }}
-                  >
-                    Role
-                  </FormLabel>
-                  <SelectField
-                    placeholder="Select role"
-                    options={EMPLOYEE_ROLE.map((el) => ({
-                      label: capitalize(el),
-                      value: el,
-                    }))}
-                    onChange={(e) => {
-                      formik.setFieldValue(
-                        'role',
-                        (e as { value: string }).value
-                      )
-                    }}
-                    // defaultValue={formik.values.school_type}
-
-                    value={{
-                      label: capitalize(formik.values.role),
-                      value: formik.values.role,
-                    }}
-                  />
-                </FormControl>
               </Stack>
               <Stack spacing={2} direction="row">
                 <CustomDatePicker
-                  // label={'"month" and "year"'}
                   views={['day', 'month', 'year']}
                   labelDetail={{ text: 'Joining Date', required: true }}
                   name="joining_date"
@@ -446,13 +516,24 @@ export function CreateTeacherComp() {
             <ButtonComp size="medium" variant="text">
               Cancel
             </ButtonComp>
-            <ButtonComp
-              // loading={createEmployeeLoading}
-              type="submit"
-              size="medium"
-            >
-              Create
-            </ButtonComp>
+            {editMode ? (
+              <ButtonComp
+                loading={editTeacherLoading}
+                type="submit"
+                size="medium"
+                disabled={!formik.dirty}
+              >
+                Edit
+              </ButtonComp>
+            ) : (
+              <ButtonComp
+                loading={createTeacherLoading}
+                type="submit"
+                size="medium"
+              >
+                Create
+              </ButtonComp>
+            )}
           </Stack>
         </form>
       </Card>

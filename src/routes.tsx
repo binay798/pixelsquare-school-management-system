@@ -26,6 +26,7 @@ import { ClassesPage } from './pages/dashboard/pages/academics/pages/classes/cla
 import { ClassSectionsPage } from './pages/dashboard/pages/academics/pages/sections/sections.page'
 import { ClassRoutinesPage } from './pages/dashboard/pages/academics/pages/classRoutines/classRoutines.page'
 import { ClassSubjectsPage } from './pages/dashboard/pages/academics/pages/subjects/subjects.page'
+import { EditTeacherPage } from './pages/dashboard/pages/teachers/pages/teachers/pages/edit/edit.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -107,6 +108,7 @@ export const privateRoutes: RouteObject[] = [
                 element: <TeacherPage />,
               },
               { path: 'create', element: <CreateTeacherPage /> },
+              { path: 'edit/:teacherId', element: <EditTeacherPage /> },
               { path: 'departments', element: <DepartmentPage /> },
             ],
           },

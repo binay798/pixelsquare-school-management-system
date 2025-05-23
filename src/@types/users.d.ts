@@ -1,6 +1,7 @@
 declare namespace User {
   import { BaseAttribute } from './base'
   interface IUser extends BaseAttribute {
+    id: number
     email: string
     password: string
     is_active: boolean
