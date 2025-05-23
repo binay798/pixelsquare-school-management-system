@@ -10,9 +10,15 @@ interface InitialState {
     data: Academics.IClassSectionList[] | null
     loading: boolean
   }
+  updateSection: {
+    loading: boolean
+  }
 }
 const initialState: InitialState = {
   createSection: {
+    loading: false,
+  },
+  updateSection: {
     loading: false,
   },
   sectionList: {
@@ -34,6 +40,27 @@ export const createClassSectionAction = createAsyncThunk(
       )
 
       data.onSuccess()
+
+      return res
+    }
+  )
+)
+
+export const updateSectionAction = createAsyncThunk(
+  'classSection/update',
+  catchAsync(
+    async (data: {
+      classId: number
+      sectionId: number
+      name: string
+      onSuccess?: () => void
+    }) => {
+      const res = await services.updateSectionService(
+        data.classId,
+        data.sectionId,
+        data.name
+      )
+      data.onSuccess?.()
 
       return res
     }
@@ -77,6 +104,16 @@ const classSectionSlice = createSlice({
     })
     builders.addCase(getClassSectionListAction.rejected, (state) => {
       state.sectionList.loading = false
+    })
+    // UPDATE SECTION ACTION
+    builders.addCase(updateSectionAction.pending, (state) => {
+      state.updateSection.loading = true
+    })
+    builders.addCase(updateSectionAction.fulfilled, (state) => {
+      state.updateSection.loading = false
+    })
+    builders.addCase(updateSectionAction.rejected, (state) => {
+      state.updateSection.loading = false
     })
   },
 })

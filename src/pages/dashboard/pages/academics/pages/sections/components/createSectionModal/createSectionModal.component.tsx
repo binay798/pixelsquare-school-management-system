@@ -18,15 +18,25 @@ import {
   customReactSelectStyles,
 } from '@src/components/select/select.component'
 import { colors } from '@src/helpers/colors.helpers'
-import { useDispatch } from '@src/store/hooks.store'
+import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { getClassList } from '@src/store/redux/dashboard/academics/classes/classes.service'
 import { StylesConfig } from 'react-select'
-import { createClassSectionAction } from '@src/store/redux/dashboard/academics/classSections/sections.slice'
+import {
+  createClassSectionAction,
+  getClassSectionListAction,
+  updateSectionAction,
+} from '@src/store/redux/dashboard/academics/classSections/sections.slice'
+import { isEmpty } from 'lodash'
 
 interface Props {
   open: boolean
   onClose: () => void
-  details: { id: number; name: string } | null
+  details: {
+    className: string
+    classId: number
+    sectionName: string
+    sectionId: number
+  } | null
 }
 
 const classReactSelectStyles: StylesConfig = {
@@ -40,6 +50,9 @@ const classReactSelectStyles: StylesConfig = {
 export function CreateClassSectionModal(props: Props) {
   const [editMode, setEditMode] = useState(false)
   const dispatch = useDispatch()
+  const { loading: updateSectionLoading } = useSelector(
+    (store) => store.classSections.updateSection
+  )
 
   useEffect(() => {
     if (props?.details) {
@@ -52,23 +65,51 @@ export function CreateClassSectionModal(props: Props) {
   // useEffect(() => {
   //   dispatch(getClassListAction({}))
   // }, [])
+  const selectedClass = useSelector(
+    (store) => store.subjects.subjectList.selectedClass
+  )
 
   const formik = useFormik({
     initialValues: {
-      name: props?.details?.name ?? '',
-      class_id: 0,
+      name: props?.details?.sectionName ?? '',
+      class_id: {
+        label: props.details?.className ?? '',
+        value: props.details?.classId ?? 0,
+      },
     },
     enableReinitialize: true,
 
     onSubmit: (values) => {
-      dispatch(
-        createClassSectionAction({
-          payload: { classId: values.class_id, name: values.name },
-          onSuccess: () => {
-            props.onClose()
-          },
-        })
-      )
+      if (isEmpty(props.details)) {
+        dispatch(
+          createClassSectionAction({
+            payload: { classId: values.class_id.value, name: values.name },
+            onSuccess: () => {
+              props.onClose()
+            },
+          })
+        )
+      } else {
+        // EDIT
+        dispatch(
+          updateSectionAction({
+            classId: props.details.classId,
+            sectionId: props.details.sectionId,
+            name: values.name,
+            onSuccess: () => {
+              props.onClose()
+              if (selectedClass) {
+                dispatch(
+                  getClassSectionListAction({
+                    payload: { classId: selectedClass.value },
+                    onSuccess: () => {},
+                  })
+                )
+              }
+            },
+          })
+        )
+      }
     },
     validationSchema: createClassSectionSchema,
   })
@@ -112,6 +153,8 @@ export function CreateClassSectionModal(props: Props) {
                 placeholder="Select class"
                 loadOptions={() => remappedClassList()}
                 defaultOptions
+                isDisabled={!isEmpty(props.details)}
+                value={formik.values.class_id}
                 onChange={(e) => {
                   formik.setFieldValue(
                     'class_id',
@@ -140,7 +183,7 @@ export function CreateClassSectionModal(props: Props) {
             </ButtonComp>
             {editMode ? (
               <ButtonComp
-                // loading={editClassLoading}
+                loading={updateSectionLoading}
                 type="submit"
                 size="medium"
                 disabled={!formik.dirty}

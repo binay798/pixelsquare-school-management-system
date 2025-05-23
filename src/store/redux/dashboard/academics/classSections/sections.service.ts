@@ -12,7 +12,19 @@ export const createClassSectionService = async (
 
   return res.data.data
 }
+export const updateSectionService = async (
+  classId: number,
+  sectionId: number,
+  name: string
+) => {
+  const res = await api<Api.Base<object>>('patch')(
+    `academics/classes/${classId}/sections/${sectionId}`,
+    undefined,
+    { name }
+  )
 
+  return res.data.data
+}
 export const getClassSectionList = async (classId: number) => {
   const res = await api<Api.Base<Academics.IClassSectionList[]>>('get')(
     `academics/classes/${classId}/sections`
