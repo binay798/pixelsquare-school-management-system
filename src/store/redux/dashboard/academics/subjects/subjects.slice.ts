@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { catchAsync } from '@src/helpers/catchAsync.helpers'
-import * as teacherServices from '@src/store/redux/dashboard/teachers/teachers.service'
+import { teacherServices } from '@src/store/redux/dashboard/teachers/teachers.service'
 import {
   subjectServices,
   TCreateSubject,
