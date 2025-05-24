@@ -29,6 +29,9 @@ import { ClassSubjectsPage } from './pages/dashboard/pages/academics/pages/subje
 import { EditTeacherPage } from './pages/dashboard/pages/teachers/pages/teachers/pages/edit/edit.page'
 import { ManageStudent } from './pages/dashboard/pages/manageStudent/manageStudent.page'
 import { StudentTypePage } from './pages/dashboard/pages/manageStudent/pages/studentType/studentType.page'
+import { AdmitStudentPage } from './pages/dashboard/pages/manageStudent/pages/admitStudent/admitStudent.page'
+import { StudentListPage } from './pages/dashboard/pages/manageStudent/pages/studentList/studentList.page'
+import { EditStudentPage } from './pages/dashboard/pages/manageStudent/pages/studentList/pages/editStudent/editStudent.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -117,7 +120,15 @@ export const privateRoutes: RouteObject[] = [
           {
             path: 'manage-students',
             element: <ManageStudent />,
-            children: [{ path: 'student-type', element: <StudentTypePage /> }],
+            children: [
+              { path: 'student-type', element: <StudentTypePage /> },
+              { path: 'admit-students', element: <AdmitStudentPage /> },
+              { path: 'students-list', element: <StudentListPage /> },
+              {
+                path: 'students-list/edit/:studentId',
+                element: <EditStudentPage />,
+              },
+            ],
           },
 
           {

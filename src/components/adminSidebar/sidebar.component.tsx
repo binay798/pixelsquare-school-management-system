@@ -151,12 +151,12 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
       {
         title: 'Student List',
         icon: <IoSchool />,
-        to: '/dashboard/students/academic-year',
+        to: '/dashboard/manage-students/students-list',
       },
       {
         title: 'Admit Student',
         icon: <FaSchool />,
-        to: '/dashboard/students/manage-school',
+        to: '/dashboard/manage-students/admit-students',
       },
       {
         title: 'Bulk Admission',
