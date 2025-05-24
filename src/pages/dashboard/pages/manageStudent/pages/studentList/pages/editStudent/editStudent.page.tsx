@@ -39,7 +39,7 @@ export function EditStudentPage() {
           </Box>
         </Stack>
       </Box>
-      <CreateStudentComp details={null} />
+      <CreateStudentComp />
     </Box>
   )
 }
