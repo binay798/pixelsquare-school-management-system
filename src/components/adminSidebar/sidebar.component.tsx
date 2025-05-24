@@ -141,12 +141,12 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
   {
     title: 'Manage Student',
     icon: <PiStudentFill />,
-    to: '/dashboard/students',
+    to: '/dashboard/manage-students',
     subItems: [
       {
         title: 'Student Type',
         icon: <FaSchool />,
-        to: '/dashboard/students/manage-school',
+        to: '/dashboard/manage-students/student-type',
       },
       {
         title: 'Student List',

@@ -9,6 +9,7 @@ import departmentReducer from './redux/dashboard/teachers/departments/department
 import classReducer from './redux/dashboard/academics/classes/classes.slice'
 import subjectReducer from './redux/dashboard/academics/subjects/subjects.slice'
 import teacherReduder from './redux/dashboard/teachers/teachers.slice'
+import manageStudentReducer from './redux/dashboard/manageStudents/manageStudents.slice'
 
 export const store = configureStore({
   reducer: {
@@ -22,5 +23,6 @@ export const store = configureStore({
     classSections: classSectionReducer,
     subjects: subjectReducer,
     teachers: teacherReduder,
+    manageStudents: manageStudentReducer,
   },
 })

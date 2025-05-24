@@ -53,6 +53,9 @@ export function CreateClassSectionModal(props: Props) {
   const { loading: updateSectionLoading } = useSelector(
     (store) => store.classSections.updateSection
   )
+  const { loading: createSectionLoading } = useSelector(
+    (store) => store.classSections.createSection
+  )
 
   useEffect(() => {
     if (props?.details) {
@@ -86,6 +89,14 @@ export function CreateClassSectionModal(props: Props) {
             payload: { classId: values.class_id.value, name: values.name },
             onSuccess: () => {
               props.onClose()
+              if (selectedClass) {
+                dispatch(
+                  getClassSectionListAction({
+                    payload: { classId: selectedClass.value },
+                    onSuccess: () => {},
+                  })
+                )
+              }
             },
           })
         )
@@ -156,10 +167,7 @@ export function CreateClassSectionModal(props: Props) {
                 isDisabled={!isEmpty(props.details)}
                 value={formik.values.class_id}
                 onChange={(e) => {
-                  formik.setFieldValue(
-                    'class_id',
-                    (e as { value: string }).value
-                  )
+                  formik.setFieldValue('class_id', e)
                 }}
                 styles={{
                   ...classReactSelectStyles,
@@ -192,7 +200,7 @@ export function CreateClassSectionModal(props: Props) {
               </ButtonComp>
             ) : (
               <ButtonComp
-                // loading={createClassLoading}
+                loading={createSectionLoading}
                 type="submit"
                 size="medium"
                 disabled={!formik.dirty}
