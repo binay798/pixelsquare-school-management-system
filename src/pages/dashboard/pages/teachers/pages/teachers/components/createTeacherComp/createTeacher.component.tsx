@@ -21,12 +21,14 @@ import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { useCallback, useEffect, useState } from 'react'
 import { getDepartmentListAction } from '@src/store/redux/dashboard/teachers/departments/departments.slice'
 import {
+  changeTeacherProfilePicAction,
   createTeacherAction,
   editTeacherDetailAction,
 } from '@src/store/redux/dashboard/teachers/teachers.slice'
 import toast from 'react-hot-toast'
 import { useNavigate, useParams } from 'react-router-dom'
 import { TUpdateTeacherDetailDto } from '@src/store/redux/dashboard/teachers/teachers.service'
+import { getImageUrl } from '@src/helpers/getImageUrl.helpers'
 
 export function CreateTeacherComp() {
   const { teacherId } = useParams()
@@ -44,6 +46,9 @@ export function CreateTeacherComp() {
   )
   const { loading: editTeacherLoading } = useSelector(
     (store) => store.teachers.editTeacher
+  )
+  const { loading: changeProfilePicLoading } = useSelector(
+    (store) => store.teachers.changeProfilePic
   )
 
   useEffect(() => {
@@ -178,6 +183,20 @@ export function CreateTeacherComp() {
     return departmentList?.rows?.map((el) => ({ label: el.name, value: el.id }))
   }, [departmentList])
 
+  const changeProfilePicHandler = (onClose?: () => void) => {
+    if (profilePic && teacherDetail?.teacher_details?.id) {
+      dispatch(
+        changeTeacherProfilePicAction({
+          image: profilePic,
+          teacherId: teacherDetail?.teacher_details.id,
+          onSuccess: () => {
+            onClose?.()
+          },
+        })
+      )
+    }
+  }
+
   return (
     <Box>
       <Box mb={3}>
@@ -197,6 +216,15 @@ export function CreateTeacherComp() {
               <UploadAvatarComp
                 onImageSelect={(file) => {
                   setProfilePic(file)
+                }}
+                editMode={{
+                  imgUrl: getImageUrl(
+                    teacherDetail?.profile_photo_details?.path ?? ''
+                  ),
+                  onSave: (onClose) => {
+                    changeProfilePicHandler(onClose)
+                  },
+                  saveBtnLoading: changeProfilePicLoading,
                 }}
               />
               <Stack spacing={2}>

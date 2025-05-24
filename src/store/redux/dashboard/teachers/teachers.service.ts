@@ -72,10 +72,26 @@ const editTeacherDetails = async (
 
   return res.data.data
 }
+const changeTeacherProfilePicService = async (
+  teacherId: number,
+  image: File
+) => {
+  const fd = new FormData()
+  fd.append('image', image)
+  const res = await api<Api.Base<object>>('patch')(
+    `teachers/${teacherId}/change-profile-pic`,
+    undefined,
+    fd,
+    { headers: { 'Content-Type': 'multipart/form-data' } }
+  )
+
+  return res.data.data
+}
 
 export const teacherServices = {
   getTeacherList,
   createTeacherService,
   getTeacherDetails,
   editTeacherDetails,
+  changeTeacherProfilePicService,
 }

@@ -14,6 +14,9 @@ interface InitialState {
   createTeacher: {
     loading: boolean
   }
+  changeProfilePic: {
+    loading: boolean
+  }
   teacherDetail: {
     data: Teachers.ITeacherDetail | null
     loading: boolean
@@ -35,6 +38,9 @@ const initialState: InitialState = {
     loading: false,
   },
   createTeacher: {
+    loading: false,
+  },
+  changeProfilePic: {
     loading: false,
   },
 }
@@ -94,6 +100,24 @@ export const editTeacherDetailAction = createAsyncThunk(
   )
 )
 
+export const changeTeacherProfilePicAction = createAsyncThunk(
+  'teacherSlice/changeProfilePic',
+  catchAsync(
+    async (data: {
+      image: File
+      teacherId: number
+      onSuccess?: () => void
+    }) => {
+      const res = await teacherServices.changeTeacherProfilePicService(
+        data.teacherId,
+        data.image
+      )
+
+      return res
+    }
+  )
+)
+
 export const teacherSlice = createSlice({
   name: 'teacherSlice',
   initialState,
@@ -140,6 +164,16 @@ export const teacherSlice = createSlice({
     })
     builder.addCase(editTeacherDetailAction.rejected, (state) => {
       state.editTeacher.loading = false
+    })
+    // CHANGE TEACHER PROFILE PICTURE ACTION
+    builder.addCase(changeTeacherProfilePicAction.pending, (state) => {
+      state.changeProfilePic.loading = true
+    })
+    builder.addCase(changeTeacherProfilePicAction.fulfilled, (state) => {
+      state.changeProfilePic.loading = false
+    })
+    builder.addCase(changeTeacherProfilePicAction.rejected, (state) => {
+      state.changeProfilePic.loading = false
     })
   },
 })
