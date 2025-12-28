@@ -98,6 +98,19 @@ const getStudentDetail = async (studentId: number) => {
   return res.data.data
 }
 
+const changeProfilePictureService = async (studentId: number, image: File) => {
+  const fd = new FormData()
+  fd.append('image', image)
+  const res = await api<Api.Base<object>>('patch')(
+    `students/${studentId}/change-profile-pic`,
+    undefined,
+    fd,
+    { headers: { 'Content-Type': 'multipart/form-data' } }
+  )
+
+  return res.data.data
+}
+
 export const manageStudentServices = {
   createStudentTypeService,
   getStudentTypeList,
@@ -106,4 +119,5 @@ export const manageStudentServices = {
   updateStudent,
   getStudentList,
   getStudentDetail,
+  changeProfilePictureService,
 }

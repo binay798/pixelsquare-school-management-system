@@ -10,10 +10,12 @@ import classReducer from './redux/dashboard/academics/classes/classes.slice'
 import subjectReducer from './redux/dashboard/academics/subjects/subjects.slice'
 import teacherReduder from './redux/dashboard/teachers/teachers.slice'
 import manageStudentReducer from './redux/dashboard/manageStudents/manageStudents.slice'
+import attendanceReducer from './redux/dashboard/attendance/attendance.slice'
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    attendance: attendanceReducer,
     manageSchool: manageSchoolReducer,
     academicYear: academicYearReducer,
     designations: designationReducer,

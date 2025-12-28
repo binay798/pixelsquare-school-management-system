@@ -13,6 +13,8 @@ import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { useCallback, useEffect, useState } from 'react'
 import { getClassListAction } from '@src/store/redux/dashboard/academics/classes/classes.slice'
 import {
+  changeClassDetails,
+  changeProfilePictureAction,
   createStudentAction,
   getStudentListAction,
   resetSelectedStudent,
@@ -29,6 +31,7 @@ export function CreateStudentComp() {
   const dispatch = useDispatch()
   const [editMode, setEditMode] = useState(false)
   const [profilePic, setProfilePic] = useState<File | null>(null)
+
   const navigate = useNavigate()
   const { data: classList, loading: classListLoading } = useSelector(
     (store) => store.classes.getClassList
@@ -44,6 +47,9 @@ export function CreateStudentComp() {
   )
   const { loading: updateStudentLoading } = useSelector(
     (store) => store.manageStudents.students.update
+  )
+  const { loading: changeProfilePicLoading } = useSelector(
+    (store) => store.manageStudents.students.changeProfilePicture
   )
   useEffect(() => {
     if (!isEmpty(selectedStudent)) {
@@ -192,6 +198,22 @@ export function CreateStudentComp() {
     }
   }, [formik.values.class.value])
 
+  const changeProfilePicHandler = (onClose?: () => void) => {
+    if (profilePic && selectedStudent?.student_details?.id) {
+      dispatch(
+        changeProfilePictureAction({
+          payload: {
+            image: profilePic,
+            studentId: selectedStudent.student_details.id,
+          },
+          onSuccess: () => {
+            onClose?.()
+          },
+        })
+      )
+    }
+  }
+
   return (
     <Box>
       <Card sx={{ p: 2 }}>
@@ -206,10 +228,10 @@ export function CreateStudentComp() {
                   imgUrl: getImageUrl(
                     selectedStudent?.asset_details?.path ?? ''
                   ),
-                  onSave: () => {
-                    // changeProfilePicHandler(onClose)
+                  onSave: (onClose) => {
+                    changeProfilePicHandler(onClose)
                   },
-                  // saveBtnLoading: changeProfilePicLoading,
+                  saveBtnLoading: changeProfilePicLoading,
                 }}
               />
               <Stack spacing={2}>
@@ -529,6 +551,11 @@ export function CreateStudentComp() {
                     options={remappedClassList() ?? []}
                     onChange={(e) => {
                       formik.setFieldValue('class', e)
+                      dispatch(
+                        changeClassDetails(
+                          e as { label: string; value: number }
+                        )
+                      )
                     }}
                     value={formik.values.class}
                   />

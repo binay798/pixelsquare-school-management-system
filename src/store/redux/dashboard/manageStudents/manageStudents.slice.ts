@@ -30,6 +30,9 @@ interface InitialState {
       data: Students.IStudentDetail | null
       loading: boolean
     }
+    changeProfilePicture: {
+      loading: boolean
+    }
   }
 }
 
@@ -59,6 +62,9 @@ const initialState: InitialState = {
     },
     selectedStudent: {
       data: null,
+      loading: false,
+    },
+    changeProfilePicture: {
       loading: false,
     },
   },
@@ -170,12 +176,41 @@ export const getStudentDetailAction = createAsyncThunk(
   })
 )
 
+export const changeProfilePictureAction = createAsyncThunk(
+  'manageStudent/changeProfilePicture',
+  catchAsync(
+    async (data: {
+      payload: { image: File; studentId: number }
+      onSuccess?: () => void
+    }) => {
+      const res = await manageStudentServices.changeProfilePictureService(
+        data.payload.studentId,
+        data.payload.image
+      )
+      data.onSuccess?.()
+
+      return res
+    }
+  )
+)
+
 const manageStudentSlice = createSlice({
   name: 'manageStudents',
   initialState,
   reducers: {
     resetSelectedStudent: (state) => {
       state.students.selectedStudent.data = null
+    },
+    changeClassDetails: (
+      state,
+      action: { payload: { label: string; value: number } }
+    ) => {
+      if (state.students.selectedStudent.data) {
+        state.students.selectedStudent.data.class_details.id =
+          action.payload.value
+        state.students.selectedStudent.data.class_details.name =
+          action.payload.label
+      }
     },
   },
   extraReducers: (builder) => {
@@ -252,8 +287,19 @@ const manageStudentSlice = createSlice({
     builder.addCase(getStudentDetailAction.rejected, (state) => {
       state.students.selectedStudent.loading = false
     })
+    // CHANGE PROFILE PICTURE ACTION
+    builder.addCase(changeProfilePictureAction.pending, (state) => {
+      state.students.changeProfilePicture.loading = true
+    })
+    builder.addCase(changeProfilePictureAction.fulfilled, (state) => {
+      state.students.changeProfilePicture.loading = false
+    })
+    builder.addCase(changeProfilePictureAction.rejected, (state) => {
+      state.students.changeProfilePicture.loading = false
+    })
   },
 })
 
 export default manageStudentSlice.reducer
-export const { resetSelectedStudent } = manageStudentSlice.actions
+export const { resetSelectedStudent, changeClassDetails } =
+  manageStudentSlice.actions
