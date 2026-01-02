@@ -270,9 +270,11 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
                     <Skeleton variant="rounded" height={25} />
                   </TableCell>
                 ))}
-              <TableCell align="right">
-                <Skeleton variant="rounded" height={25} />
-              </TableCell>
+              {props.actions ? (
+                <TableCell align="right">
+                  <Skeleton variant="rounded" height={25} />
+                </TableCell>
+              ) : null}
             </StyledTableRow>
           ) : null}
         </TableBody>

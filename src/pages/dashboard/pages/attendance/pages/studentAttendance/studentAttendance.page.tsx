@@ -19,8 +19,14 @@ import { getImageUrl } from '@src/helpers/getImageUrl.helpers'
 import { ButtonComp } from '@src/components/button/button.component'
 import { FaPlus, FaRegSave } from 'react-icons/fa'
 import { isEmpty } from 'lodash'
-import { CreateStudentAttendanceDto } from '@src/store/redux/dashboard/attendance/attendance.service'
-import { createStudentAttendanceSlice } from '@src/store/redux/dashboard/attendance/attendance.slice'
+import {
+  CreateStudentAttendanceDto,
+  UpdateStudentAttendanceDto,
+} from '@src/store/redux/dashboard/attendance/attendance.service'
+import {
+  createStudentAttendanceSlice,
+  updateStudentAttendanceSlice,
+} from '@src/store/redux/dashboard/attendance/attendance.slice'
 
 const Radio = styled(CRadio)(() => ({
   padding: 2,
@@ -39,9 +45,11 @@ interface TableStudentRow {
   photo?: string
   userId: number
   studentAcademicYearId: number
+  attendanceId: number
 }
 
 export function StudentAttendancePage() {
+  const [createAttendanceButton, setCreateAttendanceButton] = useState(true)
   const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'))
   const [remappedStudentList, setRemappedStudentList] = useState<
     TableStudentRow[]
@@ -56,23 +64,39 @@ export function StudentAttendancePage() {
   const { loading: createStudentAttendanceLoading } = useSelector(
     (store) => store.attendance.studentAttendance.create
   )
+  const { loading: updateStudentAttendanceLoading } = useSelector(
+    (store) => store.attendance.studentAttendance.update
+  )
 
   useEffect(() => {
     if (!isEmpty(studentList.data)) {
       const data = studentList?.data?.map((el) => ({
         studentId: el.student_details.id,
-        name: `${el.user_profile_details.firstname} ${el.user_profile_details.middlename} ${el.user_profile_details.lastname}`,
+        name: `${el.user_profile_details.firstname} ${
+          el.user_profile_details.middlename ?? ''
+        } ${el.user_profile_details.lastname}`,
         present: el?.attendance_details?.type ?? '',
         absent: el?.attendance_details?.type ?? '',
         leave: el?.attendance_details?.type ?? '',
         note: '',
-        photo: getImageUrl(`${el.profile_photo_details.path}`),
+        photo: getImageUrl(`${el.profile_photo_details?.path}`),
         userId: el.user_profile_details.user_id,
         studentAcademicYearId: el.student_academic_year_details.id,
+        attendanceId: el.attendance_details?.id,
       }))
       if (data) {
         setRemappedStudentList(data)
       }
+      const hasAttendanceDetails = !isEmpty(
+        studentList?.data?.filter((el) => el.attendance_details)
+      )
+      if (hasAttendanceDetails) {
+        setCreateAttendanceButton(false)
+      } else {
+        setCreateAttendanceButton(true)
+      }
+    } else {
+      setRemappedStudentList([])
     }
   }, [studentList.data])
 
@@ -96,6 +120,24 @@ export function StudentAttendancePage() {
         }
       })
     dispatch(createStudentAttendanceSlice({ payload: data }))
+  }
+  const updateAttendance = () => {
+    const data: UpdateStudentAttendanceDto[] = remappedStudentList?.map(
+      (el) => ({
+        attendanceId: el.attendanceId,
+        type: el.present
+          ? el.present
+          : el.absent
+          ? el.absent
+          : el.leave
+          ? el.leave
+          : el.present,
+        note: el.note,
+      })
+    )
+    dispatch(
+      updateStudentAttendanceSlice({ payload: data, onSuccess: () => {} })
+    )
   }
 
   return (
@@ -229,20 +271,33 @@ export function StudentAttendancePage() {
               // rowsPerPage={limit}
               showPagination={false}
             ></TableComp>
-            <ButtonComp
-              startIcon={<FaRegSave />}
-              size="medium"
-              color="warning"
-              style={{ alignSelf: 'flex-end' }}
-              onClick={createAttendance}
-              loading={createStudentAttendanceLoading}
-            >
-              Update Attendance
-            </ButtonComp>
+            {createAttendanceButton ? (
+              <ButtonComp
+                startIcon={<FaRegSave />}
+                size="medium"
+                color="warning"
+                style={{ alignSelf: 'flex-end' }}
+                onClick={createAttendance}
+                loading={createStudentAttendanceLoading}
+              >
+                Create Attendance
+              </ButtonComp>
+            ) : (
+              <ButtonComp
+                startIcon={<FaRegSave />}
+                size="medium"
+                color="warning"
+                style={{ alignSelf: 'flex-end' }}
+                onClick={updateAttendance}
+                loading={updateStudentAttendanceLoading}
+              >
+                Update Attendance
+              </ButtonComp>
+            )}
           </Stack>
         </Box>
         <Box flex={1.3}>
-          <Card>
+          <Card style={{ position: 'sticky', top: 100 }}>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DateCalendar
                 defaultValue={moment()}

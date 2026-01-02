@@ -10,7 +10,7 @@ import { StylesConfig } from 'react-select'
 import { colors } from '@src/helpers/colors.helpers'
 import { ButtonComp } from '@src/components/button/button.component'
 import { IoSearch } from 'react-icons/io5'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { isEmpty } from 'lodash'
 import { useFormik } from 'formik'
 import { getClassSectionListAction } from '@src/store/redux/dashboard/academics/classSections/sections.slice'
@@ -20,6 +20,7 @@ interface Props {
   date: string
 }
 export function StudentFilter({ date }: Props) {
+  const [firstLoad, setFirstLoad] = useState(true)
   const formik = useFormik<{
     class: { label: string; value: number } | null
     section: { label: string; value: number } | null
@@ -43,6 +44,15 @@ export function StudentFilter({ date }: Props) {
   const dispatch = useDispatch()
   const remappedClassList = async () => {
     const data = await getClassList()
+    if (!isEmpty(data?.data?.rows)) {
+      const firstClass = data.data.rows[0].class_details
+      if (firstClass?.name && firstClass?.id) {
+        formik.setFieldValue('class', {
+          label: firstClass.name,
+          value: firstClass.id,
+        })
+      }
+    }
 
     return data.data.rows?.map((el) => ({
       label: el.class_details?.name,
@@ -61,13 +71,32 @@ export function StudentFilter({ date }: Props) {
       dispatch(
         getClassSectionListAction({
           payload: { classId: classId },
-          onSuccess: () => {
+          onSuccess: (sections) => {
             // formik.resetForm()
+            const firstSection = sections?.[0]?.section_details
+            if (!isEmpty(firstSection)) {
+              formik.setFieldValue('section', {
+                label: firstSection?.name,
+                value: firstSection?.id,
+              })
+            }
           },
         })
       )
     }
   }, [formik.values.class?.value])
+
+  useEffect(() => {
+    // CLICK SEARCH BUTTON ONCE
+    if (formik.values.section?.value) {
+      if (firstLoad) {
+        searchStudents()
+        setFirstLoad(false)
+      } else {
+        setFirstLoad(false)
+      }
+    }
+  }, [formik.values.section?.value])
 
   // useEffect(() => {
   //   if (formik.values.section?.value) {
@@ -121,7 +150,11 @@ export function StudentFilter({ date }: Props) {
           <AsyncSelectField
             // menuPlacement="top"
             placeholder="Select class"
-            loadOptions={() => remappedClassList()}
+            loadOptions={() => {
+              const fetchedClassListPromise = remappedClassList()
+
+              return fetchedClassListPromise
+            }}
             defaultOptions
             value={formik.values.class}
             // @ts-ignore

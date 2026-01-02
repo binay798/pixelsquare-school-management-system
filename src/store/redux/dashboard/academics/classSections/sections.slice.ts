@@ -70,9 +70,13 @@ export const updateSectionAction = createAsyncThunk(
 export const getClassSectionListAction = createAsyncThunk(
   'classSection/getList',
   catchAsync(
-    async (data: { payload: { classId: number }; onSuccess: () => void }) => {
+    async (data: {
+      payload: { classId: number }
+      onSuccess: (data: Academics.IClassSectionList[]) => void
+    }) => {
       const res = await services.getClassSectionList(data.payload.classId)
-      data.onSuccess()
+
+      data.onSuccess(res.data)
 
       return res
     }

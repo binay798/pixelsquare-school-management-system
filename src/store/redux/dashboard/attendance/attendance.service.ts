@@ -37,7 +37,23 @@ const createStudentAttendance = async (data: CreateStudentAttendanceDto) => {
   return res.data.data
 }
 
+export interface UpdateStudentAttendanceDto {
+  attendanceId: number
+  type: string
+  note?: string
+}
+const updateStudentAttendance = async (data: UpdateStudentAttendanceDto[]) => {
+  const res = await api<Api.Base<object>>('patch')(
+    'attendance/students',
+    undefined,
+    data
+  )
+
+  return res.data.data
+}
+
 export const attendanceServices = {
   getStudentAttendanceList,
   createStudentAttendance,
+  updateStudentAttendance,
 }
