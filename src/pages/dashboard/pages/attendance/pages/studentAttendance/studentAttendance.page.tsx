@@ -275,7 +275,7 @@ export function StudentAttendancePage() {
               <ButtonComp
                 startIcon={<FaRegSave />}
                 size="medium"
-                color="warning"
+                color="secondary"
                 style={{ alignSelf: 'flex-end' }}
                 onClick={createAttendance}
                 loading={createStudentAttendanceLoading}
@@ -286,7 +286,7 @@ export function StudentAttendancePage() {
               <ButtonComp
                 startIcon={<FaRegSave />}
                 size="medium"
-                color="warning"
+                color="secondary"
                 style={{ alignSelf: 'flex-end' }}
                 onClick={updateAttendance}
                 loading={updateStudentAttendanceLoading}

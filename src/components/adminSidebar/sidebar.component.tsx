@@ -174,7 +174,11 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
         icon: <PiStudentFill />,
         to: '/dashboard/attendance/student',
       },
-      { title: 'Teacher Attendance', icon: <FaChalkboardTeacher /> },
+      {
+        title: 'Teacher Attendance',
+        icon: <FaChalkboardTeacher />,
+        to: '/dashboard/attendance/teachers',
+      },
       { title: 'Employee Attendance', icon: <FaUsersGear /> },
     ],
   },

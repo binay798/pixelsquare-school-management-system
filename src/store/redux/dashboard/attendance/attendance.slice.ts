@@ -19,6 +19,12 @@ interface InitialState {
       loading: boolean
     }
   }
+  teacherAttendance: {
+    list: {
+      data: Attendance.ITeacherAttendance[] | null
+      loading: boolean
+    }
+  }
 }
 const initialState: InitialState = {
   studentAttendance: {
@@ -30,6 +36,12 @@ const initialState: InitialState = {
       loading: false,
     },
     update: {
+      loading: false,
+    },
+  },
+  teacherAttendance: {
+    list: {
+      data: null,
       loading: false,
     },
   },
@@ -75,6 +87,19 @@ export const updateStudentAttendanceSlice = createAsyncThunk(
   )
 )
 
+// TEACHERS ATTENDANCE
+
+export const getTeacherAttendanceListSlice = createAsyncThunk(
+  'attendance/getTeacherAttendanceList',
+  catchAsync(async (data: { date: string }) => {
+    const res = await attendanceServices.getTeachersAttendanceList({
+      date: data.date,
+    })
+
+    return res
+  })
+)
+
 export const attendanceSlice = createSlice({
   name: 'attendance',
   initialState,
@@ -113,6 +138,20 @@ export const attendanceSlice = createSlice({
     })
     builder.addCase(updateStudentAttendanceSlice.rejected, (state) => {
       state.studentAttendance.update.loading = false
+    })
+    // GET TEACHERS ATTENDANCE LIST
+    builder.addCase(getTeacherAttendanceListSlice.pending, (state) => {
+      state.teacherAttendance.list.loading = true
+    })
+    builder.addCase(
+      getTeacherAttendanceListSlice.fulfilled,
+      (state, action) => {
+        state.teacherAttendance.list.loading = false
+        state.teacherAttendance.list.data = action.payload.data
+      }
+    )
+    builder.addCase(getTeacherAttendanceListSlice.rejected, (state) => {
+      state.teacherAttendance.list.loading = false
     })
   },
 })

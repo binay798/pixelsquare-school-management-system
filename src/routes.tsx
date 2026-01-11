@@ -32,6 +32,7 @@ import { StudentTypePage } from './pages/dashboard/pages/manageStudent/pages/stu
 import { AdmitStudentPage } from './pages/dashboard/pages/manageStudent/pages/admitStudent/admitStudent.page'
 import { StudentListPage } from './pages/dashboard/pages/manageStudent/pages/studentList/studentList.page'
 import { EditStudentPage } from './pages/dashboard/pages/manageStudent/pages/studentList/pages/editStudent/editStudent.page'
+import { TeacherAttendancePage } from './pages/dashboard/pages/attendance/pages/teacherAttendance/teacherAttendance.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -134,7 +135,10 @@ export const privateRoutes: RouteObject[] = [
           {
             path: 'attendance',
             element: <Outlet />,
-            children: [{ path: 'student', element: <StudentAttendancePage /> }],
+            children: [
+              { path: 'student', element: <StudentAttendancePage /> },
+              { path: 'teachers', element: <TeacherAttendancePage /> },
+            ],
           },
           {
             path: 'academics',

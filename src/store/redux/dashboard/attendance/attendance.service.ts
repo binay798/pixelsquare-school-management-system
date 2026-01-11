@@ -52,8 +52,18 @@ const updateStudentAttendance = async (data: UpdateStudentAttendanceDto[]) => {
   return res.data.data
 }
 
+const getTeachersAttendanceList = async ({ date }: { date: string }) => {
+  const res = await api<Api.Base<Attendance.ITeacherAttendance[]>>('get')(
+    '/attendance/teachers',
+    { date }
+  )
+
+  return res.data.data
+}
+
 export const attendanceServices = {
   getStudentAttendanceList,
   createStudentAttendance,
   updateStudentAttendance,
+  getTeachersAttendanceList,
 }
