@@ -33,7 +33,7 @@ interface IExtendedStudentProfile extends Students.IStudent {
 }
 // STUDENT SERVICE
 export interface TCreateStudent {
-  user_credential: Pick<User.IUser, 'email' | 'password'>
+  user_credential: Pick<User.IUser, 'email'>
   user_profile: Omit<
     User.IUserProfile,
     'id' | 'created_at' | 'updated_at' | 'user_id'

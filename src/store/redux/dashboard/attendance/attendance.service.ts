@@ -61,9 +61,29 @@ const getTeachersAttendanceList = async ({ date }: { date: string }) => {
   return res.data.data
 }
 
+export interface CreateTeacherAttendanceDto {
+  payload: {
+    userId: number
+    date: string
+    type: string
+    note?: string
+    teacherId: number
+  }[]
+}
+const createTeacherAttendance = async (data: CreateTeacherAttendanceDto) => {
+  const res = await api<Api.Base<object>>('post')(
+    'attendance/teachers',
+    undefined,
+    data.payload
+  )
+
+  return res.data.data
+}
+
 export const attendanceServices = {
   getStudentAttendanceList,
   createStudentAttendance,
   updateStudentAttendance,
   getTeachersAttendanceList,
+  createTeacherAttendance,
 }

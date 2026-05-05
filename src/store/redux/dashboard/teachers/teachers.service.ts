@@ -26,7 +26,7 @@ export interface TCreateTeacherDto {
     gender: string
     nationality: string
   }
-  user_credential: { email: string; password: string }
+  user_credential: { email: string }
   teacher_profile: {
     national_id: string
     joining_date: string

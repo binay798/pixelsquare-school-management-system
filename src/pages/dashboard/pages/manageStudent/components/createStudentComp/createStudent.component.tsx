@@ -96,7 +96,7 @@ export function CreateStudentComp() {
       },
       nationality: selectedStudent?.user_profile_details?.nationality ?? '',
       email: selectedStudent?.user_details?.email ?? '',
-      password: editMode ? '***' : '',
+      // password: editMode ? '***' : '',
 
       previousSchool: selectedStudent?.student_details?.previous_school ?? '',
       fatherName: selectedStudent?.student_details?.father_name ?? '',
@@ -119,7 +119,7 @@ export function CreateStudentComp() {
       const body: TCreateStudent = {
         user_credential: {
           email: values.email,
-          password: values.password,
+          // password: values.password,
         },
         user_profile: {
           firstname: values.firstname,
@@ -191,7 +191,7 @@ export function CreateStudentComp() {
         getClassSectionListAction({
           payload: { classId: classId },
           onSuccess: () => {
-            formik.resetForm()
+            // formik.resetForm()
           },
         })
       )
@@ -639,7 +639,7 @@ export function CreateStudentComp() {
                     formik.touched.email ? formik.errors.email : undefined
                   }
                 />
-                <InputField
+                {/* <InputField
                   placeholder="Password"
                   labelDetail={{ text: 'Password', required: true }}
                   type="password"
@@ -654,7 +654,7 @@ export function CreateStudentComp() {
                   helperText={
                     formik.touched.password ? formik.errors.password : undefined
                   }
-                />
+                /> */}
               </Stack>
               <Stack spacing={2} direction="row"></Stack>
             </Stack>

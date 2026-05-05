@@ -3,6 +3,7 @@ import { catchAsync } from '@src/helpers/catchAsync.helpers'
 import {
   attendanceServices,
   CreateStudentAttendanceDto,
+  CreateTeacherAttendanceDto,
   UpdateStudentAttendanceDto,
 } from './attendance.service'
 
@@ -24,6 +25,9 @@ interface InitialState {
       data: Attendance.ITeacherAttendance[] | null
       loading: boolean
     }
+    create: {
+      loading: boolean
+    }
   }
 }
 const initialState: InitialState = {
@@ -42,6 +46,9 @@ const initialState: InitialState = {
   teacherAttendance: {
     list: {
       data: null,
+      loading: false,
+    },
+    create: {
       loading: false,
     },
   },
@@ -100,6 +107,23 @@ export const getTeacherAttendanceListSlice = createAsyncThunk(
   })
 )
 
+export const createTeacherAttendanceSlice = createAsyncThunk(
+  'attendance/createTeacherAttendance',
+  catchAsync(
+    async (data: {
+      body: CreateTeacherAttendanceDto
+      onSuccess: () => void
+    }) => {
+      const res = await attendanceServices.createTeacherAttendance(data.body)
+
+      data.onSuccess()
+
+      return res
+    },
+    true
+  )
+)
+
 export const attendanceSlice = createSlice({
   name: 'attendance',
   initialState,
@@ -152,6 +176,16 @@ export const attendanceSlice = createSlice({
     )
     builder.addCase(getTeacherAttendanceListSlice.rejected, (state) => {
       state.teacherAttendance.list.loading = false
+    })
+    // CREATE TEACHER ATTENDANCE
+    builder.addCase(createTeacherAttendanceSlice.pending, (state) => {
+      state.teacherAttendance.create.loading = true
+    })
+    builder.addCase(createTeacherAttendanceSlice.fulfilled, (state) => {
+      state.teacherAttendance.create.loading = false
+    })
+    builder.addCase(createTeacherAttendanceSlice.rejected, (state) => {
+      state.teacherAttendance.create.loading = false
     })
   },
 })

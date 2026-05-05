@@ -13,7 +13,6 @@ export const createTeacherSchema = yup.object({
   gender: yup.string().required(),
   nationality: yup.string().required(),
   email: yup.string().required(),
-  password: yup.string().required(),
   department: yup.object({
     label: yup.string().required(),
     value: yup.number().required(),

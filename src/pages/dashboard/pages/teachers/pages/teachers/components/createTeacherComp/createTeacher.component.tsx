@@ -79,7 +79,6 @@ export function CreateTeacherComp() {
       gender: teacherDetail?.user_profile_details?.gender ?? '',
       nationality: teacherDetail?.user_profile_details?.nationality ?? '',
       email: teacherDetail?.user_details?.email ?? '',
-      password: editMode ? '***' : '',
       department: {
         label: teacherDetail?.teacher_details?.school_department_id ?? '',
         value: teacherDetail?.teacher_details?.school_department_id ?? 0,
@@ -102,7 +101,6 @@ export function CreateTeacherComp() {
         mobile,
         national_id,
         nationality,
-        password,
         permanent_address,
         religion,
         temporary_address,
@@ -133,7 +131,6 @@ export function CreateTeacherComp() {
                 },
                 user_credential: {
                   email,
-                  password,
                 },
               },
               onSuccess: () => {
@@ -471,22 +468,6 @@ export function CreateTeacherComp() {
                   error={formik.touched.email && Boolean(formik.errors.email)}
                   helperText={
                     formik.touched.email ? formik.errors.email : undefined
-                  }
-                />
-                <InputField
-                  placeholder="Password"
-                  labelDetail={{ text: 'Password', required: true }}
-                  type="password"
-                  disabled={editMode}
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  name="password"
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.password && Boolean(formik.errors.password)
-                  }
-                  helperText={
-                    formik.touched.password ? formik.errors.password : undefined
                   }
                 />
               </Stack>

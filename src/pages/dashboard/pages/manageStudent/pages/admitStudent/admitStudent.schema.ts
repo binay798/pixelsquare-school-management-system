@@ -15,7 +15,7 @@ export const admitStudentSchema = yup.object({
     .required(),
   nationality: yup.string().required(),
   email: yup.string().required(),
-  password: yup.string().required(),
+  // password: yup.string().required(),
   previousSchool: yup.string().optional(),
   fatherName: yup.string().required(),
   fatherMobile: yup.number().required(),

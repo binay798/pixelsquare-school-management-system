@@ -13,7 +13,11 @@ import { AsyncSelectField } from '@src/components/select/select.component'
 import { TableComp } from '@src/components/tableComp/tableComp.components'
 import { getImageUrl } from '@src/helpers/getImageUrl.helpers'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
-import { getTeacherAttendanceListSlice } from '@src/store/redux/dashboard/attendance/attendance.slice'
+import { CreateTeacherAttendanceDto } from '@src/store/redux/dashboard/attendance/attendance.service'
+import {
+  createTeacherAttendanceSlice,
+  getTeacherAttendanceListSlice,
+} from '@src/store/redux/dashboard/attendance/attendance.slice'
 import { isEmpty } from 'lodash'
 import moment, { Moment } from 'moment'
 import { useEffect, useState } from 'react'
@@ -47,6 +51,9 @@ export function TeacherAttendancePage() {
   const { data: teacherList, loading: teacherListLoading } = useSelector(
     (store) => store.attendance.teacherAttendance.list
   )
+  const { loading: createTeacherLoading } = useSelector(
+    (store) => store.attendance.teacherAttendance.create
+  )
 
   useEffect(() => {
     dispatch(getTeacherAttendanceListSlice({ date: currentDate }))
@@ -71,6 +78,28 @@ export function TeacherAttendancePage() {
       setRemappedTeachersList(data)
     }
   }, [teacherList])
+
+  const createTeacherAttendance = () => {
+    const payload: CreateTeacherAttendanceDto = {
+      payload:
+        remappedTeachersList?.map((el) => ({
+          userId: el.userId,
+          date: moment().format('YYYY-MM-DD'),
+          teacherId: el.teacherId,
+          type: !isEmpty(el.present)
+            ? el.present
+            : !isEmpty(el.absent)
+            ? el.absent
+            : !isEmpty(el.leave)
+            ? el.leave
+            : el.absent,
+          note: el.note,
+        })) ?? [],
+    }
+    dispatch(
+      createTeacherAttendanceSlice({ body: payload, onSuccess: () => {} })
+    )
+  }
 
   return (
     <Box>
@@ -102,7 +131,19 @@ export function TeacherAttendancePage() {
                         <Radio
                           // checked={selectedValue === 'apple'}
                           // onChange={handleChange}
-                          onChange={() => {}}
+                          onChange={() => {
+                            const stringItem = JSON.parse(
+                              JSON.stringify(remappedTeachersList)
+                            ) as TableTeacherRow[]
+                            stringItem.forEach((el) => {
+                              if (el.teacherId === item.teacherId) {
+                                el.present = 'present'
+                                el.absent = ''
+                                el.leave = ''
+                              }
+                            })
+                            setRemappedTeachersList(stringItem)
+                          }}
                           value="present"
                           name="attendance"
                           checked={item.present === 'present'}
@@ -113,25 +154,49 @@ export function TeacherAttendancePage() {
                   {
                     field: 'absent',
                     name: 'Absent',
-                    render: (val) => (
+                    render: (val, item) => (
                       <Radio
                         // checked={selectedValue === 'apple'}
                         // onChange={handleChange}
+                        onChange={() => {
+                          const stringItem = JSON.parse(
+                            JSON.stringify(remappedTeachersList)
+                          ) as TableTeacherRow[]
+                          stringItem.forEach((el) => {
+                            if (el.teacherId === item.teacherId) {
+                              el.present = ''
+                              el.absent = 'absent'
+                              el.leave = ''
+                            }
+                          })
+                          setRemappedTeachersList(stringItem)
+                        }}
                         value="absent"
                         name="attendance"
                         checked={val === 'absent'}
-                        onChange={() => {}}
                       />
                     ),
                   },
                   {
                     field: 'leave',
                     name: 'Leave',
-                    render: (val) => (
+                    render: (val, item) => (
                       <Radio
                         // checked={selectedValue === 'apple'}
                         // onChange={handleChange}
-                        onChange={() => {}}
+                        onChange={() => {
+                          const stringItem = JSON.parse(
+                            JSON.stringify(remappedTeachersList)
+                          ) as TableTeacherRow[]
+                          stringItem.forEach((el) => {
+                            if (el.teacherId === item.teacherId) {
+                              el.present = ''
+                              el.absent = ''
+                              el.leave = 'leave'
+                            }
+                          })
+                          setRemappedTeachersList(stringItem)
+                        }}
                         value="leave"
                         name="attendance"
                         checked={val === 'leave'}
@@ -155,8 +220,8 @@ export function TeacherAttendancePage() {
                 size="medium"
                 color="secondary"
                 style={{ alignSelf: 'flex-end' }}
-                // onClick={createAttendance}
-                // loading={createStudentAttendanceLoading}
+                loading={createTeacherLoading}
+                onClick={createTeacherAttendance}
               >
                 Create Attendance
               </ButtonComp>
