@@ -80,10 +80,27 @@ const createTeacherAttendance = async (data: CreateTeacherAttendanceDto) => {
   return res.data.data
 }
 
+export interface UpdateTeacherAttendanceDto {
+  attendanceId: number
+  type: string
+  note?: string
+}
+
+const updateTeacherAttendance = async (data: UpdateTeacherAttendanceDto[]) => {
+  const res = await api<Api.Base<object>>('patch')(
+    'attendance/teachers',
+    undefined,
+    data
+  )
+
+  return res.data.data
+}
+
 export const attendanceServices = {
   getStudentAttendanceList,
   createStudentAttendance,
   updateStudentAttendance,
   getTeachersAttendanceList,
   createTeacherAttendance,
+  updateTeacherAttendance,
 }

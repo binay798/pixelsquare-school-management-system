@@ -13,10 +13,14 @@ import { AsyncSelectField } from '@src/components/select/select.component'
 import { TableComp } from '@src/components/tableComp/tableComp.components'
 import { getImageUrl } from '@src/helpers/getImageUrl.helpers'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
-import { CreateTeacherAttendanceDto } from '@src/store/redux/dashboard/attendance/attendance.service'
+import {
+  CreateTeacherAttendanceDto,
+  UpdateTeacherAttendanceDto,
+} from '@src/store/redux/dashboard/attendance/attendance.service'
 import {
   createTeacherAttendanceSlice,
   getTeacherAttendanceListSlice,
+  updateTeacherAttendanceSlice,
 } from '@src/store/redux/dashboard/attendance/attendance.slice'
 import { isEmpty } from 'lodash'
 import moment, { Moment } from 'moment'
@@ -44,12 +48,16 @@ interface TableTeacherRow {
 }
 export function TeacherAttendancePage() {
   const dispatch = useDispatch()
+  const [createAttendanceButton, setCreateAttendanceButton] = useState(true)
   const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'))
   const [remappedTeachersList, setRemappedTeachersList] = useState<
     TableTeacherRow[] | null
   >(null)
   const { data: teacherList, loading: teacherListLoading } = useSelector(
     (store) => store.attendance.teacherAttendance.list
+  )
+  const { loading: updateTeacherLoading } = useSelector(
+    (store) => store.attendance.teacherAttendance.update
   )
   const { loading: createTeacherLoading } = useSelector(
     (store) => store.attendance.teacherAttendance.create
@@ -63,19 +71,30 @@ export function TeacherAttendancePage() {
     if (!isEmpty(teacherList) && teacherList) {
       const data: TableTeacherRow[] = teacherList.map((el) => ({
         teacherId: el.teacher_details.id,
-        absent: '',
+        absent: el?.attendance_details?.type ?? '',
         attendanceId: el?.attendance_details?.id,
-        leave: '',
+        leave: el?.attendance_details?.type ?? '',
         name: `${el.user_profile_details.firstname} ${
           el.user_profile_details.middlename ?? ''
         } ${el.user_profile_details.lastname}`,
-        present: '',
+        present: el?.attendance_details?.type ?? '',
         teacherAcademicYearId: el.teacher_academic_year_details.id,
         userId: el.user_profile_details.user_id,
         note: '',
         photo: getImageUrl(`${el.profile_photo_details?.path}`),
       }))
       setRemappedTeachersList(data)
+
+      const hasAttendanceDetails = !isEmpty(
+        teacherList?.filter((el) => el.attendance_details)
+      )
+      if (hasAttendanceDetails) {
+        setCreateAttendanceButton(false)
+      } else {
+        setCreateAttendanceButton(true)
+      }
+    } else {
+      setRemappedTeachersList([])
     }
   }, [teacherList])
 
@@ -98,6 +117,25 @@ export function TeacherAttendancePage() {
     }
     dispatch(
       createTeacherAttendanceSlice({ body: payload, onSuccess: () => {} })
+    )
+  }
+
+  const updateAttendance = () => {
+    const data: UpdateTeacherAttendanceDto[] = remappedTeachersList.map(
+      (el) => ({
+        attendanceId: el.attendanceId,
+        type: el.present
+          ? el.present
+          : el.absent
+          ? el.absent
+          : el.leave
+          ? el.leave
+          : el.present,
+        note: el.note,
+      })
+    )
+    dispatch(
+      updateTeacherAttendanceSlice({ payload: data, onSuccess: () => {} })
     )
   }
 
@@ -215,16 +253,29 @@ export function TeacherAttendancePage() {
                 // rowsPerPage={limit}
                 showPagination={false}
               ></TableComp>
-              <ButtonComp
-                startIcon={<FaRegSave />}
-                size="medium"
-                color="secondary"
-                style={{ alignSelf: 'flex-end' }}
-                loading={createTeacherLoading}
-                onClick={createTeacherAttendance}
-              >
-                Create Attendance
-              </ButtonComp>
+              {createAttendanceButton ? (
+                <ButtonComp
+                  startIcon={<FaRegSave />}
+                  size="medium"
+                  color="secondary"
+                  style={{ alignSelf: 'flex-end' }}
+                  loading={createTeacherLoading}
+                  onClick={createTeacherAttendance}
+                >
+                  Create Attendance
+                </ButtonComp>
+              ) : (
+                <ButtonComp
+                  startIcon={<FaRegSave />}
+                  size="medium"
+                  color="secondary"
+                  style={{ alignSelf: 'flex-end' }}
+                  loading={updateTeacherLoading}
+                  onClick={updateAttendance}
+                >
+                  Update Attendance
+                </ButtonComp>
+              )}
             </Stack>
           </Box>
           <Box>
