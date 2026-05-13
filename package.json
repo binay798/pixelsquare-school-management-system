@@ -12,6 +12,7 @@
     "deploy:worker": "npm run build &&  wrangler pages deploy"
   },
   "dependencies": {
+    "@aws-sdk/node-http-handler": "^3.370.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.4",
     "@mui/material": "^6.4.6",

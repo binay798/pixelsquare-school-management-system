@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, Chip, Stack, Typography } from '@mui/material'
 import { ButtonComp } from '@src/components/button/button.component'
 import { GoPlus } from 'react-icons/go'
 import { CreateSubjectModal } from './components/createSubjectModal/createSubjectModal.component'
@@ -126,11 +126,15 @@ export function ClassSubjectsPage() {
             name: 'Assigned Teachers',
             render: (val, item) => {
               if (isArray(val)) {
-                const teacherNames = item?.teachers
-                  ?.map((el) => `${el.label}`)
-                  ?.join(', ')
+                const teacherNames = item?.teachers?.map((el, id) => (
+                  <Chip key={id} label={el.label} color="secondary" />
+                ))
 
-                return <span>{teacherNames}</span>
+                return (
+                  <Stack direction={'row'} spacing={1}>
+                    {teacherNames}
+                  </Stack>
+                )
               }
 
               return <></>

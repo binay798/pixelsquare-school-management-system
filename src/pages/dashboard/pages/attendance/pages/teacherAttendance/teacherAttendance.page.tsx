@@ -65,7 +65,7 @@ export function TeacherAttendancePage() {
 
   useEffect(() => {
     dispatch(getTeacherAttendanceListSlice({ date: currentDate }))
-  }, [])
+  }, [currentDate])
 
   useEffect(() => {
     if (!isEmpty(teacherList) && teacherList) {
@@ -121,22 +121,24 @@ export function TeacherAttendancePage() {
   }
 
   const updateAttendance = () => {
-    const data: UpdateTeacherAttendanceDto[] = remappedTeachersList.map(
-      (el) => ({
-        attendanceId: el.attendanceId,
-        type: el.present
-          ? el.present
-          : el.absent
-          ? el.absent
-          : el.leave
-          ? el.leave
-          : el.present,
-        note: el.note,
-      })
-    )
-    dispatch(
-      updateTeacherAttendanceSlice({ payload: data, onSuccess: () => {} })
-    )
+    if (remappedTeachersList) {
+      const data: UpdateTeacherAttendanceDto[] = remappedTeachersList.map(
+        (el) => ({
+          attendanceId: el.attendanceId,
+          type: el.present
+            ? el.present
+            : el.absent
+            ? el.absent
+            : el.leave
+            ? el.leave
+            : el.present,
+          note: el.note,
+        })
+      )
+      dispatch(
+        updateTeacherAttendanceSlice({ payload: data, onSuccess: () => {} })
+      )
+    }
   }
 
   return (

@@ -179,7 +179,11 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
         icon: <FaChalkboardTeacher />,
         to: '/dashboard/attendance/teachers',
       },
-      { title: 'Employee Attendance', icon: <FaUsersGear /> },
+      {
+        title: 'Employee Attendance',
+        icon: <FaUsersGear />,
+        to: '/dashboard/attendance/employees',
+      },
     ],
   },
   // {
