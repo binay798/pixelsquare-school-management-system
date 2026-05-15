@@ -49,7 +49,6 @@ export function CreateEmployeePage() {
       gender: '',
       nationality: '',
       email: '',
-      password: '',
       employee_designation_id: { label: '', value: '' },
       national_id: '',
       joining_date: '',
@@ -71,7 +70,6 @@ export function CreateEmployeePage() {
               image: profilePic,
               user_credential: {
                 email: values.email,
-                password: values.password,
               },
               user_profile: {
                 blood_group: values.blood_group,
@@ -406,21 +404,7 @@ export function CreateEmployeePage() {
                     formik.touched.email ? formik.errors.email : undefined
                   }
                 />
-                <InputField
-                  placeholder="Password"
-                  labelDetail={{ text: 'Password', required: true }}
-                  type="password"
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  name="password"
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.password && Boolean(formik.errors.password)
-                  }
-                  helperText={
-                    formik.touched.password ? formik.errors.password : undefined
-                  }
-                />
+
                 <FormControl fullWidth required>
                   <FormLabel
                     sx={{

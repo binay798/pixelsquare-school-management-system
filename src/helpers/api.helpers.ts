@@ -8,7 +8,9 @@ const baseURL =
     ? import.meta.env.VITE_APP_DEV_URL
     : import.meta.env.VITE_APP_PROD_URL
 const API_URL = `${baseURL}/api`
-export const STATIC_URL = `${baseURL}/static`
+const CLOUDFLARE_R2_URL = 'https://pub-7bf805c7898f48a6a8dc7c281aca3539.r2.dev'
+// export const STATIC_URL = `${baseURL}/static`
+export const STATIC_URL = CLOUDFLARE_R2_URL
 
 // MARK: - instance
 const instance: AxiosInstance = axios.create({
