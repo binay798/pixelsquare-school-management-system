@@ -33,6 +33,7 @@ import { AdmitStudentPage } from './pages/dashboard/pages/manageStudent/pages/ad
 import { StudentListPage } from './pages/dashboard/pages/manageStudent/pages/studentList/studentList.page'
 import { EditStudentPage } from './pages/dashboard/pages/manageStudent/pages/studentList/pages/editStudent/editStudent.page'
 import { TeacherAttendancePage } from './pages/dashboard/pages/attendance/pages/teacherAttendance/teacherAttendance.page'
+import { EmployeeAttendancePage } from './pages/dashboard/pages/attendance/pages/employeeAttendance/employeeAttendace.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -138,7 +139,7 @@ export const privateRoutes: RouteObject[] = [
             children: [
               { path: 'student', element: <StudentAttendancePage /> },
               { path: 'teachers', element: <TeacherAttendancePage /> },
-              { path: 'employees', element: <div>Employee</div> },
+              { path: 'employees', element: <EmployeeAttendancePage /> },
             ],
           },
           {

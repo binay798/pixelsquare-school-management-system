@@ -52,6 +52,8 @@ const updateStudentAttendance = async (data: UpdateStudentAttendanceDto[]) => {
   return res.data.data
 }
 
+// TEACHERS ATTENDANCE
+
 const getTeachersAttendanceList = async ({ date }: { date: string }) => {
   const res = await api<Api.Base<Attendance.ITeacherAttendance[]>>('get')(
     '/attendance/teachers',
@@ -96,6 +98,53 @@ const updateTeacherAttendance = async (data: UpdateTeacherAttendanceDto[]) => {
   return res.data.data
 }
 
+// EMPLOYEE ATTENDANCE
+const getEmployeeAttendanceList = async ({ date }: { date: string }) => {
+  const res = await api<Api.Base<Attendance.IEmployeeAttendance[]>>('get')(
+    'attendance/employees',
+    { date }
+  )
+
+  return res.data.data
+}
+
+export interface CreateEmployeeAttendanceDto {
+  userId: number
+  date: string
+  type: string
+  note?: string
+  employeeId: number
+}
+
+const createEmployeeAttendance = async (
+  data: CreateEmployeeAttendanceDto[]
+) => {
+  const res = await api<Api.Base<object>>('post')(
+    'attendance/employees',
+    undefined,
+    data
+  )
+
+  return res.data.data
+}
+
+export interface UpdateEmployeeAttendanceDto {
+  attendanceId: number
+  type: string
+  note?: string
+}
+const updateEmployeeAttendance = async (
+  data: UpdateEmployeeAttendanceDto[]
+) => {
+  const res = await api<Api.Base<object>>('patch')(
+    'attendance/employees',
+    undefined,
+    data
+  )
+
+  return res.data.data
+}
+
 export const attendanceServices = {
   getStudentAttendanceList,
   createStudentAttendance,
@@ -103,4 +152,7 @@ export const attendanceServices = {
   getTeachersAttendanceList,
   createTeacherAttendance,
   updateTeacherAttendance,
+  getEmployeeAttendanceList,
+  createEmployeeAttendance,
+  updateEmployeeAttendance,
 }

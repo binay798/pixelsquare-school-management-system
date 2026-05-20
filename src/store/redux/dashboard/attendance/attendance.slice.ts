@@ -2,8 +2,10 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { catchAsync } from '@src/helpers/catchAsync.helpers'
 import {
   attendanceServices,
+  CreateEmployeeAttendanceDto,
   CreateStudentAttendanceDto,
   CreateTeacherAttendanceDto,
+  UpdateEmployeeAttendanceDto,
   UpdateStudentAttendanceDto,
   UpdateTeacherAttendanceDto,
 } from './attendance.service'
@@ -24,6 +26,18 @@ interface InitialState {
   teacherAttendance: {
     list: {
       data: Attendance.ITeacherAttendance[] | null
+      loading: boolean
+    }
+    create: {
+      loading: boolean
+    }
+    update: {
+      loading: boolean
+    }
+  }
+  employeeAttendance: {
+    list: {
+      data: Attendance.IEmployeeAttendance[] | null
       loading: boolean
     }
     create: {
@@ -56,6 +70,18 @@ const initialState: InitialState = {
       loading: false,
     },
     update: { loading: false },
+  },
+  employeeAttendance: {
+    list: {
+      data: null,
+      loading: false,
+    },
+    create: {
+      loading: false,
+    },
+    update: {
+      loading: false,
+    },
   },
 }
 
@@ -145,6 +171,56 @@ export const updateTeacherAttendanceSlice = createAsyncThunk(
   )
 )
 
+// EMPLOYEE ATTENDANCE SLICE
+export const getEmployeeAttendanceListSlice = createAsyncThunk(
+  'attendance/getEmployeeAttendanceList',
+  catchAsync(async (data: { date: string; onSuccess?: () => void }) => {
+    const res = await attendanceServices.getEmployeeAttendanceList({
+      date: data.date,
+    })
+    data.onSuccess?.()
+
+    return res
+  })
+)
+
+export const createEmployeeAttendanceSlice = createAsyncThunk(
+  'attendance/createEmployeeAttendance',
+  catchAsync(
+    async (data: {
+      payload: CreateEmployeeAttendanceDto[]
+      onSuccess?: () => void
+    }) => {
+      const res = await attendanceServices.createEmployeeAttendance(
+        data.payload
+      )
+      data.onSuccess?.()
+
+      return res
+    },
+    true
+  )
+)
+
+export const updateEmployeeAttendanceSlice = createAsyncThunk(
+  'attendance/updateEmployeeAttendance',
+  catchAsync(
+    async (data: {
+      payload: UpdateEmployeeAttendanceDto[]
+      onSuccess?: () => void
+    }) => {
+      const res = await attendanceServices.updateEmployeeAttendance(
+        data.payload
+      )
+
+      data.onSuccess?.()
+
+      return res
+    },
+    true
+  )
+)
+
 export const attendanceSlice = createSlice({
   name: 'attendance',
   initialState,
@@ -217,6 +293,40 @@ export const attendanceSlice = createSlice({
     })
     builder.addCase(updateTeacherAttendanceSlice.rejected, (state) => {
       state.teacherAttendance.update.loading = false
+    })
+    // GET EMPLOYEE ATTENDANCE LIST
+    builder.addCase(getEmployeeAttendanceListSlice.pending, (state) => {
+      state.employeeAttendance.list.loading = true
+    })
+    builder.addCase(
+      getEmployeeAttendanceListSlice.fulfilled,
+      (state, action) => {
+        state.employeeAttendance.list.loading = false
+        state.employeeAttendance.list.data = action.payload.data
+      }
+    )
+    builder.addCase(getEmployeeAttendanceListSlice.rejected, (state) => {
+      state.employeeAttendance.list.loading = false
+    })
+    // CREATE EMPLOYEE ATTENDANCE
+    builder.addCase(createEmployeeAttendanceSlice.pending, (state) => {
+      state.employeeAttendance.create.loading = true
+    })
+    builder.addCase(createEmployeeAttendanceSlice.fulfilled, (state) => {
+      state.employeeAttendance.create.loading = false
+    })
+    builder.addCase(createEmployeeAttendanceSlice.rejected, (state) => {
+      state.employeeAttendance.create.loading = false
+    })
+    // UPDATE EMPLOYEE ATTENDANCE
+    builder.addCase(updateEmployeeAttendanceSlice.pending, (state) => {
+      state.employeeAttendance.update.loading = true
+    })
+    builder.addCase(updateEmployeeAttendanceSlice.fulfilled, (state) => {
+      state.employeeAttendance.update.loading = false
+    })
+    builder.addCase(updateEmployeeAttendanceSlice.rejected, (state) => {
+      state.employeeAttendance.update.loading = false
     })
   },
 })
