@@ -34,6 +34,9 @@ import { StudentListPage } from './pages/dashboard/pages/manageStudent/pages/stu
 import { EditStudentPage } from './pages/dashboard/pages/manageStudent/pages/studentList/pages/editStudent/editStudent.page'
 import { TeacherAttendancePage } from './pages/dashboard/pages/attendance/pages/teacherAttendance/teacherAttendance.page'
 import { EmployeeAttendancePage } from './pages/dashboard/pages/attendance/pages/employeeAttendance/employeeAttendace.page'
+import { GuardianPage } from './pages/dashboard/pages/guardian/pages/guardian.page'
+import { CreateGuardianPage } from './pages/dashboard/pages/guardian/pages/create/createGuardian.page'
+import { EditGuardianPage } from './pages/dashboard/pages/guardian/pages/edit/edit.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -150,6 +153,20 @@ export const privateRoutes: RouteObject[] = [
               { path: 'class-sections', element: <ClassSectionsPage /> },
               { path: 'class-routines', element: <ClassRoutinesPage /> },
               { path: 'class-subjects', element: <ClassSubjectsPage /> },
+            ],
+          },
+          {
+            path: '/dashboard/guardian',
+            children: [
+              { path: '/dashboard/guardian', element: <GuardianPage /> },
+              {
+                path: '/dashboard/guardian/create',
+                element: <CreateGuardianPage />,
+              },
+              {
+                path: '/dashboard/guardian/edit/:guardianId',
+                element: <EditGuardianPage />,
+              },
             ],
           },
         ],

@@ -136,7 +136,7 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
   {
     title: 'Guardian',
     icon: <RiParentFill />,
-    to: '/dashboard/human-resources',
+    to: '/dashboard/guardian',
   },
   {
     title: 'Manage Student',
