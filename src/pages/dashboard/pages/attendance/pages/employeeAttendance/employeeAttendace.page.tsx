@@ -95,7 +95,7 @@ export function EmployeeAttendancePage() {
           ? el.leave
           : el.absent
         return {
-          date: moment().format('YYYY-MM-DD'),
+          date: currentDate,
           employeeAcademicYearId: el.employeeAcademicYearId,
           employeeId: el.employeeId,
           type: type,

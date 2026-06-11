@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weekly Lesson Plan Creator</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Tailwind Config & Custom CSS -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              slate: {
+                50: '#f8fafc',
+                100: '#f1f5f9',
+                200: '#e2e8f0',
+                300: '#cbd5e1',
+                400: '#94a3b8',
+                500: '#64748b',
+                600: '#475569',
+                700: '#334155',
+                800: '#1e293b',
+                900: '#0f172a',
+              },
+            },
+          },
+        },
+      }
+    </script>
+    <style>
+      /* Custom Styles for smooth transitions and rich text placeholders */
+      body {
+        background-color: #f8fafc;
+      }
+
+      .editor-content[contenteditable='true']:empty:before {
+        content: attr(data-placeholder);
+        color: #94a3b8;
+        pointer-events: none;
+        display: block; /* For Firefox */
+      }
+
+      .day-content {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.3s ease-out;
+      }
+      .day-content.expanded {
+        grid-template-rows: 1fr;
+      }
+      .day-content-inner {
+        overflow: hidden;
+      }
+
+      /* Hide scrollbar for anchor nav */
+      .anchor-nav::-webkit-scrollbar {
+        display: none;
+      }
+      .anchor-nav {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      [contenteditable]:focus {
+        outline: none;
+      }
+    </style>
+  </head>
+  <body class="text-slate-800 antialiased pb-24">
+    <!-- Top Navigation / Breadcrumb -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+      <div
+        class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between"
+      >
+        <div
+          class="flex items-center gap-3 text-sm font-medium text-slate-500 hover:text-slate-800 transition cursor-pointer"
+        >
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Dashboard</span>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-slate-500">
+          <span class="relative flex h-2 w-2">
+            <span
+              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"
+            ></span>
+            <span
+              class="relative inline-flex rounded-full h-2 w-2 bg-green-500"
+            ></span>
+          </span>
+          Auto-saved 1m ago
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+      <!-- Weekly Meta Information -->
+      <header class="mb-8">
+        <div class="flex items-center gap-2 mb-2">
+          <span
+            class="px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 text-xs font-semibold tracking-wide uppercase border border-indigo-100"
+            >Class 10-A</span
+          >
+          <span class="text-slate-400">•</span>
+          <span
+            class="px-2.5 py-0.5 rounded-md bg-sky-50 text-sky-700 text-xs font-semibold tracking-wide uppercase border border-sky-100"
+            >Mathematics</span
+          >
+        </div>
+        <h1 class="text-3xl font-bold text-slate-900 mb-3 tracking-tight">
+          Week 14: Introduction to Quadratic Equations
+        </h1>
+        <div
+          class="flex flex-wrap items-center gap-4 text-sm text-slate-600 font-medium"
+        >
+          <div class="flex items-center gap-1.5">
+            <i class="far fa-calendar-alt text-emerald-500"></i>
+            May 25, 2026 – May 29, 2026
+          </div>
+          <span class="hidden sm:inline text-slate-300">|</span>
+          <div class="flex items-center gap-1.5">
+            <i class="far fa-user text-emerald-500"></i>
+            Binay Shrestha
+          </div>
+        </div>
+      </header>
+
+      <!-- Weekly Plan Container -->
+      <div class="flex flex-col gap-4" id="week-container">
+        <!-- DAY BLOCK 1: MONDAY (Expanded by default) -->
+        <div
+          class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative group"
+        >
+          <!-- Color Accent Line -->
+          <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500"></div>
+
+          <!-- Day Header (Clickable) -->
+          <div
+            class="day-header flex items-center justify-between p-5 pl-7 cursor-pointer hover:bg-slate-50 transition"
+            onclick="toggleDay(this)"
+          >
+            <div class="flex items-center gap-4">
+              <div class="flex flex-col">
+                <h2 class="text-lg font-bold text-slate-900 leading-tight">
+                  Monday
+                </h2>
+                <span class="text-sm text-slate-500">May 25, 2026</span>
+              </div>
+              <span
+                class="px-2.5 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold ml-2"
+                >Published</span
+              >
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                class="opacity-0 group-hover:opacity-100 p-2 text-slate-400 hover:text-slate-700 transition"
+                onclick="event.stopPropagation();"
+              >
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+              <div
+                class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 transition-transform duration-300 chevron-icon transform rotate-180"
+              >
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Day Content (Expanded) -->
+          <div class="day-content expanded border-t border-slate-100">
+            <div class="day-content-inner p-5 pl-7">
+              <!-- Anchor Navigation -->
+              <div
+                class="flex items-center gap-2 mb-6 overflow-x-auto anchor-nav pb-2 border-b border-slate-100"
+              >
+                <button
+                  class="whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium bg-blue-50 text-blue-700"
+                >
+                  Objectives
+                </button>
+                <button
+                  class="whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50"
+                >
+                  Topics
+                </button>
+                <button
+                  class="whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50"
+                >
+                  Activities
+                </button>
+                <button
+                  class="whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50"
+                >
+                  Homework
+                </button>
+                <button
+                  class="whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50"
+                >
+                  Attachments
+                </button>
+              </div>
+
+              <div class="flex flex-col gap-8">
+                <!-- Editor Block 1: Learning Objectives -->
+                <div class="editor-section">
+                  <h3
+                    class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"
+                  >
+                    <i class="fas fa-bullseye text-blue-500"></i> Learning
+                    Objectives
+                  </h3>
+                  <!-- Contextual Toolbar (Fades in on focus inside CSS/JS) -->
+                  <div
+                    class="toolbar flex gap-1 mb-2 opacity-0 h-0 overflow-hidden transition-all duration-200 bg-slate-50 border border-slate-200 rounded-md p-1 w-fit"
+                  >
+                    <button
+                      onclick="formatDoc('bold')"
+                      class="w-8 h-8 rounded hover:bg-slate-200 text-slate-600"
+                    >
+                      <i class="fas fa-bold"></i>
+                    </button>
+                    <button
+                      onclick="formatDoc('italic')"
+                      class="w-8 h-8 rounded hover:bg-slate-200 text-slate-600"
+                    >
+                      <i class="fas fa-italic"></i>
+                    </button>
+                    <button
+                      onclick="formatDoc('underline')"
+                      class="w-8 h-8 rounded hover:bg-slate-200 text-slate-600"
+                    >
+                      <i class="fas fa-underline"></i>
+                    </button>
+                    <div class="w-px h-6 bg-slate-300 mx-1 mt-1"></div>
+                    <button
+                      onclick="formatDoc('insertUnorderedList')"
+                      class="w-8 h-8 rounded hover:bg-slate-200 text-slate-600"
+                    >
+                      <i class="fas fa-list-ul"></i>
+                    </button>
+                    <button
+                      onclick="formatDoc('insertOrderedList')"
+                      class="w-8 h-8 rounded hover:bg-slate-200 text-slate-600"
+                    >
+                      <i class="fas fa-list-ol"></i>
+                    </button>
+                  </div>
+                  <div
+                    class="editor-content p-3 border border-slate-200 rounded-lg text-slate-700 bg-white min-h-[80px] focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition"
+                    contenteditable="true"
+                    data-placeholder="What should students walk away knowing today?"
+                  >
+                    Students will be able to identify standard quadratic forms
+                    and find roots using the factoring method.
+                  </div>
+                </div>
+
+                <!-- Editor Block 2: Topics Covered -->
+                <div class="editor-section">
+                  <h3
+                    class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"
+                  >
+                    <i class="fas fa-book-open text-blue-500"></i> Topics
+                    Covered
+                  </h3>
+                  <div
+                    class="toolbar flex gap-1 mb-2 opacity-0 h-0 overflow-hidden transition-all duration-200 bg-slate-50 border border-slate-200 rounded-md p-1 w-fit"
+                  >
+                    <button
+                      onclick="formatDoc('bold')"
+                      class="w-8 h-8 rounded hover:bg-slate-200 text-slate-600"
+                    >
+                      <i class="fas fa-bold"></i>
+                    </button>
+                    <button
+                      onclick="formatDoc('italic')"
+                      class="w-8 h-8 rounded hover:bg-slate-200 text-slate-600"
+                    >
+                      <i class="fas fa-italic"></i>
+                    </button>
+                    <button
+                      onclick="formatDoc('insertUnorderedList')"
+                      class="w-8 h-8 rounded hover:bg-slate-200 text-slate-600"
+                    >
+                      <i class="fas fa-list-ul"></i>
+                    </button>
+                  </div>
+                  <div
+                    class="editor-content p-3 border border-slate-200 rounded-lg text-slate-700 bg-white min-h-[80px] focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition"
+                    contenteditable="true"
+                    data-placeholder="List the main topics..."
+                  >
+                    <ul style="list-style-type: disc; padding-left: 20px">
+                      <li>
+                        Standard form of quadratic equations: ax² + bx + c = 0
+                      </li>
+                      <li>Identifying coefficients a, b, and c.</li>
+                      <li>Basic factoring techniques.</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- Attachments Section -->
+                <div class="mt-4">
+                  <h3
+                    class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2"
+                  >
+                    <i class="fas fa-paperclip text-blue-500"></i> Attachments
+                  </h3>
+
+                  <div class="flex flex-col lg:flex-row gap-4">
+                    <!-- Upload Drop Zone -->
+                    <div
+                      class="flex-1 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-blue-50 hover:border-blue-300 transition cursor-pointer flex flex-col items-center justify-center p-6 text-center group"
+                    >
+                      <div
+                        class="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform"
+                      >
+                        <i
+                          class="fas fa-cloud-upload-alt text-xl text-blue-500"
+                        ></i>
+                      </div>
+                      <p class="text-sm font-medium text-slate-700 mb-1">
+                        Click or drag files to upload
+                      </p>
+                      <p class="text-xs text-slate-500">
+                        PDF, DOCX, PPT, JPG up to 10MB
+                      </p>
+                    </div>
+
+                    <!-- Uploaded Files Display -->
+                    <div class="flex-1 flex flex-col gap-3">
+                      <!-- File Card 1 -->
+                      <div
+                        class="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-white shadow-sm hover:shadow transition group"
+                      >
+                        <div class="flex items-center gap-3">
+                          <div
+                            class="w-10 h-10 rounded bg-red-50 flex items-center justify-center text-red-500"
+                          >
+                            <i class="fas fa-file-pdf text-lg"></i>
+                          </div>
+                          <div class="flex flex-col">
+                            <span class="text-sm font-semibold text-slate-700"
+                              >Factoring_Worksheet_Ch4.pdf</span
+                            >
+                            <span class="text-xs text-slate-400">1.2 MB</span>
+                          </div>
+                        </div>
+                        <button
+                          class="w-8 h-8 rounded-full hover:bg-red-50 text-slate-400 hover:text-red-500 transition flex items-center justify-center"
+                        >
+                          <i class="fas fa-trash-alt text-sm"></i>
+                        </button>
+                      </div>
+                      <!-- File Card 2 -->
+                      <div
+                        class="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-white shadow-sm hover:shadow transition group"
+                      >
+                        <div class="flex items-center gap-3">
+                          <div
+                            class="w-10 h-10 rounded bg-blue-50 flex items-center justify-center text-blue-500"
+                          >
+                            <i class="fas fa-image text-lg"></i>
+                          </div>
+                          <div class="flex flex-col">
+                            <span class="text-sm font-semibold text-slate-700"
+                              >Parabola_Graph_Example.png</span
+                            >
+                            <span class="text-xs text-slate-400">845 KB</span>
+                          </div>
+                        </div>
+                        <button
+                          class="w-8 h-8 rounded-full hover:bg-red-50 text-slate-400 hover:text-red-500 transition flex items-center justify-center"
+                        >
+                          <i class="fas fa-trash-alt text-sm"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DAY BLOCK 2: TUESDAY -->
+        <div
+          class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative group"
+        >
+          <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-purple-500"></div>
+          <div
+            class="day-header flex items-center justify-between p-5 pl-7 cursor-pointer hover:bg-slate-50 transition"
+            onclick="toggleDay(this)"
+          >
+            <div class="flex items-center gap-4">
+              <div class="flex flex-col">
+                <h2 class="text-lg font-bold text-slate-900 leading-tight">
+                  Tuesday
+                </h2>
+                <span class="text-sm text-slate-500">May 26, 2026</span>
+              </div>
+              <span
+                class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold ml-2"
+                >Draft</span
+              >
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                class="opacity-0 group-hover:opacity-100 p-2 text-slate-400 hover:text-slate-700 transition"
+                onclick="event.stopPropagation();"
+              >
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+              <div
+                class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 transition-transform duration-300 chevron-icon"
+              >
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+          </div>
+          <!-- Content structure exists but is collapsed -->
+          <div class="day-content border-t border-slate-100">
+            <div
+              class="day-content-inner p-5 pl-7 text-center text-slate-400 py-10"
+            >
+              <p>Drafting area for Tuesday... Click to expand editors.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- DAY BLOCK 3: WEDNESDAY -->
+        <div
+          class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative group"
+        >
+          <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-pink-500"></div>
+          <div
+            class="day-header flex items-center justify-between p-5 pl-7 cursor-pointer hover:bg-slate-50 transition"
+            onclick="toggleDay(this)"
+          >
+            <div class="flex items-center gap-4">
+              <div class="flex flex-col">
+                <h2 class="text-lg font-bold text-slate-900 leading-tight">
+                  Wednesday
+                </h2>
+                <span class="text-sm text-slate-500">May 27, 2026</span>
+              </div>
+              <span
+                class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold ml-2"
+                >Draft</span
+              >
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                class="opacity-0 group-hover:opacity-100 p-2 text-slate-400 hover:text-slate-700 transition"
+                onclick="event.stopPropagation();"
+              >
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+              <div
+                class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 transition-transform duration-300 chevron-icon"
+              >
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+          </div>
+          <div class="day-content border-t border-slate-100">
+            <div
+              class="day-content-inner p-5 pl-7 text-center text-slate-400 py-10"
+            >
+              <p>Drafting area for Wednesday...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- DAY BLOCK 4: THURSDAY -->
+        <div
+          class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative group"
+        >
+          <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-amber-500"></div>
+          <div
+            class="day-header flex items-center justify-between p-5 pl-7 cursor-pointer hover:bg-slate-50 transition"
+            onclick="toggleDay(this)"
+          >
+            <div class="flex items-center gap-4">
+              <div class="flex flex-col">
+                <h2 class="text-lg font-bold text-slate-900 leading-tight">
+                  Thursday
+                </h2>
+                <span class="text-sm text-slate-500">May 28, 2026</span>
+              </div>
+              <span
+                class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold ml-2"
+                >Draft</span
+              >
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                class="opacity-0 group-hover:opacity-100 p-2 text-slate-400 hover:text-slate-700 transition"
+                onclick="event.stopPropagation();"
+              >
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+              <div
+                class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 transition-transform duration-300 chevron-icon"
+              >
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+          </div>
+          <div class="day-content border-t border-slate-100">
+            <div
+              class="day-content-inner p-5 pl-7 text-center text-slate-400 py-10"
+            >
+              <p>Drafting area for Thursday...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- DAY BLOCK 5: FRIDAY -->
+        <div
+          class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative group"
+        >
+          <div
+            class="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500"
+          ></div>
+          <div
+            class="day-header flex items-center justify-between p-5 pl-7 cursor-pointer hover:bg-slate-50 transition"
+            onclick="toggleDay(this)"
+          >
+            <div class="flex items-center gap-4">
+              <div class="flex flex-col">
+                <h2 class="text-lg font-bold text-slate-900 leading-tight">
+                  Friday
+                </h2>
+                <span class="text-sm text-slate-500">May 29, 2026</span>
+              </div>
+              <span
+                class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold ml-2"
+                >Draft</span
+              >
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                class="opacity-0 group-hover:opacity-100 p-2 text-slate-400 hover:text-slate-700 transition"
+                onclick="event.stopPropagation();"
+              >
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+              <div
+                class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 transition-transform duration-300 chevron-icon"
+              >
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+          </div>
+          <div class="day-content border-t border-slate-100">
+            <div
+              class="day-content-inner p-5 pl-7 text-center text-slate-400 py-10"
+            >
+              <p>Drafting area for Friday...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Custom Day Button -->
+        <button
+          class="mt-2 w-full py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 font-medium hover:bg-slate-50 hover:text-slate-700 hover:border-slate-400 transition flex items-center justify-center gap-2 group"
+        >
+          <div
+            class="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-200 flex items-center justify-center group-hover:bg-slate-100 transition"
+          >
+            <i class="fas fa-plus text-slate-600"></i>
+          </div>
+          Add Custom Day (e.g., Saturday Remedial)
+        </button>
+      </div>
+    </main>
+
+    <!-- Sticky Action Footer -->
+    <div
+      class="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/80 backdrop-blur-md p-4 z-50"
+    >
+      <div
+        class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"
+      >
+        <button
+          class="text-slate-500 hover:text-red-600 font-medium text-sm flex items-center gap-2 transition px-4 py-2 rounded-lg hover:bg-red-50"
+        >
+          <i class="fas fa-trash-alt"></i> Delete Week Plan
+        </button>
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+          <button
+            class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-semibold hover:bg-slate-50 hover:border-slate-400 transition shadow-sm bg-white"
+          >
+            Save Draft
+          </button>
+          <button
+            class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition shadow-sm shadow-indigo-200 flex items-center justify-center gap-2"
+          >
+            <i class="fas fa-rocket"></i> Publish Plan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 1. Accordion Toggle Logic
+      function toggleDay(headerElement) {
+        const card = headerElement.parentElement
+        const content = card.querySelector('.day-content')
+        const icon = card.querySelector('.chevron-icon')
+
+        // Toggle expanded class
+        content.classList.toggle('expanded')
+
+        // Rotate icon
+        if (content.classList.contains('expanded')) {
+          icon.classList.add('rotate-180')
+        } else {
+          icon.classList.remove('rotate-180')
+        }
+      }
+
+      // 2. Rich Text Editor Logic
+      // Simple command execution
+      function formatDoc(cmd, value = null) {
+        document.execCommand(cmd, false, value)
+      }
+
+      // 3. Contextual Toolbar Show/Hide Logic
+      document.addEventListener('DOMContentLoaded', () => {
+        const editors = document.querySelectorAll('.editor-content')
+
+        editors.forEach((editor) => {
+          const section = editor.closest('.editor-section')
+          const toolbar = section.querySelector('.toolbar')
+
+          // Show toolbar when clicking inside editor
+          editor.addEventListener('focus', () => {
+            toolbar.classList.remove('opacity-0', 'h-0')
+            toolbar.classList.add('opacity-100', 'h-10') // explicit height for transition
+          })
+
+          // Hide toolbar when clicking outside
+          editor.addEventListener('blur', (e) => {
+            // Slight delay to allow toolbar button clicks
+            setTimeout(() => {
+              // Check if focus moved to a button inside the toolbar
+              if (!toolbar.contains(document.activeElement)) {
+                toolbar.classList.add('opacity-0', 'h-0')
+                toolbar.classList.remove('opacity-100', 'h-10')
+              }
+            }, 150)
+          })
+        })
+
+        // Re-focus editor after clicking a toolbar button to prevent it from closing
+        const formatButtons = document.querySelectorAll('.toolbar button')
+        formatButtons.forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault() // Prevent focus loss
+            const section = btn.closest('.editor-section')
+            const editor = section.querySelector('.editor-content')
+            editor.focus()
+          })
+        })
+      })
+    </script>
+  </body>
+</html>
