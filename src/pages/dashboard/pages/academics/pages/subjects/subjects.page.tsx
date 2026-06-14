@@ -16,6 +16,7 @@ import {
   updateSelectedClass,
 } from '@src/store/redux/dashboard/academics/subjects/subjects.slice'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
+import { useNavigate } from 'react-router-dom'
 
 export interface IndivSubject {
   id: number
@@ -29,6 +30,7 @@ export interface IndivSubject {
   }[]
 }
 export function ClassSubjectsPage() {
+  const navigate = useNavigate()
   const [openCreateSubject, setOpenCreateSubject] = useState(false)
   const [selectedSubject, setSelectedSubject] = useState<IndivSubject | null>(
     null
@@ -144,6 +146,9 @@ export function ClassSubjectsPage() {
         loading={subjectListLoading}
         data={remappedSubjects() ?? []}
         actions={{
+          onView: (item) => {
+            navigate(`/dashboard/academics/class-subjects/${item.id}/view`)
+          },
           onEdit: (item) => {
             setSelectedSubject({
               ...item,

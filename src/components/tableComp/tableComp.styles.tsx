@@ -10,6 +10,9 @@ export const TablePaper = styled(Paper)`
 `
 export const THeadCell = styled(TableCell)`
   color: ${colors.grey[300]};
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 13px;
 `
 
 export const StyledTableRow = styled(TableRow)(() => ({
