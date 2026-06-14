@@ -1,12 +1,18 @@
-import { Box } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import { ButtonComp } from '@src/components/button/button.component'
 import { TableComp } from '@src/components/tableComp/tableComp.components'
 import { IoAddOutline } from 'react-icons/io5'
 import { AddChapterModal } from '../addChapterModal/addChapterModal.component'
 import { useState } from 'react'
+import { ViewChapterDrawer } from '../viewChapterDrawer/viewChapterDrawer.component'
 
 export function ChapterList() {
   const [openAddChapterModal, setOpenAddChapterModal] = useState(false)
+  const [openDrawer, setOpenDrawer] = useState(false)
+
+  const toggleDrawer = (val: boolean) => {
+    setOpenDrawer(val)
+  }
 
   return (
     <Box>
@@ -22,13 +28,18 @@ export function ChapterList() {
         actions={{ onDelete: () => {} }}
         search={() => {}}
         headerEl={
-          <ButtonComp
-            sx={{ textWrap: 'nowrap' }}
-            startIcon={<IoAddOutline />}
-            onClick={() => setOpenAddChapterModal(true)}
-          >
-            Add Chapter
-          </ButtonComp>
+          <Stack direction={'row'} alignItems={'center'} spacing={1}>
+            <ButtonComp
+              sx={{ textWrap: 'nowrap' }}
+              startIcon={<IoAddOutline />}
+              onClick={() => setOpenAddChapterModal(true)}
+            >
+              Add Chapter
+            </ButtonComp>
+            <ButtonComp color="secondary" onClick={() => toggleDrawer(true)}>
+              Open
+            </ButtonComp>
+          </Stack>
         }
       />
 
@@ -37,6 +48,9 @@ export function ChapterList() {
         open={openAddChapterModal}
         onClose={() => setOpenAddChapterModal(false)}
       />
+
+      {/* CHAPTER DETAIL DRAWER */}
+      <ViewChapterDrawer open={openDrawer} toggle={toggleDrawer} />
     </Box>
   )
 }
