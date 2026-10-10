@@ -2,8 +2,10 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { catchAsync } from '@src/helpers/catchAsync.helpers'
 import { teacherServices } from '@src/store/redux/dashboard/teachers/teachers.service'
 import {
+  CreateChapterDto,
   subjectServices,
   TCreateSubject,
+  UpdateChapterDto,
 } from '@src/store/redux/dashboard/academics/subjects/subjects.service'
 
 interface InitialState {
@@ -22,6 +24,23 @@ interface InitialState {
     data: Academics.ISubjectList[] | null
     loading: boolean
   }
+  selectedSubject: {
+    data: Academics.ISubjectDetail | null
+    loading: boolean
+  }
+  chapterList: {
+    data: Academics.IChapterList | null
+    loading: boolean
+  }
+  createChapter: {
+    loading: boolean
+  }
+  updateChapter: {
+    loading: boolean
+  }
+  deleteChapter: {
+    loading: boolean
+  }
 }
 const initialState: InitialState = {
   createSubject: {
@@ -37,6 +56,23 @@ const initialState: InitialState = {
   subjectList: {
     selectedClass: null,
     data: null,
+    loading: false,
+  },
+  selectedSubject: {
+    data: null,
+    loading: false,
+  },
+  chapterList: {
+    data: null,
+    loading: false,
+  },
+  createChapter: {
+    loading: false,
+  },
+  updateChapter: {
+    loading: false,
+  },
+  deleteChapter: {
     loading: false,
   },
 }
@@ -68,6 +104,18 @@ export const createSubjectAction = createAsyncThunk(
     },
     true
   )
+)
+
+export const getSubjectDetailAction = createAsyncThunk(
+  'subjectSlice/getSubjectDetail',
+  catchAsync(async (data: { classId: number; subjectId: number }) => {
+    const res = await subjectServices.getSubjectDetail(
+      data.classId,
+      data.subjectId
+    )
+
+    return res
+  })
 )
 
 export const updateSubjectAction = createAsyncThunk(
@@ -110,6 +158,86 @@ export const getSubjectListAction = createAsyncThunk(
   )
 )
 
+// CHAPTER ACTION
+export const createChapterAction = createAsyncThunk(
+  'chapterSlice/create',
+  catchAsync(
+    async (data: {
+      classId: number
+      subjectId: number
+      body: CreateChapterDto
+      onSuccess?: () => void
+    }) => {
+      const res = await subjectServices.createChapter(
+        data.classId,
+        data.subjectId,
+        data.body
+      )
+
+      return res
+    }
+  )
+)
+
+export const updateChapterAction = createAsyncThunk(
+  'chapterSlice/update',
+  catchAsync(
+    async (data: {
+      classId: number
+      subjectId: number
+      chapterId: number
+      body: UpdateChapterDto
+    }) => {
+      const res = await subjectServices.updateChapter(
+        data.classId,
+        data.subjectId,
+        data.chapterId,
+        data.body
+      )
+
+      return res
+    }
+  )
+)
+
+export const deleteChapterAction = createAsyncThunk(
+  'chapterSlice/delete',
+  catchAsync(
+    async (data: { classId: number; subjectId: number; chapterId: number }) => {
+      const res = await subjectServices.deleteChapter(
+        data.classId,
+        data.subjectId,
+        data.chapterId
+      )
+
+      return res
+    }
+  )
+)
+
+export const getChapterListAction = createAsyncThunk(
+  'chapterSlice/getChapterList',
+  catchAsync(
+    async (data: {
+      classId: number
+      subjectId: number
+      page?: number
+      limit?: number
+      search?: string
+    }) => {
+      const res = await subjectServices.getChapterList(
+        data.classId,
+        data.subjectId,
+        data.page,
+        data.limit,
+        data.search
+      )
+
+      return res
+    }
+  )
+)
+
 const subjectSlice = createSlice({
   name: 'SubjectSlice',
   initialState,
@@ -142,6 +270,17 @@ const subjectSlice = createSlice({
     builder.addCase(createSubjectAction.rejected, (state) => {
       state.createSubject.loading = false
     })
+    // GET SUBJECT DETAIL ACTION
+    builder.addCase(getSubjectDetailAction.pending, (state) => {
+      state.selectedSubject.loading = true
+    })
+    builder.addCase(getSubjectDetailAction.fulfilled, (state, action) => {
+      state.selectedSubject.loading = false
+      state.selectedSubject.data = action.payload.data
+    })
+    builder.addCase(getSubjectDetailAction.rejected, (state) => {
+      state.selectedSubject.loading = false
+    })
     // GET SUBJECT LIST ACTION
     builder.addCase(getSubjectListAction.pending, (state) => {
       state.subjectList.loading = true
@@ -162,6 +301,47 @@ const subjectSlice = createSlice({
     })
     builder.addCase(updateSubjectAction.rejected, (state) => {
       state.updateSubject.loading = false
+    })
+    // CREATE CHAPTER ACTION
+    builder.addCase(createChapterAction.pending, (state) => {
+      state.createChapter.loading = true
+    })
+    builder.addCase(createChapterAction.fulfilled, (state) => {
+      state.createChapter.loading = false
+    })
+    builder.addCase(createChapterAction.rejected, (state) => {
+      state.createChapter.loading = false
+    })
+    // UPDATE CHAPTER ACTION
+    builder.addCase(updateChapterAction.pending, (state) => {
+      state.updateChapter.loading = true
+    })
+    builder.addCase(updateChapterAction.fulfilled, (state) => {
+      state.updateChapter.loading = false
+    })
+    builder.addCase(updateChapterAction.rejected, (state) => {
+      state.updateChapter.loading = false
+    })
+    // DELETE CHAPTER ACTION
+    builder.addCase(deleteChapterAction.pending, (state) => {
+      state.deleteChapter.loading = true
+    })
+    builder.addCase(deleteChapterAction.fulfilled, (state) => {
+      state.deleteChapter.loading = false
+    })
+    builder.addCase(deleteChapterAction.rejected, (state) => {
+      state.deleteChapter.loading = false
+    })
+    // CHAPTER LIST ACTION
+    builder.addCase(getChapterListAction.pending, (state) => {
+      state.chapterList.loading = true
+    })
+    builder.addCase(getChapterListAction.fulfilled, (state, action) => {
+      state.chapterList.loading = false
+      state.chapterList.data = action.payload.data
+    })
+    builder.addCase(getChapterListAction.rejected, (state) => {
+      state.chapterList.loading = false
     })
   },
 })

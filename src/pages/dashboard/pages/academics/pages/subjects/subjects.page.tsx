@@ -17,6 +17,10 @@ import {
 } from '@src/store/redux/dashboard/academics/subjects/subjects.slice'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { useNavigate } from 'react-router-dom'
+import {
+  LOCAL_STORAGE,
+  LOCAL_STORAGE_STATE,
+} from '@src/constants/global.constants'
 
 export interface IndivSubject {
   id: number
@@ -148,6 +152,11 @@ export function ClassSubjectsPage() {
         actions={{
           onView: (item) => {
             navigate(`/dashboard/academics/class-subjects/${item.id}/view`)
+            // SET CLASS ID IN LOCAL STORAGE
+            LOCAL_STORAGE.setItem(
+              LOCAL_STORAGE_STATE.classId,
+              String(item.classDetails.id)
+            )
           },
           onEdit: (item) => {
             setSelectedSubject({

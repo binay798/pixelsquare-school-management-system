@@ -50,26 +50,27 @@ export function EditEmployeePage() {
   const [profilePic, setProfilePic] = useState<File | null>(null)
   const formik = useFormik({
     initialValues: {
-      firstname: selectedEmployee?.user_profile_details?.firstname,
-      middlename: selectedEmployee?.user_profile_details?.middlename,
-      lastname: selectedEmployee?.user_profile_details?.lastname,
-      mobile: selectedEmployee?.user_profile_details?.mobile,
+      firstname: selectedEmployee?.user_profile_details?.firstname ?? '',
+      middlename: selectedEmployee?.user_profile_details?.middlename ?? '',
+      lastname: selectedEmployee?.user_profile_details?.lastname ?? '',
+      mobile: selectedEmployee?.user_profile_details?.mobile ?? '',
       temporary_address:
-        selectedEmployee?.user_profile_details?.temporary_address,
+        selectedEmployee?.user_profile_details?.temporary_address ?? '',
       permanent_address:
-        selectedEmployee?.user_profile_details?.permanent_address,
-      religion: selectedEmployee?.user_profile_details?.religion,
-      blood_group: selectedEmployee?.user_profile_details?.blood_group,
-      date_of_birth: selectedEmployee?.user_profile_details?.date_of_birth,
-      gender: selectedEmployee?.user_profile_details?.gender,
-      nationality: selectedEmployee?.user_profile_details?.nationality,
+        selectedEmployee?.user_profile_details?.permanent_address ?? '',
+      religion: selectedEmployee?.user_profile_details?.religion ?? '',
+      blood_group: selectedEmployee?.user_profile_details?.blood_group ?? '',
+      date_of_birth:
+        selectedEmployee?.user_profile_details?.date_of_birth ?? '',
+      gender: selectedEmployee?.user_profile_details?.gender ?? '',
+      nationality: selectedEmployee?.user_profile_details?.nationality ?? '',
       employee_designation_id: {
-        label: selectedEmployee?.designation_details?.designation,
-        value: selectedEmployee?.designation_details?.id,
+        label: selectedEmployee?.designation_details?.designation ?? '',
+        value: selectedEmployee?.designation_details?.id ?? 0,
       },
-      national_id: selectedEmployee?.employee_details?.national_id,
-      joining_date: selectedEmployee?.employee_details?.joining_date,
-      role: selectedEmployee?.user_roles?.[0]?.role,
+      national_id: selectedEmployee?.employee_details?.national_id ?? '',
+      joining_date: selectedEmployee?.employee_details?.joining_date ?? '',
+      role: selectedEmployee?.user_roles?.[0]?.role ?? '',
     },
     onSubmit: (values) => {
       dispatch(

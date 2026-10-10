@@ -33,6 +33,15 @@ declare namespace Academics {
     is_active: boolean
   }
 
+  interface ISubjectDetail {
+    subject_id: number
+    subject_details: Pick<
+      ISubject,
+      'id' | 'name' | 'type' | 'author' | 'class_id'
+    >
+    teacher_profile_list: User.IUserProfile[]
+  }
+
   interface ISubjectList {
     subject_id: number
     subject_details: Pick<ISubject, 'name' | 'type' | 'author' | 'class_id'>
@@ -43,5 +52,27 @@ declare namespace Academics {
       teacher_id: number
     }[]
     class_details: { id: number; name: string }
+  }
+
+  interface IChapter {
+    id: number
+    created_at: string
+    updated_at: string
+    name: string
+    description?: string
+    duration: number
+    deadline: string
+    subject_id: number
+    chapter_number: number
+    difficulty_level: string
+    status: string
+    objectives?: string
+  }
+
+  interface IChapterList
+    extends Api.PaginatedData<{
+      chapter_details: IChapter
+    }> {
+    total: string
   }
 }

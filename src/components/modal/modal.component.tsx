@@ -88,6 +88,7 @@ export default function SpringModal({
                   borderColor: 'secondary.dark',
                   maxHeight: '90vh',
                   maxWidth: '90vw',
+                  overflowY: 'auto',
                 }}
               >
                 <CloseContainer>

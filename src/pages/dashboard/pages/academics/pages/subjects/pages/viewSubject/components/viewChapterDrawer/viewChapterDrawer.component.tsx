@@ -11,8 +11,7 @@ import {
 import { ButtonComp, CloseBtn } from '@src/components/button/button.component'
 import { CloseContainer } from '@src/components/modal/modal.styles'
 import { colors } from '@src/helpers/colors.helpers'
-import { CiEdit } from 'react-icons/ci'
-import { GoClock } from 'react-icons/go'
+import { GoClock, GoPencil } from 'react-icons/go'
 import { IoIosInformationCircleOutline } from 'react-icons/io'
 import { RxDashboard } from 'react-icons/rx'
 import { FaListCheck } from 'react-icons/fa6'
@@ -45,7 +44,7 @@ export function ViewChapterDrawer({ open, toggle }: Props) {
                   </Typography>
                 </Stack>
                 <Stack direction={'column'}>
-                  <Typography fontWeight={800}>Number System</Typography>
+                  <Typography fontWeight={800}>Number system</Typography>
                   <Typography variant="caption" color="secondary">
                     Mathematics
                   </Typography>
@@ -264,7 +263,11 @@ export function ViewChapterDrawer({ open, toggle }: Props) {
                 >
                   Cancel
                 </ButtonComp>
-                <ButtonComp size="medium" fullWidth startIcon={<CiEdit />}>
+                <ButtonComp
+                  size="medium"
+                  fullWidth
+                  startIcon={<GoPencil size={16} />}
+                >
                   Edit chapter
                 </ButtonComp>
               </Stack>

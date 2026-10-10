@@ -5,8 +5,36 @@ import { PiGraduationCap } from 'react-icons/pi'
 import { HiOutlineSquare3Stack3D } from 'react-icons/hi2'
 import { SelectField } from '@src/components/select/select.component'
 import { ChapterList } from './components/chapterList/chapterList.component'
+import { useDispatch } from '@src/store/hooks.store'
+import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { getSubjectDetailAction } from '@src/store/redux/dashboard/academics/subjects/subjects.slice'
+import {
+  LOCAL_STORAGE,
+  LOCAL_STORAGE_STATE,
+} from '@src/constants/global.constants'
+import { isEmpty } from 'lodash'
 
 export function ViewSubjectPage() {
+  const { subjectId } = useParams()
+  const [classId, setClassId] = useState<number | null>(null)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (subjectId && classId) {
+      dispatch(
+        getSubjectDetailAction({ classId, subjectId: Number(subjectId) })
+      )
+    }
+  }, [subjectId, classId])
+
+  useEffect(() => {
+    const classIdVal = LOCAL_STORAGE.getItem(LOCAL_STORAGE_STATE.classId)
+    if (!isEmpty(classIdVal)) {
+      setClassId(Number(classIdVal))
+    }
+  }, [classId])
+
   return (
     <Box>
       <Box>

@@ -134,9 +134,9 @@ theme = createTheme({
           },
           textTransform: 'none',
         },
-        disabled: {
-          cursor: 'not-allowed',
-        },
+        // disabled: {
+        //   cursor: 'not-allowed',
+        // },
         textSecondary: {
           color: '#333',
         },

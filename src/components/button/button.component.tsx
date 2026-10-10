@@ -73,7 +73,7 @@ export function ButtonComp(props: ButtonCompProps) {
   return (
     <Tooltip title={props.tooltipTitle} placement={props.tooltipPlacement}>
       <Button
-        {...omit(props, 'loading')}
+        {...omit(props, 'loading', 'tooltipTitle', 'tooltipPlacement')}
         disabled={props.loading || props.disabled}
       >
         <Stack direction="row" alignItems="center" gap={1}>

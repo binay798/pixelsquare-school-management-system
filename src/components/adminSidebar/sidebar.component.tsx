@@ -1,5 +1,10 @@
 import { Box, Collapse, List, Stack, Typography } from '@mui/material'
-import { MdKeyboardArrowRight } from 'react-icons/md'
+import {
+  MdKeyboardArrowRight,
+  MdOutlineDashboardCustomize,
+  MdAdminPanelSettings,
+  MdOutlineAssignment,
+} from 'react-icons/md'
 import { FaSchool } from 'react-icons/fa'
 import { animated } from '@react-spring/web'
 import { IoSchool } from 'react-icons/io5'
@@ -13,7 +18,6 @@ import { GiBookmarklet } from 'react-icons/gi'
 import { RiParentFill } from 'react-icons/ri'
 import { GiTeacher } from 'react-icons/gi'
 import { HiUserAdd } from 'react-icons/hi'
-import { MdOutlineDashboardCustomize } from 'react-icons/md'
 import { VscChecklist } from 'react-icons/vsc'
 import { FaChalkboardTeacher } from 'react-icons/fa'
 import { FaUsersGear } from 'react-icons/fa6'
@@ -28,7 +32,6 @@ import {
 } from './sidebar.styles'
 import { colors } from '@src/helpers/colors.helpers'
 import { BiSolidDashboard } from 'react-icons/bi'
-import { MdAdminPanelSettings } from 'react-icons/md'
 // import { MdKeyboardArrowRight } from 'react-icons/md'
 import React, { useState } from 'react'
 import { config, useSpring } from '@react-spring/web'
@@ -130,6 +133,11 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
         title: 'Class Routines',
         icon: <GrTableAdd />,
         to: '/dashboard/academics/class-routines',
+      },
+      {
+        title: 'Lesson Plan',
+        icon: <MdOutlineAssignment />,
+        to: '/dashboard/academics/lesson-plan',
       },
     ],
   },

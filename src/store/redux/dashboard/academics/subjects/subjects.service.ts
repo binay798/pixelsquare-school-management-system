@@ -47,8 +47,81 @@ const updateSubjectService = async (
   return res.data.data
 }
 
+const getSubjectDetail = async (classId: number, subjectId: number) => {
+  const res = await api<Api.Base<Academics.ISubjectDetail>>('get')(
+    `academics/classes/${classId}/subjects/${subjectId}`
+  )
+
+  return res.data.data
+}
+
+// CHAPTER SERVICE
+export interface CreateChapterDto
+  extends Omit<Academics.IChapter, 'id' | 'created_at' | 'updated_at'> {}
+const createChapter = async (
+  classId: number,
+  subjectId: number,
+  data: CreateChapterDto
+) => {
+  const res = await api<Api.Base<object>>('post')(
+    `academics/classes/${classId}/subjects/${subjectId}/chapters`,
+    undefined,
+    data
+  )
+
+  return res.data.data
+}
+
+const getChapterList = async (
+  classId: number,
+  subjectId: number,
+  page = 1,
+  limit = 5,
+  search?: string
+) => {
+  const res = await api<Api.Base<Academics.IChapterList>>('get')(
+    `academics/classes/${classId}/subjects/${subjectId}/chapters`,
+    { page, limit, search }
+  )
+
+  return res.data.data
+}
+
+export interface UpdateChapterDto extends Partial<CreateChapterDto> {}
+const updateChapter = async (
+  classId: number,
+  subjectId: number,
+  chapterId: number,
+  data: UpdateChapterDto
+) => {
+  const res = await api<Api.Base<object>>('patch')(
+    `academics/classes/${classId}/subjects/${subjectId}/chapters/${chapterId}`,
+    undefined,
+    data
+  )
+
+  return res.data.data
+}
+
+const deleteChapter = async (
+  classId: number,
+  subjectId: number,
+  chapterId: number
+) => {
+  const res = await api<Api.Base<object>>('delete')(
+    `academics/classes/${classId}/subjects/${subjectId}/chapters/${chapterId}`
+  )
+
+  return res.data.data
+}
+
 export const subjectServices = {
   createSubjectService,
+  getSubjectDetail,
   getSubjectListService,
   updateSubjectService,
+  getChapterList,
+  createChapter,
+  updateChapter,
+  deleteChapter,
 }

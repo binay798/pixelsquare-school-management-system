@@ -26,6 +26,8 @@ import { ClassesPage } from './pages/dashboard/pages/academics/pages/classes/cla
 import { ClassSectionsPage } from './pages/dashboard/pages/academics/pages/sections/sections.page'
 import { ClassRoutinesPage } from './pages/dashboard/pages/academics/pages/classRoutines/classRoutines.page'
 import { ClassSubjectsPage } from './pages/dashboard/pages/academics/pages/subjects/subjects.page'
+import { LessonPlanPage } from './pages/dashboard/pages/academics/pages/lessonPlan/lessonPlan.page'
+import { CreateLessonPlanPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/create/create.page'
 import { EditTeacherPage } from './pages/dashboard/pages/teachers/pages/teachers/pages/edit/edit.page'
 import { ManageStudent } from './pages/dashboard/pages/manageStudent/manageStudent.page'
 import { StudentTypePage } from './pages/dashboard/pages/manageStudent/pages/studentType/studentType.page'
@@ -153,6 +155,14 @@ export const privateRoutes: RouteObject[] = [
               { path: 'classes', element: <ClassesPage /> },
               { path: 'class-sections', element: <ClassSectionsPage /> },
               { path: 'class-routines', element: <ClassRoutinesPage /> },
+              {
+                path: 'lesson-plan',
+                element: <Outlet />,
+                children: [
+                  { path: '', element: <LessonPlanPage /> },
+                  { path: 'create', element: <CreateLessonPlanPage /> },
+                ],
+              },
               {
                 path: 'class-subjects',
                 element: <Outlet />,

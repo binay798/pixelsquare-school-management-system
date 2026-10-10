@@ -354,7 +354,7 @@ export function TableComp<T, K extends Extract<keyof T, string>>({
             )}
             variant="outlined"
             shape="rounded"
-            page={Number(props?.page)}
+            page={Number(props?.page ?? 1)}
             onChange={(_, page) => {
               props.onPageChange?.(page)
               updateSearchParams('page', String(Number(page || 1)))
