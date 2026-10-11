@@ -189,6 +189,7 @@ export const updateChapterAction = createAsyncThunk(
       subjectId: number
       chapterId: number
       body: UpdateChapterDto
+      onSuccess?: () => void
     }) => {
       const res = await subjectServices.updateChapter(
         data.classId,
@@ -196,9 +197,13 @@ export const updateChapterAction = createAsyncThunk(
         data.chapterId,
         data.body
       )
+      data?.onSuccess?.()
 
       return res
-    }
+    },
+    true,
+    undefined,
+    'Chapter updated successfully'
   )
 )
 

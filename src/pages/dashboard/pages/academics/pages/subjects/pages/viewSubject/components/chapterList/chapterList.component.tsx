@@ -27,6 +27,11 @@ export function ChapterList() {
   const [search, setSearch] = useState('')
   const [openAddChapterModal, setOpenAddChapterModal] = useState(false)
   const [openDrawer, setOpenDrawer] = useState(false)
+  const [selectedChapter, setSelectedChapter] =
+    useState<Academics.IChapter | null>(null)
+  const [chapterToEdit, setChapterToEdit] = useState<Academics.IChapter | null>(
+    null
+  )
   const dispatch = useDispatch()
   const { data: chapterList, loading: chapterListLoading } = useSelector(
     (store) => store.subjects.chapterList
@@ -34,9 +39,18 @@ export function ChapterList() {
   const { loading: deleteChapterLoading } = useSelector(
     (store) => store.subjects.deleteChapter
   )
+  const { data: selectedSubject } = useSelector(
+    (store) => store.subjects.selectedSubject
+  )
 
-  const toggleDrawer = (val: boolean) => {
+  const viewChapterModal = (val: boolean) => {
     setOpenDrawer(val)
+  }
+
+  const openEditChapterModal = (chapter: Academics.IChapter | null) => {
+    setChapterToEdit(chapter)
+    setOpenDrawer(false)
+    setOpenAddChapterModal(true)
   }
 
   useEffect(() => {
@@ -65,14 +79,7 @@ export function ChapterList() {
   }, [fetchChapterList])
 
   const remappedChapterList = useCallback(() => {
-    return chapterList?.rows?.map((el) => ({
-      id: el.chapter_details.id,
-      chapter_number: el.chapter_details.chapter_number,
-      name: el.chapter_details.name,
-      duration: el.chapter_details.duration,
-      status: el.chapter_details.status,
-      created_at: el.chapter_details.created_at,
-    }))
+    return chapterList?.rows?.map((el) => el.chapter_details)
   }, [chapterList])
 
   return (
@@ -101,6 +108,11 @@ export function ChapterList() {
         loading={chapterListLoading}
         data={remappedChapterList() ?? []}
         actions={{
+          onView: (item) => {
+            setSelectedChapter(item)
+            viewChapterModal(true)
+          },
+          onEdit: (item) => openEditChapterModal(item),
           onDelete: (item, onClose) => {
             if (!subjectId || !classId) return
 
@@ -128,25 +140,43 @@ export function ChapterList() {
             <ButtonComp
               sx={{ textWrap: 'nowrap' }}
               startIcon={<IoAddOutline />}
-              onClick={() => setOpenAddChapterModal(true)}
+              onClick={() => {
+                setChapterToEdit(null)
+                setOpenAddChapterModal(true)
+              }}
             >
               Add Chapter
             </ButtonComp>
-            <ButtonComp color="secondary" onClick={() => toggleDrawer(true)}>
+            {/* <ButtonComp
+              color="secondary"
+              onClick={() => viewChapterModal(true)}
+            >
               Open
-            </ButtonComp>
+            </ButtonComp> */}
           </Stack>
         }
       />
 
-      {/* ADD CHAPTER MODAL */}
+      {/* ADD / EDIT CHAPTER MODAL */}
       <AddChapterModal
         open={openAddChapterModal}
-        onClose={() => setOpenAddChapterModal(false)}
+        onClose={() => {
+          setOpenAddChapterModal(false)
+          setChapterToEdit(null)
+        }}
+        details={chapterToEdit}
+        subjectName={selectedSubject?.subject_details?.name}
+        onSuccess={fetchChapterList}
       />
 
       {/* CHAPTER DETAIL DRAWER */}
-      <ViewChapterDrawer open={openDrawer} toggle={toggleDrawer} />
+      <ViewChapterDrawer
+        open={openDrawer}
+        toggle={viewChapterModal}
+        chapter={selectedChapter}
+        subjectName={selectedSubject?.subject_details?.name}
+        onEdit={openEditChapterModal}
+      />
     </Box>
   )
 }

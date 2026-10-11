@@ -21,7 +21,10 @@ import { capitalize, isEmpty } from 'lodash'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { CustomDatePicker } from '@src/components/datePicker/datePicker.component'
 import moment from 'moment'
-import { createChapterAction } from '@src/store/redux/dashboard/academics/subjects/subjects.slice'
+import {
+  createChapterAction,
+  updateChapterAction,
+} from '@src/store/redux/dashboard/academics/subjects/subjects.slice'
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import {
@@ -32,14 +35,26 @@ import {
 interface Props {
   open: boolean
   onClose: () => void
+  details?: Academics.IChapter | null
+  subjectName?: string
+  onSuccess?: () => void
 }
 export function AddChapterModal(props: Props) {
   const { subjectId } = useParams()
   const [classId, setClassId] = useState<number | null>(null)
+  const [editMode, setEditMode] = useState(false)
   const dispatch = useDispatch()
   const { loading: createChapterLoading } = useSelector(
     (store) => store.subjects.createChapter
   )
+  const { loading: updateChapterLoading } = useSelector(
+    (store) => store.subjects.updateChapter
+  )
+  const chapterLoading = editMode ? updateChapterLoading : createChapterLoading
+
+  useEffect(() => {
+    setEditMode(!isEmpty(props.details))
+  }, [props.details])
 
   useEffect(() => {
     const classIdVal = LOCAL_STORAGE.getItem(LOCAL_STORAGE_STATE.classId)
@@ -50,39 +65,60 @@ export function AddChapterModal(props: Props) {
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      description: '',
-      duration: '',
-      deadline: '',
-      chapter_number: '',
-      difficulty_level: 'easy',
-      status: 'active',
-      objectives: '',
+      name: props.details?.name ?? '',
+      description: props.details?.description ?? '',
+      duration: props.details?.duration ?? '',
+      deadline: props.details?.deadline ?? '',
+      chapter_number: props.details?.chapter_number ?? '',
+      difficulty_level: props.details?.difficulty_level ?? 'easy',
+      status: props.details?.status ?? 'active',
+      objectives: props.details?.objectives ?? '',
     },
+    enableReinitialize: true,
     onSubmit: (values, { resetForm }) => {
       if (!subjectId || !classId) return
 
-      dispatch(
-        createChapterAction({
-          classId,
-          subjectId: Number(subjectId),
-          body: {
-            name: values.name,
-            description: values.description || undefined,
-            duration: Number(values.duration),
-            deadline: values.deadline,
-            subject_id: Number(subjectId),
-            chapter_number: Number(values.chapter_number),
-            difficulty_level: values.difficulty_level,
-            status: values.status,
-            objectives: values.objectives || undefined,
-          },
-          onSuccess: () => {
-            resetForm()
-            props.onClose()
-          },
-        })
-      )
+      const body = {
+        name: values.name,
+        description: values.description || undefined,
+        duration: Number(values.duration),
+        // API returns a timestamp on read, but expects a date only (YYYY-MM-DD)
+        deadline: isEmpty(values.deadline)
+          ? values.deadline
+          : moment(values.deadline).format('YYYY-MM-DD'),
+        subject_id: Number(subjectId),
+        chapter_number: Number(values.chapter_number),
+        difficulty_level: values.difficulty_level,
+        status: values.status,
+        objectives: values.objectives || undefined,
+      }
+
+      const onSuccess = () => {
+        resetForm()
+        props.onSuccess?.()
+        props.onClose()
+      }
+
+      if (editMode && props.details) {
+        dispatch(
+          updateChapterAction({
+            classId,
+            subjectId: Number(subjectId),
+            chapterId: props.details.id,
+            body,
+            onSuccess,
+          })
+        )
+      } else {
+        dispatch(
+          createChapterAction({
+            classId,
+            subjectId: Number(subjectId),
+            body,
+            onSuccess,
+          })
+        )
+      }
     },
     validationSchema: createChapterSchema,
   })
@@ -94,10 +130,12 @@ export function AddChapterModal(props: Props) {
           {/* HEADER */}
           <Box p={2} borderBottom="1px solid" borderColor={colors.grey[300]}>
             <Typography variant="h6" fontWeight={'bold'}>
-              Add New Chapter
+              {editMode ? 'Edit Chapter' : 'Add New Chapter'}
             </Typography>
             <Typography color="secondary" variant="caption">
-              For Mathematics (Math-101)
+              {props.subjectName
+                ? `For ${props.subjectName}`
+                : 'Chapter details'}
             </Typography>
           </Box>
           {/* MAIN BODY */}
@@ -292,9 +330,10 @@ export function AddChapterModal(props: Props) {
                     type="submit"
                     startIcon={<IoAddOutline />}
                     size="medium"
-                    disabled={createChapterLoading || !formik.dirty}
+                    loading={chapterLoading}
+                    disabled={chapterLoading || !formik.dirty}
                   >
-                    Save Chapter
+                    {editMode ? 'Update Chapter' : 'Save Chapter'}
                   </ButtonComp>
                 </Stack>
               </Box>

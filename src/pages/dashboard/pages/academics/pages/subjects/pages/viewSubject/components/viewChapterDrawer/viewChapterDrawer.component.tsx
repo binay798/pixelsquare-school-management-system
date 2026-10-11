@@ -11,6 +11,8 @@ import {
 import { ButtonComp, CloseBtn } from '@src/components/button/button.component'
 import { CloseContainer } from '@src/components/modal/modal.styles'
 import { colors } from '@src/helpers/colors.helpers'
+import { capitalize } from 'lodash'
+import moment from 'moment'
 import { GoClock, GoPencil } from 'react-icons/go'
 import { IoIosInformationCircleOutline } from 'react-icons/io'
 import { RxDashboard } from 'react-icons/rx'
@@ -20,8 +22,17 @@ import { GrDocumentText } from 'react-icons/gr'
 interface Props {
   open: boolean
   toggle: (val: boolean) => void
+  chapter?: Academics.IChapter | null
+  subjectName?: string
+  onEdit?: (chapter: Academics.IChapter | null) => void
 }
-export function ViewChapterDrawer({ open, toggle }: Props) {
+export function ViewChapterDrawer({
+  open,
+  toggle,
+  chapter,
+  subjectName,
+  onEdit,
+}: Props) {
   return (
     <Box>
       <Drawer anchor="right" open={open} onClose={() => toggle(false)}>
@@ -40,13 +51,15 @@ export function ViewChapterDrawer({ open, toggle }: Props) {
                   justifyContent={'center'}
                 >
                   <Typography color="primary" fontWeight={700}>
-                    01
+                    {String(chapter?.chapter_number ?? 0).padStart(2, '0')}
                   </Typography>
                 </Stack>
                 <Stack direction={'column'}>
-                  <Typography fontWeight={800}>Number system</Typography>
+                  <Typography fontWeight={800}>
+                    {chapter?.name || '-'}
+                  </Typography>
                   <Typography variant="caption" color="secondary">
-                    Mathematics
+                    {subjectName || '-'}
                   </Typography>
                 </Stack>
                 <CloseContainer>
@@ -60,15 +73,17 @@ export function ViewChapterDrawer({ open, toggle }: Props) {
               <Stack direction="column" spacing={2}>
                 <Stack direction="row" spacing={1}>
                   <Chip
-                    label="Active"
+                    label={capitalize(chapter?.status || '-')}
                     size="small"
                     icon={<GoClock size={14} />}
                     sx={{ fontWeight: 500 }}
-                    color="success"
+                    color={chapter?.status === 'active' ? 'success' : 'error'}
                   ></Chip>
                   <Chip
                     color="primary"
-                    label="Difficulty: Medium"
+                    label={`Difficulty: ${capitalize(
+                      chapter?.difficulty_level || '-'
+                    )}`}
                     size="small"
                     sx={{ fontWeight: 500 }}
                   ></Chip>
@@ -88,8 +103,7 @@ export function ViewChapterDrawer({ open, toggle }: Props) {
                   </Stack>
                   <Box pl={2}>
                     <Typography variant="caption" color={colors.grey[700]}>
-                      Real numbers, rational and irrational numbers and their
-                      properties on the number line.
+                      {chapter?.description || '-'}
                     </Typography>
                   </Box>
                 </Card>
@@ -110,7 +124,7 @@ export function ViewChapterDrawer({ open, toggle }: Props) {
                         spacing={1}
                       >
                         <Typography variant="h4" fontWeight={500}>
-                          8
+                          {chapter?.duration ?? 0}
                         </Typography>
                         <Typography>hrs</Typography>
                       </Stack>
@@ -225,7 +239,7 @@ export function ViewChapterDrawer({ open, toggle }: Props) {
                       <Typography fontWeight={500} color={colors.grey[600]}>
                         Created By
                       </Typography>
-                      <Typography fontWeight={500}>Sarah Jenkins</Typography>
+                      <Typography fontWeight={500}>-</Typography>
                     </Stack>
 
                     <Stack
@@ -236,7 +250,11 @@ export function ViewChapterDrawer({ open, toggle }: Props) {
                       <Typography fontWeight={500} color={colors.grey[600]}>
                         Created Date
                       </Typography>
-                      <Typography fontWeight={500}>01/06/2026</Typography>
+                      <Typography fontWeight={500}>
+                        {chapter?.created_at
+                          ? moment(chapter.created_at).format('DD MMM YYYY')
+                          : '-'}
+                      </Typography>
                     </Stack>
                     <Stack
                       direction={'row'}
@@ -246,7 +264,11 @@ export function ViewChapterDrawer({ open, toggle }: Props) {
                       <Typography fontWeight={500} color={colors.grey[600]}>
                         Last Updated
                       </Typography>
-                      <Typography fontWeight={500}>17/07/2026</Typography>
+                      <Typography fontWeight={500}>
+                        {chapter?.updated_at
+                          ? moment(chapter.updated_at).format('DD MMM YYYY')
+                          : '-'}
+                      </Typography>
                     </Stack>
                   </Stack>
                 </Card>
@@ -260,6 +282,7 @@ export function ViewChapterDrawer({ open, toggle }: Props) {
                   fullWidth
                   variant="outlined"
                   color="secondary"
+                  onClick={() => toggle(false)}
                 >
                   Cancel
                 </ButtonComp>
@@ -267,6 +290,7 @@ export function ViewChapterDrawer({ open, toggle }: Props) {
                   size="medium"
                   fullWidth
                   startIcon={<GoPencil size={16} />}
+                  onClick={() => onEdit?.(chapter ?? null)}
                 >
                   Edit chapter
                 </ButtonComp>
