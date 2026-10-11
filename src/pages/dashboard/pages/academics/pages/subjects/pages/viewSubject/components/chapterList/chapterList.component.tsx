@@ -7,7 +7,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { ViewChapterDrawer } from '../viewChapterDrawer/viewChapterDrawer.component'
 import { usePage } from '@src/helpers/getPageParams.helper'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
-import { getChapterListAction } from '@src/store/redux/dashboard/academics/subjects/subjects.slice'
+import {
+  deleteChapterAction,
+  getChapterListAction,
+} from '@src/store/redux/dashboard/academics/subjects/subjects.slice'
 import { useParams } from 'react-router-dom'
 import {
   LOCAL_STORAGE,
@@ -28,6 +31,9 @@ export function ChapterList() {
   const { data: chapterList, loading: chapterListLoading } = useSelector(
     (store) => store.subjects.chapterList
   )
+  const { loading: deleteChapterLoading } = useSelector(
+    (store) => store.subjects.deleteChapter
+  )
 
   const toggleDrawer = (val: boolean) => {
     setOpenDrawer(val)
@@ -40,7 +46,7 @@ export function ChapterList() {
     }
   }, [])
 
-  useEffect(() => {
+  const fetchChapterList = useCallback(() => {
     if (!subjectId || !classId) return
 
     dispatch(
@@ -52,7 +58,11 @@ export function ChapterList() {
         search,
       })
     )
-  }, [classId, subjectId, page, limit, search])
+  }, [dispatch, classId, subjectId, page, limit, search])
+
+  useEffect(() => {
+    fetchChapterList()
+  }, [fetchChapterList])
 
   const remappedChapterList = useCallback(() => {
     return chapterList?.rows?.map((el) => ({
@@ -90,7 +100,24 @@ export function ChapterList() {
         ]}
         loading={chapterListLoading}
         data={remappedChapterList() ?? []}
-        actions={{ onDelete: () => {} }}
+        actions={{
+          onDelete: (item, onClose) => {
+            if (!subjectId || !classId) return
+
+            dispatch(
+              deleteChapterAction({
+                classId,
+                subjectId: Number(subjectId),
+                chapterId: item.id,
+                onSuccess: () => {
+                  onClose?.()
+                  fetchChapterList()
+                },
+              })
+            )
+          },
+        }}
+        deleteConfirmLoader={deleteChapterLoading}
         count={Number(chapterList?.total)}
         page={page}
         rowsPerPage={limit}

@@ -205,15 +205,24 @@ export const updateChapterAction = createAsyncThunk(
 export const deleteChapterAction = createAsyncThunk(
   'chapterSlice/delete',
   catchAsync(
-    async (data: { classId: number; subjectId: number; chapterId: number }) => {
+    async (data: {
+      classId: number
+      subjectId: number
+      chapterId: number
+      onSuccess?: () => void
+    }) => {
       const res = await subjectServices.deleteChapter(
         data.classId,
         data.subjectId,
         data.chapterId
       )
+      data?.onSuccess?.()
 
       return res
-    }
+    },
+    true,
+    undefined,
+    'Chapter deleted successfully'
   )
 )
 
