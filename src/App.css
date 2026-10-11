@@ -87,7 +87,14 @@ body {
   position: relative;
   z-index: 1;
 }
+/*
+ * Modals are portaled into this container (`SpringModal` uses it as its
+ * `container`), so `#modal-portal` must stack ABOVE MUI's Drawer layer.
+ * MUI defaults: drawer = 1200, modal = 1300. Keeping the portal at the modal
+ * level (1300) means modals beat drawers (1200), while body-level popovers/menus
+ * (also 1300) are appended later in the DOM and still render above the modal.
+ */
 #modal-portal {
   position: relative;
-  z-index: 2;
+  z-index: 1300;
 }

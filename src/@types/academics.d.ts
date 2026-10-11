@@ -75,4 +75,20 @@ declare namespace Academics {
     }> {
     total: string
   }
+
+  interface ITopic {
+    id: number
+    created_at: string
+    updated_at: string
+    name: string
+    description?: string
+    subject_id: number
+    chapter_id: number
+    sequence_order?: number
+    estimated_periods?: number
+  }
+
+  interface ITopicList {
+    topic_details: ITopic
+  }
 }

@@ -18,6 +18,7 @@ import { IoIosInformationCircleOutline } from 'react-icons/io'
 import { RxDashboard } from 'react-icons/rx'
 import { FaListCheck } from 'react-icons/fa6'
 import { GrDocumentText } from 'react-icons/gr'
+import { TopicComponent } from './components/topicComponent/topic.component'
 
 interface Props {
   open: boolean
@@ -35,7 +36,12 @@ export function ViewChapterDrawer({
 }: Props) {
   return (
     <Box>
-      <Drawer anchor="right" open={open} onClose={() => toggle(false)}>
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={() => toggle(false)}
+        slotProps={{ paper: { sx: { overflowY: 'hidden' } } }}
+      >
         <Box width={500} height="100%">
           <Stack direction="column" height="100%">
             {/* HEADER */}
@@ -69,8 +75,18 @@ export function ViewChapterDrawer({
             </Box>
             <Divider />
             {/* MAIN BODY */}
-            <Box bgcolor={colors.grey[200]} flex={1} p={2}>
-              <Stack direction="column" spacing={2}>
+            <Box
+              bgcolor={colors.grey[200]}
+              flex={1}
+              minHeight={0}
+              p={2}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                overflowY: 'auto',
+              }}
+            >
+              <Stack direction="column" spacing={2} sx={{ flexShrink: 0 }}>
                 <Stack direction="row" spacing={1}>
                   <Chip
                     label={capitalize(chapter?.status || '-')}
@@ -273,6 +289,12 @@ export function ViewChapterDrawer({
                   </Stack>
                 </Card>
               </Stack>
+
+              {/* TOPIC COMPONENT */}
+              <TopicComponent
+                chapterId={chapter?.id}
+                chapterName={chapter?.name}
+              />
             </Box>
             {/* BUTTON SECTION */}
             <Box p={2} mt="auto" justifySelf={'flex-end'}>

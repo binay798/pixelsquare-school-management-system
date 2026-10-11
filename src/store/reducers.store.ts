@@ -8,6 +8,7 @@ import manageEmployeeReducer from './redux/dashboard/humanResources/manageEmploy
 import departmentReducer from './redux/dashboard/teachers/departments/departments.slice'
 import classReducer from './redux/dashboard/academics/classes/classes.slice'
 import subjectReducer from './redux/dashboard/academics/subjects/subjects.slice'
+import topicReducer from './redux/dashboard/academics/topics/topics.slice'
 import teacherReduder from './redux/dashboard/teachers/teachers.slice'
 import manageStudentReducer from './redux/dashboard/manageStudents/manageStudents.slice'
 import attendanceReducer from './redux/dashboard/attendance/attendance.slice'
@@ -25,6 +26,7 @@ export const store = configureStore({
     classes: classReducer,
     classSections: classSectionReducer,
     subjects: subjectReducer,
+    topics: topicReducer,
     teachers: teacherReduder,
     manageStudents: manageStudentReducer,
     guardians: guardianReducer,

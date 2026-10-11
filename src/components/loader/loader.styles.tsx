@@ -61,7 +61,8 @@ export const FullPageLoaderContainer = styled.div`
   justify-content: center;
   background: ${colors.grey[100]};
   position: fixed;
-  z-index: 200;
+  /* above MUI's drawer (1200) and modal (1300) layers: the curtain blocks everything */
+  z-index: 1500;
   width: 100vw;
   height: 100vh;
   top: 0;
