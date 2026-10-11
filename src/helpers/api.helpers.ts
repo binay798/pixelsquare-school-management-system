@@ -72,6 +72,7 @@ const api =
       'baseURL' | 'url' | 'method' | 'data'
     >
   ): Promise<AxiosResponse<ApiResponse>> =>
+    // @ts-ignore
     instance({ url: getParsedUrl(url, params), method, data, ...config })
 
 export { instance, api }
