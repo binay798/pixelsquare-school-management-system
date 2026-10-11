@@ -18,19 +18,36 @@ import { ButtonComp } from '@src/components/button/button.component'
 import { IoAddOutline } from 'react-icons/io5'
 import { createChapterSchema } from './addChapterModal.schema'
 import { capitalize, isEmpty } from 'lodash'
-import { useSelector } from '@src/store/hooks.store'
+import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { CustomDatePicker } from '@src/components/datePicker/datePicker.component'
 import moment from 'moment'
+import { createChapterAction } from '@src/store/redux/dashboard/academics/subjects/subjects.slice'
+import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import {
+  LOCAL_STORAGE,
+  LOCAL_STORAGE_STATE,
+} from '@src/constants/global.constants'
 
 interface Props {
   open: boolean
   onClose: () => void
 }
 export function AddChapterModal(props: Props) {
-  // const dispatch = useDispatch()
+  const { subjectId } = useParams()
+  const [classId, setClassId] = useState<number | null>(null)
+  const dispatch = useDispatch()
   const { loading: createChapterLoading } = useSelector(
     (store) => store.subjects.createChapter
   )
+
+  useEffect(() => {
+    const classIdVal = LOCAL_STORAGE.getItem(LOCAL_STORAGE_STATE.classId)
+    if (!isEmpty(classIdVal)) {
+      setClassId(Number(classIdVal))
+    }
+  }, [])
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -42,9 +59,30 @@ export function AddChapterModal(props: Props) {
       status: 'active',
       objectives: '',
     },
-    onSubmit: () => {
-      // console.log(values)
-      // dispatch(createChapterAction())
+    onSubmit: (values, { resetForm }) => {
+      if (!subjectId || !classId) return
+
+      dispatch(
+        createChapterAction({
+          classId,
+          subjectId: Number(subjectId),
+          body: {
+            name: values.name,
+            description: values.description || undefined,
+            duration: Number(values.duration),
+            deadline: values.deadline,
+            subject_id: Number(subjectId),
+            chapter_number: Number(values.chapter_number),
+            difficulty_level: values.difficulty_level,
+            status: values.status,
+            objectives: values.objectives || undefined,
+          },
+          onSuccess: () => {
+            resetForm()
+            props.onClose()
+          },
+        })
+      )
     },
     validationSchema: createChapterSchema,
   })

@@ -173,9 +173,11 @@ export const createChapterAction = createAsyncThunk(
         data.subjectId,
         data.body
       )
+      data.onSuccess?.()
 
       return res
-    }
+    },
+    true
   )
 )
 
