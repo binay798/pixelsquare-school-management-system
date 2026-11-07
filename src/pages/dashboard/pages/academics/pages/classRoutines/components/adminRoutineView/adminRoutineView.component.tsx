@@ -1,5 +1,5 @@
 import { Box, Card, Stack, Typography } from '@mui/material'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { StylesConfig } from 'react-select'
 import { GoPlus } from 'react-icons/go'
 import { ButtonComp } from '@src/components/button/button.component'
@@ -18,6 +18,7 @@ import {
   getScheduleTemplateListAction,
   getTimeSlotListAction,
   getWorkingDayListAction,
+  resetRoutineList,
 } from '@src/store/redux/dashboard/academics/classRoutines/classRoutines.slice'
 import RoutineGrid, {
   IAssignSlotPayload,
@@ -60,6 +61,9 @@ export function AdminRoutineView() {
   const [selectedTemplate, setSelectedTemplate] =
     useState<ISelectOption | null>(null)
   const [sectionOptions, setSectionOptions] = useState<ISelectOption[]>([])
+  const [classLoading, setClassLoading] = useState(false)
+  const [sectionLoading, setSectionLoading] = useState(false)
+  const classOptionsRef = useRef<ISelectOption[] | null>(null)
   const [activeTab, setActiveTab] = useState<TTab>('routine')
   const [openAssignModal, setOpenAssignModal] = useState(false)
   const [assignDefaults, setAssignDefaults] =
@@ -82,27 +86,69 @@ export function AdminRoutineView() {
 
   const classId = selectedClass?.value ?? null
 
-  const remappedClassList = async (): Promise<ISelectOption[]> => {
-    const data = await getClassList()
-
-    return (
-      data?.data?.rows?.map((el) => ({
-        label: el.class_details?.name,
-        value: el.class_details?.id,
-      })) ?? []
-    )
-  }
-
-  useEffect(() => {
-    const loadClassList = async () => {
-      const options = await remappedClassList()
-      if (options.length) {
-        setSelectedClass(options[0])
-      }
+  /**
+   * The class options are fetched once and cached, so typing inside the select
+   * filters the list locally instead of hitting the api on every keystroke.
+   */
+  const getClassOptions = useCallback(async (): Promise<ISelectOption[]> => {
+    if (classOptionsRef.current) {
+      return classOptionsRef.current
     }
-    loadClassList()
+
+    setClassLoading(true)
+    try {
+      const data = await getClassList()
+      const options =
+        data?.data?.rows?.map((el) => ({
+          label: el.class_details?.name,
+          value: el.class_details?.id,
+        })) ?? []
+
+      classOptionsRef.current = options
+
+      return options
+    } finally {
+      setClassLoading(false)
+    }
   }, [])
 
+  const remappedClassList = useCallback(
+    async (inputValue?: string): Promise<ISelectOption[]> => {
+      const options = await getClassOptions()
+      const term = (inputValue ?? '').trim().toLowerCase()
+
+      if (!term) {
+        return options
+      }
+
+      return options.filter((el) => el.label?.toLowerCase().includes(term))
+    },
+    [getClassOptions]
+  )
+
+  useEffect(() => {
+    let active = true
+
+    const loadClassList = async () => {
+      try {
+        const options = await getClassOptions()
+
+        if (active && options.length) {
+          setSelectedClass((current) => current ?? options[0])
+        }
+      } catch {
+        // the select stays empty, reopening the dropdown retries the request
+      }
+    }
+
+    loadClassList()
+
+    return () => {
+      active = false
+    }
+  }, [getClassOptions])
+
+  // working days, time slots and schedule templates follow the selected class
   useEffect(() => {
     if (!classId) {
       return
@@ -111,19 +157,54 @@ export function AdminRoutineView() {
     dispatch(getWorkingDayListAction({ classId }))
     dispatch(getTimeSlotListAction({ classId }))
     dispatch(getScheduleTemplateListAction({ classId }))
+  }, [classId, dispatch])
+
+  // sections are re-fetched for every class change
+  useEffect(() => {
+    setSectionOptions([])
+    setSelectedSection(null)
+
+    if (!classId) {
+      return
+    }
+
+    let active = true
+    setSectionLoading(true)
 
     const loadSectionList = async () => {
-      const data = await getClassSectionList(classId)
-      const options =
-        data?.data?.map((el) => ({
-          label: el.section_details?.name,
-          value: el.section_details?.id,
-        })) ?? []
-      setSectionOptions(options)
-      setSelectedSection(options.length ? options[0] : null)
+      try {
+        const data = await getClassSectionList(classId)
+
+        if (!active) {
+          return
+        }
+
+        const options =
+          data?.data?.map((el) => ({
+            label: el.section_details?.name,
+            value: el.section_details?.id,
+          })) ?? []
+
+        setSectionOptions(options)
+        setSelectedSection(options[0] ?? null)
+      } catch {
+        if (active) {
+          setSectionOptions([])
+          setSelectedSection(null)
+        }
+      } finally {
+        if (active) {
+          setSectionLoading(false)
+        }
+      }
     }
+
     loadSectionList()
-  }, [classId, dispatch])
+
+    return () => {
+      active = false
+    }
+  }, [classId])
 
   useEffect(() => {
     if (!scheduleTemplateList?.length) {
@@ -154,16 +235,22 @@ export function AdminRoutineView() {
   }, [classId, dispatch])
 
   const refreshRoutines = useCallback(() => {
-    if (!classId) {
+    // the api falls back to a class wide list when no section is sent, so wait
+    // until a section is resolved before requesting the routine
+    if (!classId || !sectionId) {
       return
     }
     dispatch(
       getClassRoutineListAction({
         classId,
-        classSectionId: sectionId ?? undefined,
+        classSectionId: sectionId,
       })
     )
   }, [classId, sectionId, dispatch])
+
+  useEffect(() => {
+    dispatch(resetRoutineList())
+  }, [classId, dispatch])
 
   useEffect(() => {
     refreshRoutines()
@@ -223,6 +310,8 @@ export function AdminRoutineView() {
             <AsyncSelectField
               placeholder="Select class"
               loadOptions={remappedClassList}
+              defaultOptions
+              isLoading={classLoading}
               value={selectedClass}
               onChange={(val) => {
                 setSelectedClass(val as ISelectOption | null)
@@ -236,13 +325,16 @@ export function AdminRoutineView() {
               Section
             </Typography>
             <SelectField
-              placeholder="Select section"
+              placeholder={
+                sectionLoading ? 'Loading sections...' : 'Select section'
+              }
               options={sectionOptions}
               value={selectedSection}
               onChange={(val) => {
                 setSelectedSection(val as ISelectOption | null)
               }}
-              isDisabled={!sectionOptions.length}
+              isLoading={sectionLoading}
+              isDisabled={sectionLoading || !sectionOptions.length}
               {...routineSelectPortalProps}
               styles={selectStyles}
             />

@@ -28,6 +28,10 @@ import { ClassRoutinesPage } from './pages/dashboard/pages/academics/pages/class
 import { ClassSubjectsPage } from './pages/dashboard/pages/academics/pages/subjects/subjects.page'
 import { LessonPlanPage } from './pages/dashboard/pages/academics/pages/lessonPlan/lessonPlan.page'
 import { CreateLessonPlanPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/create/create.page'
+import { LessonPlanDetailPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/detail/detail.page'
+import { WeeklyPlannerPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/weekly/weekly.page'
+import { SyllabusCompletionPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/syllabus/syllabus.page'
+import { LessonPlanTemplatesPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/templates/templates.page'
 import { EditTeacherPage } from './pages/dashboard/pages/teachers/pages/teachers/pages/edit/edit.page'
 import { ManageStudent } from './pages/dashboard/pages/manageStudent/manageStudent.page'
 import { StudentTypePage } from './pages/dashboard/pages/manageStudent/pages/studentType/studentType.page'
@@ -161,6 +165,14 @@ export const privateRoutes: RouteObject[] = [
                 children: [
                   { path: '', element: <LessonPlanPage /> },
                   { path: 'create', element: <CreateLessonPlanPage /> },
+                  { path: 'weekly', element: <WeeklyPlannerPage /> },
+                  { path: 'syllabus', element: <SyllabusCompletionPage /> },
+                  { path: 'templates', element: <LessonPlanTemplatesPage /> },
+                  { path: ':lessonPlanId', element: <LessonPlanDetailPage /> },
+                  {
+                    path: ':lessonPlanId/edit',
+                    element: <CreateLessonPlanPage />,
+                  },
                 ],
               },
               {

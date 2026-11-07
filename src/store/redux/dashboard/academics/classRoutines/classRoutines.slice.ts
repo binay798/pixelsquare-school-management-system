@@ -423,7 +423,12 @@ export const deleteScheduleTemplateAction = createAsyncThunk(
 const classRoutineSlice = createSlice({
   name: 'classRoutine',
   initialState,
-  reducers: {},
+  reducers: {
+    // clears the grid while a different class/section is being loaded
+    resetRoutineList: (state) => {
+      state.routineList.data = null
+    },
+  },
   extraReducers: (builders) => {
     // GET CLASS ROUTINE LIST
     builders.addCase(getClassRoutineListAction.pending, (state) => {
@@ -600,5 +605,7 @@ const classRoutineSlice = createSlice({
     })
   },
 })
+
+export const { resetRoutineList } = classRoutineSlice.actions
 
 export default classRoutineSlice.reducer
