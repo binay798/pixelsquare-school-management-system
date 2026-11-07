@@ -150,8 +150,8 @@ export function TopicsPickerModal({
   }
 
   return (
-    <SpringModal open={open} close={onClose} size="md">
-      <Box sx={{ width: { xs: '100%', md: 620 }, minHeight: 360 }}>
+    <SpringModal open={open} close={onClose} size="sm">
+      <Box sx={{ width: '100%', minHeight: 360 }}>
         <Stack spacing={0.5} mb={2}>
           <Stack direction="row" alignItems="center" spacing={1}>
             <Box

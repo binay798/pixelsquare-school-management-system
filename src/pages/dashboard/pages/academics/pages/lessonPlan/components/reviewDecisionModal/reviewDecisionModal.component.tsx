@@ -33,8 +33,8 @@ export function ReviewDecisionModal({
   }, [open])
 
   return (
-    <SpringModal open={open} close={onClose} size="sm">
-      <Box sx={{ width: { xs: '100%', md: 460 } }}>
+    <SpringModal open={open} close={onClose} size="xs">
+      <Box sx={{ width: '100%' }}>
         <Stack alignItems="center" spacing={1} mb={2}>
           <Box
             sx={{

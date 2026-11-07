@@ -121,8 +121,8 @@ export function TemplateFormModal({
   }
 
   return (
-    <SpringModal open={open} close={onClose} size="md">
-      <Box sx={{ width: { xs: '100%', md: 640 } }}>
+    <SpringModal open={open} close={onClose} size="sm">
+      <Box sx={{ width: '100%' }}>
         <Typography fontSize={17} fontWeight={700} color={colors.grey[900]}>
           {template ? 'Edit plan template' : 'New plan template'}
         </Typography>

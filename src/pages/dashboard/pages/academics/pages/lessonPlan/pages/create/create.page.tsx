@@ -753,7 +753,7 @@ export function CreateLessonPlanPage() {
                   fontSize={12}
                   fontWeight={600}
                   color={colors.grey[700]}
-                  mb={0.75}
+                  // mb={0.75}
                 >
                   Lesson date
                 </Typography>
