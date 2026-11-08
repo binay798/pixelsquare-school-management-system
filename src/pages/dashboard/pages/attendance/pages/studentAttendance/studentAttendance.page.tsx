@@ -45,12 +45,16 @@ interface TableStudentRow {
   photo?: string
   userId: number
   studentAcademicYearId: number
-  attendanceId: number
+  /** empty until the day of the student is submitted */
+  attendanceId?: number
 }
 
 export function StudentAttendancePage() {
   const [createAttendanceButton, setCreateAttendanceButton] = useState(true)
   const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'))
+  // bumping it makes the filter component reload the sheet of the day, so the
+  // page never keeps stale attendance ids after a save
+  const [reloadToken, setReloadToken] = useState(0)
   const [remappedStudentList, setRemappedStudentList] = useState<
     TableStudentRow[]
   >([])
@@ -78,8 +82,10 @@ export function StudentAttendancePage() {
         present: el?.attendance_details?.type ?? '',
         absent: el?.attendance_details?.type ?? '',
         leave: el?.attendance_details?.type ?? '',
-        note: '',
-        photo: getImageUrl(`${el.profile_photo_details?.path}`),
+        note: el?.attendance_details?.note ?? '',
+        photo: el?.profile_photo_details?.path
+          ? getImageUrl(el.profile_photo_details.path)
+          : undefined,
         userId: el.user_profile_details.user_id,
         studentAcademicYearId: el.student_academic_year_details.id,
         attendanceId: el.attendance_details?.id,
@@ -111,19 +117,29 @@ export function StudentAttendancePage() {
           ? el.leave
           : el.absent
         return {
-          date: moment().format('YYYY-MM-DD'),
+          // the selected day of the calendar, never `today`
+          date: currentDate,
           studentAcademicYearId: el.studentAcademicYearId,
           studentId: el.studentId,
           type: type,
           userId: el.userId,
-          note: el.note,
+          note: isEmpty(el.note) ? undefined : el.note,
         }
       })
-    dispatch(createStudentAttendanceSlice({ payload: data }))
+    dispatch(
+      createStudentAttendanceSlice({
+        payload: data,
+        onSuccess: () => setReloadToken((token) => token + 1),
+      })
+    )
   }
   const updateAttendance = () => {
-    const data: UpdateStudentAttendanceDto[] = remappedStudentList?.map(
-      (el) => ({
+    const data: UpdateStudentAttendanceDto[] = remappedStudentList
+      ?.filter(
+        (el): el is TableStudentRow & { attendanceId: number } =>
+          !isEmpty(el.attendanceId)
+      )
+      .map((el) => ({
         attendanceId: el.attendanceId,
         type: el.present
           ? el.present
@@ -132,11 +148,17 @@ export function StudentAttendancePage() {
           : el.leave
           ? el.leave
           : el.present,
-        note: el.note,
-      })
-    )
+        // an untouched note must not wipe the note stored on the record
+        note: isEmpty(el.note) ? undefined : el.note,
+      }))
+    if (isEmpty(data)) {
+      return
+    }
     dispatch(
-      updateStudentAttendanceSlice({ payload: data, onSuccess: () => {} })
+      updateStudentAttendanceSlice({
+        payload: data,
+        onSuccess: () => setReloadToken((token) => token + 1),
+      })
     )
   }
 
@@ -154,7 +176,7 @@ export function StudentAttendancePage() {
                 Update the school&apos;s details to keep records accurate and
                 up-to-date.
               </Typography> */}
-                <StudentFilter date={currentDate} />
+                <StudentFilter date={currentDate} reloadToken={reloadToken} />
               </Box>
             </Card>
             <TableComp

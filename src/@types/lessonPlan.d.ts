@@ -158,5 +158,6 @@ declare namespace LessonPlan {
     default_methodology: string | null
     default_assessment: string | null
     school_id: number
+    academic_year_id: number
   }
 }

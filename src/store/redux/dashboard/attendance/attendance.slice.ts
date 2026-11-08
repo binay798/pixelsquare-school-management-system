@@ -102,11 +102,20 @@ export const getStudentAttendanceListSlice = createAsyncThunk(
 
 export const createStudentAttendanceSlice = createAsyncThunk(
   'attendance/createStudentAttendance',
-  catchAsync(async (data: CreateStudentAttendanceDto) => {
-    const res = await attendanceServices.createStudentAttendance(data)
+  catchAsync(
+    async (data: {
+      payload: CreateStudentAttendanceDto['payload']
+      onSuccess?: () => void
+    }) => {
+      const res = await attendanceServices.createStudentAttendance({
+        payload: data.payload,
+      })
+      data.onSuccess?.()
 
-    return res
-  })
+      return res
+    },
+    true
+  )
 )
 
 export const updateStudentAttendanceSlice = createAsyncThunk(

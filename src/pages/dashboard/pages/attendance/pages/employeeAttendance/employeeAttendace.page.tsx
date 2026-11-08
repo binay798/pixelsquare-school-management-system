@@ -29,7 +29,8 @@ interface TableEmployeeRow {
   photo?: string
   userId: number
   employeeAcademicYearId: number
-  attendanceId: number
+  /** empty until the day of the employee is submitted */
+  attendanceId?: number
 }
 
 export function EmployeeAttendancePage() {
@@ -62,8 +63,10 @@ export function EmployeeAttendancePage() {
         present: el?.attendance_details?.type ?? '',
         absent: el?.attendance_details?.type ?? '',
         leave: el?.attendance_details?.type ?? '',
-        note: '',
-        photo: getImageUrl(`${el.profile_photo_details?.path}`),
+        note: el?.attendance_details?.note ?? '',
+        photo: el?.profile_photo_details?.path
+          ? getImageUrl(el.profile_photo_details.path)
+          : undefined,
         userId: el.user_profile_details.user_id,
         employeeAcademicYearId: el.employee_academic_year_details.id,
         attendanceId: el.attendance_details?.id,
@@ -84,6 +87,10 @@ export function EmployeeAttendancePage() {
     }
   }, [list.data])
 
+  const reloadSheet = () => {
+    dispatch(getEmployeeAttendanceListSlice({ date: currentDate }))
+  }
+
   const createAttendance = () => {
     const data: CreateEmployeeAttendanceDto[] = remappedTeacherList?.map(
       (el) => {
@@ -95,20 +102,29 @@ export function EmployeeAttendancePage() {
           ? el.leave
           : el.absent
         return {
+          // the selected day of the calendar, never `today`
           date: currentDate,
-          employeeAcademicYearId: el.employeeAcademicYearId,
           employeeId: el.employeeId,
           type: type,
           userId: el.userId,
-          note: el.note,
+          note: isEmpty(el.note) ? undefined : el.note,
         }
       }
     )
-    dispatch(createEmployeeAttendanceSlice({ payload: data }))
+    if (isEmpty(data)) {
+      return
+    }
+    dispatch(
+      createEmployeeAttendanceSlice({ payload: data, onSuccess: reloadSheet })
+    )
   }
   const updateAttendance = () => {
-    const data: UpdateEmployeeAttendanceDto[] = remappedTeacherList?.map(
-      (el) => ({
+    const data: UpdateEmployeeAttendanceDto[] = remappedTeacherList
+      ?.filter(
+        (el): el is TableEmployeeRow & { attendanceId: number } =>
+          !isEmpty(el.attendanceId)
+      )
+      .map((el) => ({
         attendanceId: el.attendanceId,
         type: el.present
           ? el.present
@@ -117,11 +133,13 @@ export function EmployeeAttendancePage() {
           : el.leave
           ? el.leave
           : el.present,
-        note: el.note,
-      })
-    )
+        note: isEmpty(el.note) ? undefined : el.note,
+      }))
+    if (isEmpty(data)) {
+      return
+    }
     dispatch(
-      updateEmployeeAttendanceSlice({ payload: data, onSuccess: () => {} })
+      updateEmployeeAttendanceSlice({ payload: data, onSuccess: reloadSheet })
     )
   }
   return (

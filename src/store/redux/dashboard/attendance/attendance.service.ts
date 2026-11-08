@@ -19,11 +19,15 @@ const getStudentAttendanceList = async (
 
 export interface CreateStudentAttendanceDto {
   payload: {
-    userId: number
+    /**
+     * Resolved by the backend from `studentAcademicYearId`, kept optional so the
+     * sheet can never mark a user other than the student of the row.
+     */
+    userId?: number
     date: string
     type: string
     note?: string
-    studentId: number
+    studentId?: number
     studentAcademicYearId: number
   }[]
 }
@@ -65,7 +69,8 @@ const getTeachersAttendanceList = async ({ date }: { date: string }) => {
 
 export interface CreateTeacherAttendanceDto {
   payload: {
-    userId: number
+    /** Resolved by the backend from `teacherId`. */
+    userId?: number
     date: string
     type: string
     note?: string
@@ -109,7 +114,8 @@ const getEmployeeAttendanceList = async ({ date }: { date: string }) => {
 }
 
 export interface CreateEmployeeAttendanceDto {
-  userId: number
+  /** Resolved by the backend from `employeeId`. */
+  userId?: number
   date: string
   type: string
   note?: string

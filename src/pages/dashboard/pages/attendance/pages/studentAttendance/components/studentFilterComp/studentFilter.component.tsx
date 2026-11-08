@@ -18,8 +18,10 @@ import { getStudentAttendanceListSlice } from '@src/store/redux/dashboard/attend
 
 interface Props {
   date: string
+  /** bumped by the page after a successful create/update to reload the sheet */
+  reloadToken?: number
 }
-export function StudentFilter({ date }: Props) {
+export function StudentFilter({ date, reloadToken = 0 }: Props) {
   const [firstLoad, setFirstLoad] = useState(true)
   const formik = useFormik<{
     class: { label: string; value: number } | null
@@ -133,6 +135,14 @@ export function StudentFilter({ date }: Props) {
       )
     }
   }
+
+  // the sheet follows the selected day of the calendar and is reloaded after a
+  // save, otherwise the page keeps the attendance ids of the previous load
+  useEffect(() => {
+    if (formik.values.class?.value && formik.values.section?.value) {
+      searchStudents()
+    }
+  }, [date, reloadToken])
 
   return (
     <Box mt={2}>

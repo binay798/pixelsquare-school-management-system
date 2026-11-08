@@ -63,6 +63,7 @@ declare namespace Academics {
     duration: number
     deadline: string
     subject_id: number
+    academic_year_id?: number
     chapter_number: number
     difficulty_level: string
     status: string
@@ -84,6 +85,7 @@ declare namespace Academics {
     description?: string
     subject_id: number
     chapter_id: number
+    academic_year_id?: number
     sequence_order?: number
     estimated_periods?: number
   }
