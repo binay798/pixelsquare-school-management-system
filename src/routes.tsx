@@ -44,6 +44,7 @@ import { GuardianPage } from './pages/dashboard/pages/guardian/pages/guardian.pa
 import { CreateGuardianPage } from './pages/dashboard/pages/guardian/pages/create/createGuardian.page'
 import { EditGuardianPage } from './pages/dashboard/pages/guardian/pages/edit/edit.page'
 import { ViewSubjectPage } from './pages/dashboard/pages/academics/pages/subjects/pages/viewSubject/viewSubject.page'
+import { AccountPage } from './pages/dashboard/pages/account/account.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -63,6 +64,7 @@ export const privateRoutes: RouteObject[] = [
         element: <Dashboard />,
         children: [
           { path: '/dashboard', element: <DashboardMain /> },
+          { path: '/dashboard/account', element: <AccountPage /> },
           {
             path: '/dashboard/administrator',
             element: <Administrator />,

@@ -7,6 +7,34 @@ declare namespace Service {
     }
   }
 
+  namespace Account {
+    /** `PATCH /api/account/password` */
+    interface UpdatePassword {
+      currentPassword: string
+      newPassword: string
+    }
+
+    /**
+     * `PATCH /api/account/profile`
+     *
+     * Every detail is optional so a single detail can be updated on its own.
+     * The form of the account page always sends the complete set.
+     */
+    interface UpdateProfile {
+      firstname?: string
+      middlename?: string
+      lastname?: string
+      mobile?: string
+      temporary_address?: string
+      permanent_address?: string
+      religion?: string
+      blood_group?: string
+      date_of_birth?: string
+      gender?: string
+      nationality?: string
+    }
+  }
+
   namespace ManageEmployee {
     interface CreateEmployee {
       image: File

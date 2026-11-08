@@ -1,5 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './redux/auth/auth.slice'
+import accountPasswordReducer from './redux/dashboard/account/password/password.slice'
+import accountProfileReducer from './redux/dashboard/account/profile/profile.slice'
 import manageSchoolReducer from './redux/dashboard/manageSchool/manageSchool.slice'
 import classSectionReducer from './redux/dashboard/academics/classSections/sections.slice'
 import academicYearReducer from './redux/dashboard/academicYear/academicYear.slice'
@@ -19,6 +21,8 @@ import lessonPlanReducer from './redux/dashboard/academics/lessonPlans/lessonPla
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    accountPassword: accountPasswordReducer,
+    accountProfile: accountProfileReducer,
     attendance: attendanceReducer,
     manageSchool: manageSchoolReducer,
     academicYear: academicYearReducer,

@@ -13,8 +13,9 @@ import { FaUser } from 'react-icons/fa'
 import { IoLogOutSharp } from 'react-icons/io5'
 import React from 'react'
 import { IoSettingsSharp } from 'react-icons/io5'
-import { useDispatch } from '@src/store/hooks.store'
+import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { authSliceLogout } from '@src/store/redux/auth/auth.slice'
+import { useNavigate } from 'react-router-dom'
 
 export function AccountMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -27,9 +28,17 @@ export function AccountMenu() {
   }
 
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const user = useSelector((store) => store.auth.user.data?.user)
+  const userRoles = useSelector((store) => store.auth.user.data?.userRoles)
+
   const logoutHandler = () => {
     dispatch(authSliceLogout({}))
     handleClose()
+  }
+  const accountHandler = () => {
+    handleClose()
+    navigate('/dashboard/account')
   }
 
   return (
@@ -65,13 +74,13 @@ export function AccountMenu() {
         }}
       >
         <Box p={2} pt={0} pb={1}>
-          <Typography>Binay shrestha</Typography>
+          <Typography noWrap>{user?.email ?? 'My account'}</Typography>
           <Typography variant="body2" color="textSecondary">
-            binay6014@gmail.com
+            {userRoles?.length ? userRoles.join(', ') : 'Signed in'}
           </Typography>
         </Box>
         <Divider />
-        <MenuItem sx={{ marginTop: 1 }} onClick={handleClose}>
+        <MenuItem sx={{ marginTop: 1 }} onClick={accountHandler}>
           <Stack direction={'row'} spacing={2} alignItems={'center'}>
             <FaUser size={16} />
             <Typography>My Account</Typography>
