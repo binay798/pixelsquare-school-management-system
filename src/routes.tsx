@@ -32,6 +32,11 @@ import { LessonPlanDetailPage } from './pages/dashboard/pages/academics/pages/le
 import { WeeklyPlannerPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/weekly/weekly.page'
 import { SyllabusCompletionPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/syllabus/syllabus.page'
 import { LessonPlanTemplatesPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/templates/templates.page'
+import { AnnouncementListPage } from './pages/dashboard/pages/academics/pages/announcements/announcements.page'
+import { CreateAnnouncementPage } from './pages/dashboard/pages/academics/pages/announcements/pages/create/create.page'
+import { AnnouncementDetailPage } from './pages/dashboard/pages/academics/pages/announcements/pages/detail/detail.page'
+import { AnnouncementRecipientsPage } from './pages/dashboard/pages/academics/pages/announcements/pages/recipients/recipients.page'
+import { AnnouncementFeedPage } from './pages/dashboard/pages/academics/pages/announcements/pages/feed/feed.page'
 import { EditTeacherPage } from './pages/dashboard/pages/teachers/pages/teachers/pages/edit/edit.page'
 import { ManageStudent } from './pages/dashboard/pages/manageStudent/manageStudent.page'
 import { StudentTypePage } from './pages/dashboard/pages/manageStudent/pages/studentType/studentType.page'
@@ -183,6 +188,27 @@ export const privateRoutes: RouteObject[] = [
                 children: [
                   { path: '', element: <ClassSubjectsPage /> },
                   { path: ':subjectId/view', element: <ViewSubjectPage /> },
+                ],
+              },
+              {
+                path: 'announcements',
+                element: <Outlet />,
+                children: [
+                  { path: '', element: <AnnouncementListPage /> },
+                  { path: 'create', element: <CreateAnnouncementPage /> },
+                  { path: 'feed', element: <AnnouncementFeedPage /> },
+                  {
+                    path: ':announcementId',
+                    element: <AnnouncementDetailPage />,
+                  },
+                  {
+                    path: ':announcementId/edit',
+                    element: <CreateAnnouncementPage />,
+                  },
+                  {
+                    path: ':announcementId/recipients',
+                    element: <AnnouncementRecipientsPage />,
+                  },
                 ],
               },
             ],

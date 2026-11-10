@@ -4,6 +4,8 @@ import {
   MdOutlineDashboardCustomize,
   MdAdminPanelSettings,
   MdOutlineAssignment,
+  MdCampaign,
+  MdOutlineNotificationsActive,
 } from 'react-icons/md'
 import { FaSchool } from 'react-icons/fa'
 import { animated } from '@react-spring/web'
@@ -140,6 +142,16 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
         to: '/dashboard/academics/lesson-plan',
       },
     ],
+  },
+  {
+    title: 'Announcements',
+    icon: <MdCampaign />,
+    to: '/dashboard/academics/announcements',
+  },
+  {
+    title: 'Notice Board',
+    icon: <MdOutlineNotificationsActive />,
+    to: '/dashboard/academics/announcements/feed',
   },
   {
     title: 'Guardian',

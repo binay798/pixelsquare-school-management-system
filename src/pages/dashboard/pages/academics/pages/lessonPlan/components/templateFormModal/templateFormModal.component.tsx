@@ -3,10 +3,8 @@ import { useEffect, useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import SpringModal from '@src/components/modal/modal.component'
 import { ButtonComp } from '@src/components/button/button.component'
-import {
-  InputField,
-  TextareaField,
-} from '@src/components/input/input.component'
+import { InputField } from '@src/components/input/input.component'
+import { TinyMceEditor } from '@src/components/tinyMce/tinyMceEditor.component'
 import { CustomSwitch } from '@src/components/switch/switch.component'
 import { colors } from '@src/helpers/colors.helpers'
 import { ICreateLessonPlanTemplateDto } from '@src/store/redux/dashboard/academics/lessonPlans/lessonPlans.service'
@@ -260,29 +258,26 @@ export function TemplateFormModal({
           Default content pre-filled for teachers
         </Typography>
         <Stack spacing={1.25}>
-          <TextareaField
-            variant="outlined"
+          <TinyMceEditor
             placeholder="Default learning objectives"
-            multiline
-            minRows={2}
+            height={140}
+            compact
             value={defaultObjectives}
-            onChange={(event) => setDefaultObjectives(event.target.value)}
+            onChange={setDefaultObjectives}
           />
-          <TextareaField
-            variant="outlined"
+          <TinyMceEditor
             placeholder="Default methodology"
-            multiline
-            minRows={2}
+            height={140}
+            compact
             value={defaultMethodology}
-            onChange={(event) => setDefaultMethodology(event.target.value)}
+            onChange={setDefaultMethodology}
           />
-          <TextareaField
-            variant="outlined"
+          <TinyMceEditor
             placeholder="Default assessment"
-            multiline
-            minRows={2}
+            height={140}
+            compact
             value={defaultAssessment}
-            onChange={(event) => setDefaultAssessment(event.target.value)}
+            onChange={setDefaultAssessment}
           />
         </Stack>
 

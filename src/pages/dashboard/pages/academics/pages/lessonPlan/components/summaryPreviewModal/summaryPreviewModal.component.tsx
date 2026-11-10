@@ -7,6 +7,7 @@ import {
 } from '@mui/material'
 import { BadgeCheck, CalendarDays, GraduationCap } from 'lucide-react'
 import SpringModal from '@src/components/modal/modal.component'
+import { TinyMceViewer } from '@src/components/tinyMce/tinyMceViewer.component'
 import { colors } from '@src/helpers/colors.helpers'
 import { formatPlanDate, getPlanTitle } from '../../lessonPlan.helpers'
 import { PlanStatusChip } from '../statusChip/planStatusChip.component'
@@ -136,13 +137,7 @@ export function SummaryPreviewModal({
                   >
                     {section.label}
                   </Typography>
-                  <Typography
-                    fontSize={13}
-                    color={section.value ? colors.grey[800] : colors.grey[400]}
-                    sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}
-                  >
-                    {section.value || 'Not specified.'}
-                  </Typography>
+                  <TinyMceViewer content={section.value} dense />
                 </Box>
               ))}
 

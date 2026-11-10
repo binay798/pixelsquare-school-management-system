@@ -32,7 +32,8 @@ import {
 } from 'lucide-react'
 import { ButtonComp } from '@src/components/button/button.component'
 import { DeleteConfirmationModal } from '@src/components/confirmationModal/deleteConfirmationModal.component'
-import { TextareaField } from '@src/components/input/input.component'
+import { TinyMceEditor } from '@src/components/tinyMce/tinyMceEditor.component'
+import { TinyMceViewer } from '@src/components/tinyMce/tinyMceViewer.component'
 import { colors } from '@src/helpers/colors.helpers'
 import { ROLE } from '@src/constants/users.constants'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
@@ -530,15 +531,7 @@ export function LessonPlanDetailPage() {
                       {section.label}
                     </Typography>
                   </Stack>
-                  <Typography
-                    fontSize={13.5}
-                    color={
-                      plan[section.key] ? colors.grey[800] : colors.grey[400]
-                    }
-                    sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}
-                  >
-                    {plan[section.key] || 'Not specified.'}
-                  </Typography>
+                  <TinyMceViewer content={plan[section.key]} />
                 </Box>
               ))}
             </Stack>
@@ -721,13 +714,12 @@ export function LessonPlanDetailPage() {
                   What worked well? What needs to change the next time this
                   lesson is delivered?
                 </Typography>
-                <TextareaField
-                  variant="outlined"
+                <TinyMceEditor
                   placeholder="Write your reflection after the lesson has been delivered..."
-                  multiline
-                  minRows={4}
+                  height={190}
+                  compact
                   value={reflection}
-                  onChange={(event) => setReflection(event.target.value)}
+                  onChange={setReflection}
                 />
                 <Stack
                   direction="row"
@@ -762,13 +754,7 @@ export function LessonPlanDetailPage() {
                 </Stack>
               </>
             ) : plan.teacher_reflection ? (
-              <Typography
-                fontSize={13.5}
-                color={colors.grey[800]}
-                sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}
-              >
-                {plan.teacher_reflection}
-              </Typography>
+              <TinyMceViewer content={plan.teacher_reflection} />
             ) : (
               <Typography fontSize={12.5} color={colors.grey[500]}>
                 The teacher has not recorded a reflection for this lesson yet.

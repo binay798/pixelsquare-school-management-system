@@ -17,6 +17,7 @@ import attendanceReducer from './redux/dashboard/attendance/attendance.slice'
 import guardianReducer from './redux/dashboard/guardian/guardian.slice'
 import classRoutineReducer from './redux/dashboard/academics/classRoutines/classRoutines.slice'
 import lessonPlanReducer from './redux/dashboard/academics/lessonPlans/lessonPlans.slice'
+import announcementReducer from './redux/dashboard/academics/announcements/announcements.slice'
 
 export const store = configureStore({
   reducer: {
@@ -38,5 +39,6 @@ export const store = configureStore({
     guardians: guardianReducer,
     classRoutines: classRoutineReducer,
     lessonPlans: lessonPlanReducer,
+    announcements: announcementReducer,
   },
 })

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { ButtonComp } from '@src/components/button/button.component'
 import { DeleteConfirmationModal } from '@src/components/confirmationModal/deleteConfirmationModal.component'
+import { TinyMceViewer } from '@src/components/tinyMce/tinyMceViewer.component'
 import { colors } from '@src/helpers/colors.helpers'
 import { ROLE } from '@src/constants/users.constants'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
@@ -414,12 +415,17 @@ function TemplateCard({
 
       <Box mt={1.5} flex={1}>
         {template.default_objectives ? (
-          <Typography fontSize={11.5} color={colors.grey[600]}>
-            <Box component="span" fontWeight={700}>
-              Objectives:{' '}
-            </Box>
-            {template.default_objectives}
-          </Typography>
+          <Box>
+            <Typography
+              fontSize={11.5}
+              fontWeight={700}
+              color={colors.grey[600]}
+              mb={0.25}
+            >
+              Objectives:
+            </Typography>
+            <TinyMceViewer content={template.default_objectives} dense />
+          </Box>
         ) : null}
       </Box>
 

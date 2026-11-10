@@ -23,10 +23,8 @@ import {
   Users,
 } from 'lucide-react'
 import { ButtonComp } from '@src/components/button/button.component'
-import {
-  InputField,
-  TextareaField,
-} from '@src/components/input/input.component'
+import { InputField } from '@src/components/input/input.component'
+import { TinyMceEditor } from '@src/components/tinyMce/tinyMceEditor.component'
 import { CustomDatePicker } from '@src/components/datePicker/datePicker.component'
 import { SelectField } from '@src/components/select/select.component'
 import { colors } from '@src/helpers/colors.helpers'
@@ -108,6 +106,9 @@ const CONTENT_FIELDS: {
     icon: <Lightbulb size={14} />,
   },
 ]
+
+const contentFieldHeight = (rows: number) =>
+  Math.min(320, Math.max(180, rows * 46 + 76))
 
 const validationSchema = yup.object({
   class_id: yup.number().nullable().required('Select a class'),
@@ -924,14 +925,17 @@ export function CreateLessonPlanPage() {
                           ) : null}
                         </Typography>
                       </Stack>
-                      <TextareaField
-                        variant="outlined"
+                      <TinyMceEditor
                         name={field.key}
                         placeholder={meta.placeholder ?? field.placeholder}
-                        multiline
-                        minRows={field.rows}
+                        height={contentFieldHeight(field.rows)}
                         value={formik.values[field.key]}
-                        onChange={formik.handleChange}
+                        onChange={(html) =>
+                          formik.setFieldValue(field.key, html)
+                        }
+                        onBlur={() =>
+                          formik.setFieldTouched(field.key, true, false)
+                        }
                       />
                     </Box>
                   )
