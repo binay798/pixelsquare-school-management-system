@@ -84,20 +84,36 @@ export const SelectField = (props: SelectProps) => {
   )
 }
 
-interface AsyncSelectProps
-  extends AsyncProps<unknown, false, GroupBase<unknown>> {
+export interface AsyncSelectFieldProps<Option, IsMulti extends boolean = false>
+  extends Omit<AsyncProps<Option, IsMulti, GroupBase<Option>>, 'styles'> {
+  // Kept deliberately untyped so the many existing call sites can pass their
+  // shared style objects without re-declaring the generic option type.
   styles?: StylesConfig
   menuListHeight?: number
 }
 
-export const AsyncSelectField = (props: AsyncSelectProps) => {
+/**
+ * Typed wrapper around react-select's async select.
+ *
+ * The component stays generic so callers can use it for both single and multi
+ * select without casting. `AsyncProps` itself is generic, a non generic wrapper
+ * forces every caller into a single select.
+ */
+export const AsyncSelectField = <Option, IsMulti extends boolean = false>(
+  props: AsyncSelectFieldProps<Option, IsMulti>
+) => {
   return (
-    <AsyncSelect
-      styles={{ ...customReactSelectStyles, ...props?.styles }}
+    <AsyncSelect<Option, IsMulti>
+      {...props}
+      styles={
+        {
+          ...customReactSelectStyles,
+          ...props.styles,
+        } as unknown as StylesConfig<Option, IsMulti, GroupBase<Option>>
+      }
       theme={customTheme}
       // placeholder={props}
       placeholder={props.placeholder}
-      {...props}
     />
   )
 }

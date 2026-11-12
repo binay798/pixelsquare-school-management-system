@@ -254,7 +254,10 @@ export function EditEmployeePage() {
                     >
                       Designation
                     </FormLabel>
-                    <AsyncSelectField
+                    <AsyncSelectField<
+                      { label: string; value: string | number },
+                      false
+                    >
                       placeholder="Select employee designation"
                       // defaultOptions={[
                       //   { label: 'Accountant', value: 'Accountant' },

@@ -20,6 +20,19 @@ interface InitialState {
   changeProfilePic: {
     loading: boolean
   }
+  linkedStudents: {
+    data: Guardian.ILinkedStudentList | null
+    loading: boolean
+  }
+  availableStudents: {
+    data: Guardian.IAvailableStudentList | null
+    loading: boolean
+  }
+  link: {
+    attach: boolean
+    update: boolean
+    detach: boolean
+  }
 }
 const initialState: InitialState = {
   list: {
@@ -39,18 +52,36 @@ const initialState: InitialState = {
   changeProfilePic: {
     loading: false,
   },
+  linkedStudents: {
+    data: null,
+    loading: false,
+  },
+  availableStudents: {
+    data: null,
+    loading: false,
+  },
+  link: {
+    attach: false,
+    update: false,
+    detach: false,
+  },
 }
 
 export const listGuardians = createAsyncThunk(
   'guardian/list',
-  catchAsync(async (data: { payload: { page?: number; limit?: number } }) => {
-    const res = await guardianServices.getGuardianList(
-      data.payload.page,
-      data.payload.limit
-    )
+  catchAsync(
+    async (data: {
+      payload: { page?: number; limit?: number; search?: string }
+    }) => {
+      const res = await guardianServices.getGuardianList(
+        data.payload.page,
+        data.payload.limit,
+        data.payload.search
+      )
 
-    return res
-  })
+      return res
+    }
+  )
 )
 
 export const createGuardianAction = createAsyncThunk(
@@ -106,6 +137,107 @@ export const changeGuardianProfilePic = createAsyncThunk(
       )
 
       data?.onSuccess?.()
+
+      return res
+    }
+  )
+)
+
+export const getGuardianStudentsAction = createAsyncThunk(
+  'guardian/students',
+  catchAsync(
+    async (data: {
+      guardianId: number
+      page?: number
+      limit?: number
+      search?: string
+    }) => {
+      const res = await guardianServices.getGuardianStudentList(
+        data.guardianId,
+        data.page,
+        data.limit,
+        data.search
+      )
+
+      return res
+    }
+  )
+)
+
+export const searchAvailableStudentsAction = createAsyncThunk(
+  'guardian/students/available',
+  catchAsync(
+    async (data: {
+      guardianId: number
+      page?: number
+      limit?: number
+      search?: string
+    }) => {
+      const res = await guardianServices.searchAvailableStudents(
+        data.guardianId,
+        data.page,
+        data.limit,
+        data.search
+      )
+
+      return res
+    }
+  )
+)
+
+export const attachStudentToGuardianAction = createAsyncThunk(
+  'guardian/students/attach',
+  catchAsync(
+    async (data: {
+      guardianId: number
+      payload: Guardian.IAttachStudentPayload
+      onSuccess?: () => void
+    }) => {
+      const res = await guardianServices.attachStudentToGuardian(
+        data.guardianId,
+        data.payload
+      )
+      data.onSuccess?.()
+
+      return res
+    }
+  )
+)
+
+export const updateGuardianStudentLinkAction = createAsyncThunk(
+  'guardian/students/update',
+  catchAsync(
+    async (data: {
+      guardianId: number
+      studentId: number
+      payload: Guardian.IGuardianStudentLinkPayload
+      onSuccess?: () => void
+    }) => {
+      const res = await guardianServices.updateGuardianStudentLink(
+        data.guardianId,
+        data.studentId,
+        data.payload
+      )
+      data.onSuccess?.()
+
+      return res
+    }
+  )
+)
+
+export const detachStudentFromGuardianAction = createAsyncThunk(
+  'guardian/students/detach',
+  catchAsync(
+    async (data: {
+      guardianId: number
+      studentId: number
+      onSuccess?: () => void
+    }) => {
+      const res = await guardianServices.detachStudentFromGuardian(
+        data.guardianId,
+        data.studentId
+      )
+      data.onSuccess?.()
 
       return res
     }
@@ -168,6 +300,61 @@ export const guardianSlice = createSlice({
     })
     builder.addCase(changeGuardianProfilePic.rejected, (state) => {
       state.changeProfilePic.loading = false
+    })
+    // LINKED STUDENTS
+    builder.addCase(getGuardianStudentsAction.pending, (state) => {
+      state.linkedStudents.loading = true
+    })
+    builder.addCase(getGuardianStudentsAction.fulfilled, (state, action) => {
+      state.linkedStudents.loading = false
+      state.linkedStudents.data = action.payload.data
+    })
+    builder.addCase(getGuardianStudentsAction.rejected, (state) => {
+      state.linkedStudents.loading = false
+    })
+    // AVAILABLE STUDENTS
+    builder.addCase(searchAvailableStudentsAction.pending, (state) => {
+      state.availableStudents.loading = true
+    })
+    builder.addCase(
+      searchAvailableStudentsAction.fulfilled,
+      (state, action) => {
+        state.availableStudents.loading = false
+        state.availableStudents.data = action.payload.data
+      }
+    )
+    builder.addCase(searchAvailableStudentsAction.rejected, (state) => {
+      state.availableStudents.loading = false
+    })
+    // ATTACH STUDENT
+    builder.addCase(attachStudentToGuardianAction.pending, (state) => {
+      state.link.attach = true
+    })
+    builder.addCase(attachStudentToGuardianAction.fulfilled, (state) => {
+      state.link.attach = false
+    })
+    builder.addCase(attachStudentToGuardianAction.rejected, (state) => {
+      state.link.attach = false
+    })
+    // UPDATE LINK
+    builder.addCase(updateGuardianStudentLinkAction.pending, (state) => {
+      state.link.update = true
+    })
+    builder.addCase(updateGuardianStudentLinkAction.fulfilled, (state) => {
+      state.link.update = false
+    })
+    builder.addCase(updateGuardianStudentLinkAction.rejected, (state) => {
+      state.link.update = false
+    })
+    // DETACH STUDENT
+    builder.addCase(detachStudentFromGuardianAction.pending, (state) => {
+      state.link.detach = true
+    })
+    builder.addCase(detachStudentFromGuardianAction.fulfilled, (state) => {
+      state.link.detach = false
+    })
+    builder.addCase(detachStudentFromGuardianAction.rejected, (state) => {
+      state.link.detach = false
     })
   },
 })

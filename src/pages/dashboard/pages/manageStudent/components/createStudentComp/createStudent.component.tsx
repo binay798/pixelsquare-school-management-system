@@ -1,4 +1,11 @@
-import { Box, Card, FormControl, FormLabel, Stack } from '@mui/material'
+import {
+  Box,
+  Card,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Stack,
+} from '@mui/material'
 import { ButtonComp } from '@src/components/button/button.component'
 import { FormBlock } from '@src/components/formBlock/formBlock.component'
 import { InputField } from '@src/components/input/input.component'
@@ -26,6 +33,14 @@ import { getClassSectionListAction } from '@src/store/redux/dashboard/academics/
 import { getImageUrl } from '@src/helpers/getImageUrl.helpers'
 import { TCreateStudent } from '@src/store/redux/dashboard/manageStudents/manageStudents.service'
 import { useNavigate } from 'react-router-dom'
+import { listGuardians } from '@src/store/redux/dashboard/guardian/guardian.slice'
+import { MultiValue } from 'react-select'
+import { AsyncSelectField } from '@src/components/select/select.component'
+
+interface IGuardianOption {
+  label: string
+  value: number
+}
 
 export function CreateStudentComp() {
   const dispatch = useDispatch()
@@ -112,6 +127,16 @@ export function CreateStudentComp() {
         value: selectedStudent?.class_section_details?.id ?? 0,
       },
       rollNo: selectedStudent?.student_academic_year_details?.roll_no ?? 0,
+      guardians:
+        selectedStudent?.guardians?.map((link) => ({
+          value: link.guardian_details.id,
+          label: [
+            link.user_profile_details.firstname,
+            link.user_profile_details.lastname,
+          ]
+            .filter(Boolean)
+            .join(' '),
+        })) ?? [],
     },
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -136,7 +161,7 @@ export function CreateStudentComp() {
         },
         student_profile: {
           previous_school: values.previousSchool,
-          guardian_id: 1,
+          guardian_ids: values.guardians.map((guardian) => guardian.value),
           father_name: values.fatherName,
           father_mobile: String(values.fatherMobile),
           mother_name: values.motherName,
@@ -212,6 +237,22 @@ export function CreateStudentComp() {
         })
       )
     }
+  }
+
+  const loadGuardianOptions = async (search: string) => {
+    const result = await dispatch(
+      listGuardians({ payload: { page: 1, limit: 20, search } })
+    ).unwrap()
+
+    return (result?.data?.rows ?? []).map((row) => ({
+      value: row.guardian_details.id,
+      label: [
+        row.user_profile_details.firstname,
+        row.user_profile_details.lastname,
+      ]
+        .filter(Boolean)
+        .join(' '),
+    }))
   }
 
   return (
@@ -658,6 +699,41 @@ export function CreateStudentComp() {
               </Stack>
               <Stack spacing={2} direction="row"></Stack>
             </Stack>
+          </FormBlock>
+
+          <FormBlock title="Guardian Information">
+            <FormControl
+              fullWidth
+              required
+              error={isEmpty(formik.values.guardians)}
+            >
+              <FormLabel
+                sx={{
+                  fontSize: 13,
+                  mb: 1,
+                  color: colors.grey[600],
+                }}
+              >
+                Guardians
+              </FormLabel>
+              <AsyncSelectField<IGuardianOption, true>
+                isMulti
+                placeholder="Search and select guardians"
+                cacheOptions
+                defaultOptions
+                menuPortalTarget={document.body}
+                loadOptions={loadGuardianOptions}
+                value={formik.values.guardians}
+                onChange={(options: MultiValue<IGuardianOption>) =>
+                  formik.setFieldValue('guardians', options ?? [])
+                }
+              />
+              <FormHelperText>
+                {isEmpty(formik.values.guardians)
+                  ? 'Select at least one guardian.'
+                  : 'The first selected guardian becomes the primary contact.'}
+              </FormHelperText>
+            </FormControl>
           </FormBlock>
 
           <Stack direction={'row'} justifyContent={'flex-end'} spacing={2}>

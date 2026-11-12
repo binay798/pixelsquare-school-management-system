@@ -1,309 +1,123 @@
-import { Avatar, Box, Card, Radio, Stack, Typography } from '@mui/material'
-import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
-import { ButtonComp } from '@src/components/button/button.component'
-import { TableComp } from '@src/components/tableComp/tableComp.components'
-import { getImageUrl } from '@src/helpers/getImageUrl.helpers'
-import { useDispatch, useSelector } from '@src/store/hooks.store'
-import {
-  CreateEmployeeAttendanceDto,
-  UpdateEmployeeAttendanceDto,
-} from '@src/store/redux/dashboard/attendance/attendance.service'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import moment from 'moment'
 import {
   createEmployeeAttendanceSlice,
   getEmployeeAttendanceListSlice,
   updateEmployeeAttendanceSlice,
 } from '@src/store/redux/dashboard/attendance/attendance.slice'
-import { isEmpty } from 'lodash'
-import moment, { Moment } from 'moment'
-import { useEffect, useState } from 'react'
-import { FaRegSave } from 'react-icons/fa'
+import { useDispatch, useSelector } from '@src/store/hooks.store'
+import { getImageUrl } from '@src/helpers/getImageUrl.helpers'
+import {
+  AttendancePerson,
+  AttendanceStatus,
+  AttendanceSubmissionPlan,
+} from '../../attendance.types'
+import { getPersonName, parseAttendanceStatus } from '../../attendance.helpers'
+import { AttendanceWorkspace } from '../../components/attendanceWorkspace/attendanceWorkspace.component'
 
-interface TableEmployeeRow {
-  employeeId: number
-  name: string
-  present: string
-  absent: string
-  leave: string
-  note?: string
-  photo?: string
-  userId: number
-  employeeAcademicYearId: number
-  /** empty until the day of the employee is submitted */
-  attendanceId?: number
-}
+const today = () => moment().format('YYYY-MM-DD')
 
+/**
+ * Employee attendance sheet, built on the same workspace as the students and
+ * the teachers. The endpoint is global for the day, so the page only owns the
+ * selected day, the reload token and the write actions.
+ */
 export function EmployeeAttendancePage() {
-  const [createAttendanceButton, setCreateAttendanceButton] = useState(true)
-  const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'))
-  const [remappedTeacherList, setRemappedTeacherList] = useState<
-    TableEmployeeRow[]
-  >([])
   const dispatch = useDispatch()
-  const { list } = useSelector((store) => store.attendance.employeeAttendance)
-  const { loading: employeeListLoading } = useSelector(
+
+  const { data: employeeList, loading: listLoading } = useSelector(
     (store) => store.attendance.employeeAttendance.list
   )
-  const { loading: createEmployeeAttendanceLoading } = useSelector(
+  const { loading: creating } = useSelector(
     (store) => store.attendance.employeeAttendance.create
   )
-  const { loading: updateEmployeeAttendanceLoading } = useSelector(
+  const { loading: updating } = useSelector(
     (store) => store.attendance.employeeAttendance.update
   )
+
+  const [date, setDate] = useState(today)
+  const [reloadToken, setReloadToken] = useState(0)
+
   useEffect(() => {
-    dispatch(getEmployeeAttendanceListSlice({ date: currentDate }))
-  }, [currentDate])
-  useEffect(() => {
-    if (!isEmpty(list.data)) {
-      const data = list?.data?.map((el) => ({
-        employeeId: el.employee_details.id,
-        name: `${el.user_profile_details.firstname} ${
-          el.user_profile_details.middlename ?? ''
-        } ${el.user_profile_details.lastname}`,
-        present: el?.attendance_details?.type ?? '',
-        absent: el?.attendance_details?.type ?? '',
-        leave: el?.attendance_details?.type ?? '',
-        note: el?.attendance_details?.note ?? '',
-        photo: el?.profile_photo_details?.path
-          ? getImageUrl(el.profile_photo_details.path)
+    dispatch(getEmployeeAttendanceListSlice({ date }))
+  }, [date, reloadToken, dispatch])
+
+  const people: AttendancePerson[] = useMemo(
+    () =>
+      (employeeList ?? []).map((row) => ({
+        id: row.employee_details.id,
+        code: `EMP_${row.employee_details.id}`,
+        name: getPersonName(row.user_profile_details),
+        photo: row.profile_photo_details?.path
+          ? getImageUrl(row.profile_photo_details.path)
           : undefined,
-        userId: el.user_profile_details.user_id,
-        employeeAcademicYearId: el.employee_academic_year_details.id,
-        attendanceId: el.attendance_details?.id,
-      }))
-      if (data) {
-        setRemappedTeacherList(data)
-      }
-      const hasAttendanceDetails = !isEmpty(
-        list?.data?.filter((el) => el.attendance_details)
-      )
-      if (hasAttendanceDetails) {
-        setCreateAttendanceButton(false)
-      } else {
-        setCreateAttendanceButton(true)
-      }
-    } else {
-      setRemappedTeacherList([])
-    }
-  }, [list.data])
+        userId: row.user_profile_details?.user_id,
+        academicYearRecordId: row.employee_academic_year_details.id,
+        attendanceId: row.attendance_details?.id,
+        status: parseAttendanceStatus(row.attendance_details?.type),
+        note: row.attendance_details?.note ?? '',
+      })),
+    [employeeList]
+  )
 
-  const reloadSheet = () => {
-    dispatch(getEmployeeAttendanceListSlice({ date: currentDate }))
-  }
+  const handleSubmit = useCallback(
+    async (plan: AttendanceSubmissionPlan): Promise<boolean> => {
+      const { creates, updates } = plan
 
-  const createAttendance = () => {
-    const data: CreateEmployeeAttendanceDto[] = remappedTeacherList?.map(
-      (el) => {
-        const type = !isEmpty(el.present)
-          ? el.present
-          : !isEmpty(el.absent)
-          ? el.absent
-          : !isEmpty(el.leave)
-          ? el.leave
-          : el.absent
-        return {
-          // the selected day of the calendar, never `today`
-          date: currentDate,
-          employeeId: el.employeeId,
-          type: type,
-          userId: el.userId,
-          note: isEmpty(el.note) ? undefined : el.note,
+      try {
+        if (creates.length > 0) {
+          await dispatch(
+            createEmployeeAttendanceSlice({
+              payload: creates.map(({ row, status }) => ({
+                employeeId: row.id,
+                userId: row.userId,
+                date,
+                type: status as AttendanceStatus,
+                note: row.currentNote || undefined,
+              })),
+              onSuccess: () => undefined,
+            })
+          ).unwrap()
         }
+
+        if (updates.length > 0) {
+          await dispatch(
+            updateEmployeeAttendanceSlice({
+              payload: updates
+                .filter(({ row }) => Boolean(row.attendanceId))
+                .map(({ row, status }) => ({
+                  attendanceId: row.attendanceId as number,
+                  type: status as AttendanceStatus,
+                  note: row.currentNote || undefined,
+                })),
+              onSuccess: () => undefined,
+            })
+          ).unwrap()
+        }
+
+        return true
+      } catch {
+        return false
+      } finally {
+        setReloadToken((token) => token + 1)
       }
-    )
-    if (isEmpty(data)) {
-      return
-    }
-    dispatch(
-      createEmployeeAttendanceSlice({ payload: data, onSuccess: reloadSheet })
-    )
-  }
-  const updateAttendance = () => {
-    const data: UpdateEmployeeAttendanceDto[] = remappedTeacherList
-      ?.filter(
-        (el): el is TableEmployeeRow & { attendanceId: number } =>
-          !isEmpty(el.attendanceId)
-      )
-      .map((el) => ({
-        attendanceId: el.attendanceId,
-        type: el.present
-          ? el.present
-          : el.absent
-          ? el.absent
-          : el.leave
-          ? el.leave
-          : el.present,
-        note: isEmpty(el.note) ? undefined : el.note,
-      }))
-    if (isEmpty(data)) {
-      return
-    }
-    dispatch(
-      updateEmployeeAttendanceSlice({ payload: data, onSuccess: reloadSheet })
-    )
-  }
+    },
+    [date, dispatch]
+  )
+
   return (
-    <Box>
-      <Stack direction={'row'} spacing={2}>
-        <Box flex={3}>
-          <Stack direction="column" gap={2}>
-            <Box mb={1}>
-              <Typography variant="h5" fontWeight={600}>
-                Employee Attendance
-              </Typography>
-            </Box>
-            <TableComp
-              columns={[
-                {
-                  field: 'employeeId',
-                  name: 'ID',
-                  render: (val) => `STA_${val}`,
-                },
-                {
-                  field: 'photo',
-                  name: 'Photo',
-                  render: (val) => <Avatar src={val as string} />,
-                },
-                { field: 'name', name: 'Name' },
-                {
-                  field: 'present',
-                  name: 'Present',
-                  render: (_, item) => {
-                    return (
-                      <Radio
-                        // checked={selectedValue === 'apple'}
-                        // onChange={handleChange}
-                        onChange={() => {
-                          const stringItem = JSON.parse(
-                            JSON.stringify(remappedTeacherList)
-                          ) as TableEmployeeRow[]
-                          stringItem.forEach((el) => {
-                            if (el.employeeId === item.employeeId) {
-                              el.present = 'present'
-                              el.absent = ''
-                              el.leave = ''
-                            }
-                          })
-                          setRemappedTeacherList(stringItem)
-                        }}
-                        value="present"
-                        name="attendance"
-                        checked={item.present === 'present'}
-                      />
-                    )
-                  },
-                },
-                {
-                  field: 'absent',
-                  name: 'Absent',
-                  render: (val, item) => (
-                    <Radio
-                      // checked={selectedValue === 'apple'}
-                      // onChange={handleChange}
-                      value="absent"
-                      name="attendance"
-                      checked={val === 'absent'}
-                      onChange={() => {
-                        const stringItem = JSON.parse(
-                          JSON.stringify(remappedTeacherList)
-                        ) as TableEmployeeRow[]
-                        stringItem.forEach((el) => {
-                          if (el.employeeId === item.employeeId) {
-                            el.present = ''
-                            el.absent = 'absent'
-                            el.leave = ''
-                          }
-                        })
-                        setRemappedTeacherList(stringItem)
-                      }}
-                    />
-                  ),
-                },
-                {
-                  field: 'leave',
-                  name: 'Leave',
-                  render: (val, item) => (
-                    <Radio
-                      // checked={selectedValue === 'apple'}
-                      // onChange={handleChange}
-                      onChange={() => {
-                        const stringItem = JSON.parse(
-                          JSON.stringify(remappedTeacherList)
-                        ) as TableEmployeeRow[]
-                        stringItem.forEach((el) => {
-                          if (el.employeeId === item.employeeId) {
-                            el.present = ''
-                            el.absent = ''
-                            el.leave = 'leave'
-                          }
-                        })
-                        setRemappedTeacherList(stringItem)
-                      }}
-                      value="leave"
-                      name="attendance"
-                      checked={val === 'leave'}
-                    />
-                  ),
-                },
-                {
-                  field: 'note',
-                  name: 'Note',
-                  // render: (_, item) =>
-                  //   item.leave === 'leave' ? (
-                  //     <ButtonComp
-                  //       startIcon={<FaPlus size={12} />}
-                  //       color="secondary"
-                  //     >
-                  //       Add Note
-                  //     </ButtonComp>
-                  //   ) : null,
-                },
-              ]}
-              loading={employeeListLoading}
-              data={remappedTeacherList ?? []}
-              // count={Math.ceil(Number(studentList?.total) / Number(limit))}
-              // page={page}
-              // rowsPerPage={limit}
-              showPagination={false}
-            ></TableComp>
-            {createAttendanceButton ? (
-              <ButtonComp
-                startIcon={<FaRegSave />}
-                size="medium"
-                color="secondary"
-                style={{ alignSelf: 'flex-end' }}
-                onClick={() => createAttendance()}
-                loading={createEmployeeAttendanceLoading}
-              >
-                Create Attendance
-              </ButtonComp>
-            ) : (
-              <ButtonComp
-                startIcon={<FaRegSave />}
-                size="medium"
-                color="secondary"
-                style={{ alignSelf: 'flex-end' }}
-                onClick={() => updateAttendance()}
-                loading={updateEmployeeAttendanceLoading}
-              >
-                Update Attendance
-              </ButtonComp>
-            )}
-          </Stack>
-        </Box>
-        <Box flex={1.3}>
-          <Card style={{ position: 'sticky', top: 100 }}>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DateCalendar
-                defaultValue={moment()}
-                onChange={(e: Moment) => {
-                  setCurrentDate(e.format('YYYY-MM-DD'))
-                }}
-              />
-            </LocalizationProvider>
-          </Card>
-        </Box>
-      </Stack>
-    </Box>
+    <AttendanceWorkspace
+      title="Employee attendance"
+      subtitle="Mark the non teaching staff of the selected day. Unmarked employees are saved as absent while the day is still empty."
+      peopleLabel="employees"
+      sheetKey={`employees-${date}`}
+      people={people}
+      loading={listLoading}
+      saving={creating || updating}
+      date={date}
+      onDateChange={setDate}
+      onRefresh={() => setReloadToken((token) => token + 1)}
+      onSubmit={handleSubmit}
+    />
   )
 }

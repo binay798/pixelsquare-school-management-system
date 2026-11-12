@@ -1,9 +1,10 @@
 import { api } from '@src/helpers/api.helpers'
 
-const getGuardianList = async (page = 1, limit = 10) => {
+const getGuardianList = async (page = 1, limit = 10, search = '') => {
   const res = await api<Api.Base<Guardian.IList>>('get')('guardians', {
     page,
     limit,
+    search,
   })
 
   return res.data.data
@@ -75,10 +76,80 @@ const changeGuardianProfilePicService = async (
   return res.data.data
 }
 
+const getGuardianStudentList = async (
+  guardianId: number,
+  page = 1,
+  limit = 10,
+  search = ''
+) => {
+  const res = await api<Api.Base<Guardian.ILinkedStudentList>>('get')(
+    `guardians/${guardianId}/students`,
+    { page, limit, search }
+  )
+
+  return res.data.data
+}
+
+const searchAvailableStudents = async (
+  guardianId: number,
+  page = 1,
+  limit = 20,
+  search = ''
+) => {
+  const res = await api<Api.Base<Guardian.IAvailableStudentList>>('get')(
+    `guardians/${guardianId}/students/available`,
+    { page, limit, search }
+  )
+
+  return res.data.data
+}
+
+const attachStudentToGuardian = async (
+  guardianId: number,
+  data: Guardian.IAttachStudentPayload
+) => {
+  const res = await api<Api.Base<{ link: Guardian.IStudentGuardianLink }>>(
+    'post'
+  )(`guardians/${guardianId}/students`, undefined, data)
+
+  return res.data.data
+}
+
+const updateGuardianStudentLink = async (
+  guardianId: number,
+  studentId: number,
+  data: Guardian.IGuardianStudentLinkPayload
+) => {
+  const res = await api<Api.Base<{ link: Guardian.IStudentGuardianLink }>>(
+    'patch'
+  )(`students/${studentId}/guardians/${guardianId}`, undefined, data)
+
+  return res.data.data
+}
+
+const detachStudentFromGuardian = async (
+  guardianId: number,
+  studentId: number
+) => {
+  const res = await api<
+    Api.Base<{
+      deleted_link_id: number
+      promoted_guardian_id: number | null
+    }>
+  >('delete')(`students/${studentId}/guardians/${guardianId}`)
+
+  return res.data.data
+}
+
 export const guardianServices = {
   getGuardianList,
   createGuardian,
   updateGuardian,
   getGuardianDetails,
   changeGuardianProfilePicService,
+  getGuardianStudentList,
+  searchAvailableStudents,
+  attachStudentToGuardian,
+  updateGuardianStudentLink,
+  detachStudentFromGuardian,
 }

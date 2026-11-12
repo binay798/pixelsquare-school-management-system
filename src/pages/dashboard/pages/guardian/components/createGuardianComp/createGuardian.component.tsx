@@ -27,15 +27,19 @@ import { SelectField } from '@src/components/select/select.component'
 import { createGuardianSchema } from './createGuardian.schema'
 import { ButtonComp } from '@src/components/button/button.component'
 import { TCreateGuardianDto } from '@src/store/redux/dashboard/guardian/guardian.service'
+import moment from 'moment'
+import { CustomDatePicker } from '@src/components/datePicker/datePicker.component'
 
 export function CreateGuardianComp() {
   const { guardianId } = useParams()
   const dispatch = useDispatch()
-  const [editMode, setEditMode] = useState(false)
+  const editMode = Boolean(guardianId)
   const [profilePic, setProfilePic] = useState<File | null>(null)
-  const { data: guardianDetails } = useSelector(
+  const { data: guardianDetailData } = useSelector(
     (store) => store.guardians.guardianDetail
   )
+  // Never reuse a previously opened guardian while creating a new one.
+  const guardianDetails = editMode ? guardianDetailData : undefined
   const { loading: createGuardianLoading } = useSelector(
     (store) => store.guardians.create
   )
@@ -47,15 +51,7 @@ export function CreateGuardianComp() {
   )
 
   useEffect(() => {
-    if (!isEmpty(guardianDetails)) {
-      setEditMode(true)
-    } else {
-      setEditMode(false)
-    }
-  }, [guardianDetails])
-
-  useEffect(() => {
-    if (!isEmpty(guardianId)) {
+    if (guardianId) {
       dispatch(getGuardianDetailsAction({ guardianId: Number(guardianId) }))
     }
   }, [guardianId])
@@ -69,7 +65,7 @@ export function CreateGuardianComp() {
       firstname: guardianDetails?.user_profile_details?.firstname ?? '',
       middlename: guardianDetails?.user_profile_details?.middlename ?? '',
       lastname: guardianDetails?.user_profile_details?.lastname ?? '',
-      mobile: String(guardianDetails?.user_profile_details?.mobile) ?? '',
+      mobile: String(guardianDetails?.user_profile_details?.mobile ?? ''),
       temporary_address:
         guardianDetails?.user_profile_details?.temporary_address ?? '',
       permanent_address:
@@ -82,6 +78,7 @@ export function CreateGuardianComp() {
       email: guardianDetails?.user_details?.email ?? '',
     },
     enableReinitialize: true,
+
     onSubmit: (values) => {
       const {
         blood_group,
@@ -121,7 +118,7 @@ export function CreateGuardianComp() {
                 },
               },
               onSuccess: () => {
-                navigate('/dashboard/teachers')
+                navigate('/dashboard/guardian')
               },
             })
           )
@@ -405,6 +402,29 @@ export function CreateGuardianComp() {
                   helperText={
                     formik.touched.email ? formik.errors.email : undefined
                   }
+                />
+                <CustomDatePicker
+                  // label={'"month" and "year"'}
+                  views={['day', 'month', 'year']}
+                  labelDetail={{ text: 'Date of Birth', required: true }}
+                  name="date_of_birth"
+                  onChange={(e) => {
+                    if (!isEmpty(e)) {
+                      formik.handleChange('date_of_birth')(
+                        e.format('YYYY-MM-DD')
+                      )
+                    }
+                  }}
+                  textFieldProps={{
+                    value: moment(formik.values?.date_of_birth),
+                    onBlur: formik.handleBlur,
+                    error:
+                      formik.touched.date_of_birth &&
+                      Boolean(formik.errors.date_of_birth),
+                    helperText: formik.touched.date_of_birth
+                      ? formik.errors.date_of_birth
+                      : undefined,
+                  }}
                 />
               </Stack>
             </Stack>

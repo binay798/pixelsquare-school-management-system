@@ -1,228 +1,87 @@
-import { Box, FormControl, FormLabel, Stack } from '@mui/material'
+import { FormControl } from '@mui/material'
 import {
-  AsyncSelectField,
   customReactSelectStyles,
   SelectField,
 } from '@src/components/select/select.component'
-import { useDispatch, useSelector } from '@src/store/hooks.store'
-import { getClassList } from '@src/store/redux/dashboard/academics/classes/classes.service'
 import { StylesConfig } from 'react-select'
-import { colors } from '@src/helpers/colors.helpers'
-import { ButtonComp } from '@src/components/button/button.component'
-import { IoSearch } from 'react-icons/io5'
-import { useCallback, useEffect, useState } from 'react'
-import { isEmpty } from 'lodash'
-import { useFormik } from 'formik'
-import { getClassSectionListAction } from '@src/store/redux/dashboard/academics/classSections/sections.slice'
-import { getStudentAttendanceListSlice } from '@src/store/redux/dashboard/attendance/attendance.slice'
+import { AttendanceFieldLabel } from '@src/pages/dashboard/pages/attendance/components/attendanceFilters/attendanceFilters.component'
+
+export interface ClassSectionOption {
+  label: string
+  value: number
+}
 
 interface Props {
-  date: string
-  /** bumped by the page after a successful create/update to reload the sheet */
-  reloadToken?: number
+  classValue: ClassSectionOption | null
+  sectionValue: ClassSectionOption | null
+  classOptions: ClassSectionOption[]
+  sectionOptions: ClassSectionOption[]
+  classLoading?: boolean
+  sectionLoading?: boolean
+  onClassChange: (option: ClassSectionOption | null) => void
+  onSectionChange: (option: ClassSectionOption | null) => void
+  disabled?: boolean
 }
-export function StudentFilter({ date, reloadToken = 0 }: Props) {
-  const [firstLoad, setFirstLoad] = useState(true)
-  const formik = useFormik<{
-    class: { label: string; value: number } | null
-    section: { label: string; value: number } | null
-  }>({
-    initialValues: {
-      class: null,
-      section: null,
-    },
-    onSubmit: () => {},
-  })
 
-  const { data: classSectionList, loading: sectionListLoading } = useSelector(
-    (store) => store.classSections.sectionList
-  )
-  const { loading: searchStudentLoading } = useSelector(
-    (store) => store.attendance.studentAttendance.studentList
-  )
-  const { loading: classListLoading } = useSelector(
-    (store) => store.classes.getClassList
-  )
-  const dispatch = useDispatch()
-  const remappedClassList = async () => {
-    const data = await getClassList()
-    if (!isEmpty(data?.data?.rows)) {
-      const firstClass = data.data.rows[0].class_details
-      if (firstClass?.name && firstClass?.id) {
-        formik.setFieldValue('class', {
-          label: firstClass.name,
-          value: firstClass.id,
-        })
-      }
-    }
-
-    return data.data.rows?.map((el) => ({
-      label: el.class_details?.name,
-      value: el.class_details?.id,
-    }))
-  }
-  const remappedClassSectionList = useCallback(() => {
-    return classSectionList?.map((el) => ({
-      label: el.section_details?.name,
-      value: el.section_details?.id,
-    }))
-  }, [classSectionList])
-  useEffect(() => {
-    const classId = formik.values.class?.value
-    if (classId) {
-      dispatch(
-        getClassSectionListAction({
-          payload: { classId: classId },
-          onSuccess: (sections) => {
-            // formik.resetForm()
-            const firstSection = sections?.[0]?.section_details
-            if (!isEmpty(firstSection)) {
-              formik.setFieldValue('section', {
-                label: firstSection?.name,
-                value: firstSection?.id,
-              })
-            }
-          },
-        })
-      )
-    }
-  }, [formik.values.class?.value])
-
-  useEffect(() => {
-    // CLICK SEARCH BUTTON ONCE
-    if (formik.values.section?.value) {
-      if (firstLoad) {
-        searchStudents()
-        setFirstLoad(false)
-      } else {
-        setFirstLoad(false)
-      }
-    }
-  }, [formik.values.section?.value])
-
-  // useEffect(() => {
-  //   if (formik.values.section?.value) {
-  //     if (formik.values.class?.value && formik.values.section?.value) {
-  //       dispatch(
-  //         getStudentAttendanceListSlice({
-  //           classId: formik.values.class.value,
-  //           classSectionId: formik.values.section.value,
-  //           date: date,
-  //         })
-  //       )
-  //     }
-  //   }
-  // }, [formik.values.section?.value])
-
-  // useEffect(() => {
-  //   // eslint-disable-next-line no-extra-semi
-  //   ;(async () => {
-  //     const classList = await remappedClassList()
-  //     if (!isEmpty(classList)) {
-  //       dispatch(updateSelectedClass(classList[0]))
-  //     }
-  //   })()
-  // }, [])
-
-  const searchStudents = () => {
-    if (formik.values.class?.value && formik.values.section?.value) {
-      dispatch(
-        getStudentAttendanceListSlice({
-          classId: formik.values.class.value,
-          classSectionId: formik.values.section.value,
-          date: date,
-        })
-      )
-    }
-  }
-
-  // the sheet follows the selected day of the calendar and is reloaded after a
-  // save, otherwise the page keeps the attendance ids of the previous load
-  useEffect(() => {
-    if (formik.values.class?.value && formik.values.section?.value) {
-      searchStudents()
-    }
-  }, [date, reloadToken])
-
-  return (
-    <Box mt={2}>
-      <Stack direction="row" gap={2} alignItems={'flex-end'}>
-        <FormControl required sx={{ flex: 1 }}>
-          <FormLabel
-            sx={{
-              fontSize: 13,
-              mb: 1,
-              color: colors.grey[600],
-            }}
-          >
-            Student Class
-          </FormLabel>
-          <AsyncSelectField
-            // menuPlacement="top"
-            placeholder="Select class"
-            loadOptions={() => {
-              const fetchedClassListPromise = remappedClassList()
-
-              return fetchedClassListPromise
-            }}
-            defaultOptions
-            value={formik.values.class}
-            // @ts-ignore
-            onChange={(e: { label: string; value: number }) => {
-              // formik.setFieldValue('class_id', (e as { value: string }).value)
-              // setSelectedValue(e)
-              formik.setFieldValue('class', e)
-              // dispatch(updateSelectedClass(e))
-            }}
-            styles={{
-              ...classReactSelectStyles,
-            }}
-          />
-        </FormControl>
-        <FormControl fullWidth required sx={{ flex: 1 }}>
-          <FormLabel
-            sx={{
-              fontSize: 13,
-              mb: 1,
-              color: colors.grey[600],
-            }}
-          >
-            Class Section
-          </FormLabel>
-          <SelectField
-            isLoading={sectionListLoading}
-            placeholder={'Select class section'}
-            options={remappedClassSectionList() ?? []}
-            onChange={(e) => {
-              formik.setFieldValue('section', e)
-            }}
-            isDisabled={
-              isEmpty(formik.values.class?.label) ||
-              classListLoading ||
-              sectionListLoading
-            }
-            value={formik.values.section}
-          />
-        </FormControl>
-        <ButtonComp
-          onClick={searchStudents}
-          startIcon={<IoSearch size={20} />}
-          size="large"
-          loading={searchStudentLoading}
-        >
-          Search
-        </ButtonComp>
-      </Stack>
-    </Box>
-  )
-}
-const classReactSelectStyles: StylesConfig = {
+const selectStyles: StylesConfig = {
   ...customReactSelectStyles,
   menuList: () => ({
     maxHeight: 180,
     overflowY: 'auto',
   }),
-  container: () => ({
-    // width: 200,
+  control: (provided, state) => ({
+    ...(customReactSelectStyles.control?.(provided, state) ?? provided),
+    minHeight: 40,
   }),
+}
+
+/**
+ * Class / class section pair of the student sheet. Both selects are controlled
+ * by the page: the sheet, the day and the drafts are loaded from the selection,
+ * so the dropdowns cannot keep a state of their own.
+ */
+export function StudentFilter({
+  classValue,
+  sectionValue,
+  classOptions,
+  sectionOptions,
+  classLoading = false,
+  sectionLoading = false,
+  onClassChange,
+  onSectionChange,
+  disabled = false,
+}: Props) {
+  return (
+    <>
+      <FormControl fullWidth>
+        <AttendanceFieldLabel>Class</AttendanceFieldLabel>
+        <SelectField
+          placeholder="Select class"
+          isLoading={classLoading}
+          isDisabled={disabled}
+          options={classOptions}
+          value={classValue}
+          styles={selectStyles}
+          onChange={(option) =>
+            onClassChange((option as ClassSectionOption | null) ?? null)
+          }
+        />
+      </FormControl>
+
+      <FormControl fullWidth>
+        <AttendanceFieldLabel>Class section</AttendanceFieldLabel>
+        <SelectField
+          placeholder="Select class section"
+          isLoading={sectionLoading}
+          isDisabled={disabled || !classValue || sectionLoading}
+          options={sectionOptions}
+          value={sectionValue}
+          styles={selectStyles}
+          onChange={(option) =>
+            onSectionChange((option as ClassSectionOption | null) ?? null)
+          }
+        />
+      </FormControl>
+    </>
+  )
 }

@@ -26,10 +26,12 @@ const updateStudentType = async (studentTypeId: number, name: string) => {
   return res.data.data
 }
 
-interface IExtendedStudentProfile extends Students.IStudent {
+interface IExtendedStudentProfile
+  extends Omit<Students.IStudent, 'profile_photo'> {
   roll_no: number
   class_id: number
   class_section_id: number
+  guardian_ids: number[]
 }
 // STUDENT SERVICE
 export interface TCreateStudent {

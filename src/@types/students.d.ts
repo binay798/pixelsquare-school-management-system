@@ -15,7 +15,6 @@ declare namespace Students {
     profile_photo: number
     school_id: number
     previous_school: string
-    guardian_id?: number | null
     father_name: string
     father_mobile: string
     mother_name: string
@@ -58,5 +57,6 @@ declare namespace Students {
     class_section_details: Pick<Academics.IClassSection, 'id' | 'name'>
     asset_details: Asset.IAsset
     user_details: Pick<User.IUser, 'id' | 'email'>
+    guardians: Guardian.ILinkedGuardianRow[]
   }
 }

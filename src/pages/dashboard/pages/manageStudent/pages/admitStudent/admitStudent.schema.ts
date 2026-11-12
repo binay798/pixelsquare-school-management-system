@@ -30,4 +30,14 @@ export const admitStudentSchema = yup.object({
     value: yup.number().required(),
   }),
   rollNo: yup.number().required(),
+  guardians: yup
+    .array()
+    .of(
+      yup.object({
+        label: yup.string().required(),
+        value: yup.number().required(),
+      })
+    )
+    .min(1, 'Select at least one guardian')
+    .required('Select at least one guardian'),
 })

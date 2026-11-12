@@ -72,7 +72,7 @@ export function GuardianPage() {
           },
           { field: 'name', name: 'Name', render: (_, item) => `${item.name}` },
           { field: 'email', name: 'Email Address' },
-          { field: 'mobile', name: 'Gender' },
+          { field: 'mobile', name: 'Mobile Number' },
         ]}
         loading={false}
         data={remappedGuardianList() ?? []}
