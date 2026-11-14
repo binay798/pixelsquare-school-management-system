@@ -169,9 +169,11 @@ export function TemplateBuilderModal({
           academic_year_id: detail.academic_year_id,
           class_id: detail.class_id,
           section_id: detail.section_id,
-          effective_from: String(detail.effective_from).slice(0, 10),
+          effective_from: moment(String(detail.effective_from)).format(
+            'YYYY-MM-DD'
+          ),
           effective_to: detail.effective_to
-            ? String(detail.effective_to).slice(0, 10)
+            ? moment(String(detail.effective_to)).format('YYYY-MM-DD')
             : '',
           status: detail.status,
         })
@@ -444,6 +446,7 @@ export function TemplateBuilderModal({
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
             <Box flex={1}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Effective from *', required: true }}
                 views={['day', 'month', 'year']}
                 value={form.effective_from ? moment(form.effective_from) : null}
@@ -465,6 +468,7 @@ export function TemplateBuilderModal({
             </Box>
             <Box flex={1}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Effective until', required: false }}
                 views={['day', 'month', 'year']}
                 value={form.effective_to ? moment(form.effective_to) : null}

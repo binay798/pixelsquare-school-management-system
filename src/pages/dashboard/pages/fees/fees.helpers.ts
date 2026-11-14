@@ -97,7 +97,13 @@ export const formatPercent = (value?: number | string | null, digits = 1) =>
  * Dates and people
  * ------------------------------------------------------------------ */
 
-export const formatDate = (value?: string | null, format = 'DD MMM YYYY') => {
+/**
+ * Calendar dates are always rendered as `YYYY-MM-DD` in the fee and accounting
+ * modules and always parsed through moment, so a value coming from the API (ISO
+ * string, `YYYY-MM-DD`, timestamp or `Date`) renders identically everywhere
+ * instead of falling back to the browser locale (`Date#toDateString()`).
+ */
+export const formatDate = (value?: string | null, format = 'YYYY-MM-DD') => {
   if (!value || !moment(value).isValid()) {
     return '—'
   }
@@ -105,12 +111,13 @@ export const formatDate = (value?: string | null, format = 'DD MMM YYYY') => {
   return moment(value).format(format)
 }
 
+/** `YYYY-MM-DD` date plus a 12 hour clock time (`YYYY-MM-DD, hh:mm A`). */
 export const formatDateTime = (value?: string | null) => {
   if (!value || !moment(value).isValid()) {
     return '—'
   }
 
-  return moment(value).format('DD MMM YYYY, hh:mm A')
+  return moment(value).format('YYYY-MM-DD, hh:mm A')
 }
 
 export const todayIso = () => moment().format('YYYY-MM-DD')

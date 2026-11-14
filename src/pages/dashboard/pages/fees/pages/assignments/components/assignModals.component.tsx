@@ -251,6 +251,7 @@ export function AssignFeeModal({
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
             <Box flex={1}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Effective from', required: false }}
                 views={['day', 'month', 'year']}
                 value={form.effective_from ? moment(form.effective_from) : null}
@@ -268,6 +269,7 @@ export function AssignFeeModal({
             </Box>
             <Box flex={1}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Effective until', required: false }}
                 views={['day', 'month', 'year']}
                 value={form.effective_to ? moment(form.effective_to) : null}

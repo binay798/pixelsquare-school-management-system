@@ -1,8 +1,10 @@
 import { Box, Pagination, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import moment from 'moment'
 import { CalendarPlus, Search } from 'lucide-react'
 import { ButtonComp } from '@src/components/button/button.component'
+import { CustomDatePicker } from '@src/components/datePicker/datePicker.component'
 import { InputField } from '@src/components/input/input.component'
 import SpringModal from '@src/components/modal/modal.component'
 import { SelectField } from '@src/components/select/select.component'
@@ -44,7 +46,7 @@ interface IPeriodForm {
 
 const emptyPeriod: IPeriodForm = {
   period_name: '',
-  fiscal_year: String(new Date().getFullYear()),
+  fiscal_year: String(moment().year()),
   start_date: '',
   end_date: '',
 }
@@ -335,32 +337,46 @@ export function AccountingPeriodsPage() {
             />
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
               <Box flex={1}>
-                <InputField
-                  type="date"
+                <CustomDatePicker
                   labelDetail={{ text: 'Start date', required: true }}
-                  value={form.start_date}
-                  error={Boolean(errors.range)}
-                  onChange={(event) =>
+                  views={['day', 'month', 'year']}
+                  format="YYYY-MM-DD"
+                  value={form.start_date ? moment(form.start_date) : null}
+                  onChange={(value) =>
                     setForm((prev) => ({
                       ...prev,
-                      start_date: event.target.value,
+                      start_date:
+                        value && moment(value).isValid()
+                          ? moment(value).format('YYYY-MM-DD')
+                          : '',
                     }))
                   }
+                  textFieldProps={{
+                    size: 'small',
+                    error: Boolean(errors.range),
+                  }}
                 />
               </Box>
               <Box flex={1}>
-                <InputField
-                  type="date"
+                <CustomDatePicker
                   labelDetail={{ text: 'End date', required: true }}
-                  value={form.end_date}
-                  error={Boolean(errors.range)}
-                  helperText={errors.range}
-                  onChange={(event) =>
+                  views={['day', 'month', 'year']}
+                  format="YYYY-MM-DD"
+                  value={form.end_date ? moment(form.end_date) : null}
+                  onChange={(value) =>
                     setForm((prev) => ({
                       ...prev,
-                      end_date: event.target.value,
+                      end_date:
+                        value && moment(value).isValid()
+                          ? moment(value).format('YYYY-MM-DD')
+                          : '',
                     }))
                   }
+                  textFieldProps={{
+                    size: 'small',
+                    error: Boolean(errors.range),
+                    helperText: errors.range,
+                  }}
                 />
               </Box>
             </Stack>

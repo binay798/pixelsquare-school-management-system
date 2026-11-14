@@ -261,6 +261,7 @@ export function FeeLateFeesPage() {
           >
             <Box sx={{ width: { xs: '100%', md: 170 } }}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'As of date', required: false }}
                 views={['day', 'month', 'year']}
                 value={assessDate ? moment(assessDate) : null}

@@ -222,6 +222,7 @@ export function AssignConcessionModal({
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
             <Box flex={1}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Valid from', required: false }}
                 views={['day', 'month', 'year']}
                 value={form.valid_from ? moment(form.valid_from) : null}
@@ -239,6 +240,7 @@ export function AssignConcessionModal({
             </Box>
             <Box flex={1}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Valid until', required: false }}
                 views={['day', 'month', 'year']}
                 value={form.valid_until ? moment(form.valid_until) : null}

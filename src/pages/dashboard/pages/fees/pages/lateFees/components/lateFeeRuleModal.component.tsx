@@ -73,9 +73,11 @@ export function LateFeeRuleModal({
         frequency: rule.frequency,
         applies_to_fee_type_id: rule.applies_to_fee_type_id,
         accounting_account_id: rule.accounting_account_id,
-        effective_from: String(rule.effective_from).slice(0, 10),
+        effective_from: moment(String(rule.effective_from)).format(
+          'YYYY-MM-DD'
+        ),
         effective_until: rule.effective_until
-          ? String(rule.effective_until).slice(0, 10)
+          ? moment(String(rule.effective_until)).format('YYYY-MM-DD')
           : '',
         is_active: rule.is_active,
       })
@@ -333,6 +335,7 @@ export function LateFeeRuleModal({
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
             <Box flex={1}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Effective from *', required: true }}
                 views={['day', 'month', 'year']}
                 value={form.effective_from ? moment(form.effective_from) : null}
@@ -355,6 +358,7 @@ export function LateFeeRuleModal({
             </Box>
             <Box flex={1}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Effective until', required: false }}
                 views={['day', 'month', 'year']}
                 value={

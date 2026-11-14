@@ -443,6 +443,7 @@ export function FeeInvoiceGeneratePage() {
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
                 <Box flex={1}>
                   <CustomDatePicker
+                    format="YYYY-MM-DD"
                     labelDetail={{ text: 'Issue date', required: false }}
                     views={['day', 'month', 'year']}
                     value={single.issue_date ? moment(single.issue_date) : null}
@@ -460,6 +461,7 @@ export function FeeInvoiceGeneratePage() {
                 </Box>
                 <Box flex={1}>
                   <CustomDatePicker
+                    format="YYYY-MM-DD"
                     labelDetail={{ text: 'Due date', required: false }}
                     views={['day', 'month', 'year']}
                     value={single.due_date ? moment(single.due_date) : null}
@@ -789,6 +791,7 @@ export function FeeInvoiceGeneratePage() {
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
                 <Box flex={1}>
                   <CustomDatePicker
+                    format="YYYY-MM-DD"
                     labelDetail={{ text: 'Issue date', required: false }}
                     views={['day', 'month', 'year']}
                     value={bulk.issue_date ? moment(bulk.issue_date) : null}
@@ -806,6 +809,7 @@ export function FeeInvoiceGeneratePage() {
                 </Box>
                 <Box flex={1}>
                   <CustomDatePicker
+                    format="YYYY-MM-DD"
                     labelDetail={{ text: 'Due date', required: false }}
                     views={['day', 'month', 'year']}
                     value={bulk.due_date ? moment(bulk.due_date) : null}

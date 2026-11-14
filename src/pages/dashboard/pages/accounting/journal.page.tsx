@@ -222,6 +222,7 @@ export function AccountingJournalPage() {
           </Box>
           <Box>
             <CustomDatePicker
+              format="YYYY-MM-DD"
               labelDetail={{ text: 'From date', required: false }}
               views={['day', 'month', 'year']}
               value={filters.date_from ? moment(filters.date_from) : null}
@@ -240,6 +241,7 @@ export function AccountingJournalPage() {
           </Box>
           <Box>
             <CustomDatePicker
+              format="YYYY-MM-DD"
               labelDetail={{ text: 'To date', required: false }}
               views={['day', 'month', 'year']}
               value={filters.date_to ? moment(filters.date_to) : null}

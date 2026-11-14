@@ -528,6 +528,7 @@ export function FeeCollectPaymentPage() {
                 </Box>
 
                 <CustomDatePicker
+                  format="YYYY-MM-DD"
                   labelDetail={{ text: 'Payment date', required: false }}
                   views={['day', 'month', 'year']}
                   value={form.payment_date ? moment(form.payment_date) : null}

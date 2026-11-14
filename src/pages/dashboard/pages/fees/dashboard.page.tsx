@@ -116,7 +116,7 @@ export function FeeDashboardPage() {
   const monthly = useMemo(
     () =>
       (dashboard?.monthly_collection ?? []).map((row) => ({
-        month: moment(row.month, ['YYYY-MM', 'YYYY-MM-DD']).format('MMM YY'),
+        month: moment(row.month, ['YYYY-MM', 'YYYY-MM-DD']).format('YYYY-MM'),
         amount: Number(row.amount ?? 0),
       })),
     [dashboard]
@@ -124,7 +124,7 @@ export function FeeDashboardPage() {
   const daily = useMemo(
     () =>
       (dashboard?.daily_collection ?? []).slice(-14).map((row) => ({
-        date: moment(row.date).format('DD MMM'),
+        date: moment(row.date).format('YYYY-MM-DD'),
         amount: Number(row.amount ?? 0),
       })),
     [dashboard]
@@ -355,6 +355,7 @@ export function FeeDashboardPage() {
           >
             <Box sx={{ width: 165 }}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'From', required: false }}
                 views={['day', 'month', 'year']}
                 value={dateFrom ? moment(dateFrom) : null}
@@ -370,6 +371,7 @@ export function FeeDashboardPage() {
             </Box>
             <Box sx={{ width: 165 }}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'To', required: false }}
                 views={['day', 'month', 'year']}
                 value={dateTo ? moment(dateTo) : null}

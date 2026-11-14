@@ -409,6 +409,7 @@ export function FeeInvoicesPage() {
           <FeeFilterBar columns={2}>
             <Box>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Issued from', required: false }}
                 views={['day', 'month', 'year']}
                 value={filters.date_from ? moment(filters.date_from) : null}
@@ -427,6 +428,7 @@ export function FeeInvoicesPage() {
             </Box>
             <Box>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Issued to', required: false }}
                 views={['day', 'month', 'year']}
                 value={filters.date_to ? moment(filters.date_to) : null}

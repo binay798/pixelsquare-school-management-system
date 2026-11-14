@@ -91,9 +91,9 @@ export function ScholarshipFormModal({
         maximum_discount_amount: scholarship.maximum_discount_amount ?? '',
         minimum_fee_amount: scholarship.minimum_fee_amount ?? '',
         academic_year_id: scholarship.academic_year_id,
-        valid_from: String(scholarship.valid_from).slice(0, 10),
+        valid_from: moment(String(scholarship.valid_from)).format('YYYY-MM-DD'),
         valid_until: scholarship.valid_until
-          ? String(scholarship.valid_until).slice(0, 10)
+          ? moment(String(scholarship.valid_until)).format('YYYY-MM-DD')
           : '',
         maximum_beneficiaries: scholarship.maximum_beneficiaries
           ? String(scholarship.maximum_beneficiaries)
@@ -406,6 +406,7 @@ export function ScholarshipFormModal({
             </Box>
             <Box flex={1}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Valid from *', required: true }}
                 views={['day', 'month', 'year']}
                 value={form.valid_from ? moment(form.valid_from) : null}
@@ -428,6 +429,7 @@ export function ScholarshipFormModal({
             </Box>
             <Box flex={1}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Valid until', required: false }}
                 views={['day', 'month', 'year']}
                 value={form.valid_until ? moment(form.valid_until) : null}

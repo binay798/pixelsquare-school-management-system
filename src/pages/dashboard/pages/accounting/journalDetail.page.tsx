@@ -1,6 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import moment from 'moment'
 import {
   ArrowLeftRight,
   CheckCircle2,
@@ -10,10 +11,8 @@ import {
 } from 'lucide-react'
 import { ButtonComp } from '@src/components/button/button.component'
 import { ConfirmationModal } from '@src/components/confirmationModal/confirmationModal.component'
-import {
-  InputField,
-  TextareaField,
-} from '@src/components/input/input.component'
+import { CustomDatePicker } from '@src/components/datePicker/datePicker.component'
+import { TextareaField } from '@src/components/input/input.component'
 import { colors } from '@src/helpers/colors.helpers'
 import { useAccountingPermissions } from '@src/hooks/useAccountingPermissions.hooks'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
@@ -528,11 +527,19 @@ export function AccountingJournalDetailPage() {
               setReasonError('')
             }}
           />
-          <InputField
-            type="date"
+          <CustomDatePicker
             labelDetail={{ text: 'Reversal date', required: false }}
-            value={reversalDate}
-            onChange={(event) => setReversalDate(event.target.value)}
+            views={['day', 'month', 'year']}
+            format="YYYY-MM-DD"
+            value={reversalDate ? moment(reversalDate) : null}
+            onChange={(value) =>
+              setReversalDate(
+                value && moment(value).isValid()
+                  ? moment(value).format('YYYY-MM-DD')
+                  : ''
+              )
+            }
+            textFieldProps={{ size: 'small' }}
           />
         </Stack>
       </ConfirmationModal>

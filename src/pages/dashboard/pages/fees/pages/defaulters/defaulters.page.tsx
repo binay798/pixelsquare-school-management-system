@@ -312,6 +312,7 @@ export function FeeDefaultersPage() {
           </Box>
           <Box>
             <CustomDatePicker
+              format="YYYY-MM-DD"
               labelDetail={{ text: 'Due from', required: false }}
               views={['day', 'month', 'year']}
               value={filters.due_from ? moment(filters.due_from) : null}
@@ -330,6 +331,7 @@ export function FeeDefaultersPage() {
           </Box>
           <Box>
             <CustomDatePicker
+              format="YYYY-MM-DD"
               labelDetail={{ text: 'Due to', required: false }}
               views={['day', 'month', 'year']}
               value={filters.due_to ? moment(filters.due_to) : null}

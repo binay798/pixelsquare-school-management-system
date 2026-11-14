@@ -435,6 +435,7 @@ export function FeeReportsPage() {
           </Box>
           <Box>
             <CustomDatePicker
+              format="YYYY-MM-DD"
               labelDetail={{ text: 'From', required: false }}
               views={['day', 'month', 'year']}
               value={filters.date_from ? moment(filters.date_from) : null}
@@ -452,6 +453,7 @@ export function FeeReportsPage() {
           </Box>
           <Box>
             <CustomDatePicker
+              format="YYYY-MM-DD"
               labelDetail={{ text: 'To', required: false }}
               views={['day', 'month', 'year']}
               value={filters.date_to ? moment(filters.date_to) : null}

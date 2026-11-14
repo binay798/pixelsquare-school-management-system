@@ -200,6 +200,7 @@ export function AccountingJournalCreatePage() {
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
             <Box flex={1}>
               <CustomDatePicker
+                format="YYYY-MM-DD"
                 labelDetail={{ text: 'Entry date', required: true }}
                 views={['day', 'month', 'year']}
                 value={transactionDate ? moment(transactionDate) : null}
