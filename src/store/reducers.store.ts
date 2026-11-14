@@ -18,6 +18,13 @@ import guardianReducer from './redux/dashboard/guardian/guardian.slice'
 import classRoutineReducer from './redux/dashboard/academics/classRoutines/classRoutines.slice'
 import lessonPlanReducer from './redux/dashboard/academics/lessonPlans/lessonPlans.slice'
 import announcementReducer from './redux/dashboard/academics/announcements/announcements.slice'
+import feeConfigReducer from './redux/dashboard/fee/fee.config.slice'
+import feeDashboardReducer from './redux/dashboard/fee/fee.dashboard.slice'
+import feeInvoicesReducer from './redux/dashboard/fee/fee.invoices.slice'
+import feePaymentsReducer from './redux/dashboard/fee/fee.payments.slice'
+import feeRefundsReducer from './redux/dashboard/fee/fee.refunds.slice'
+import feeWalletsReducer from './redux/dashboard/fee/fee.wallets.slice'
+import accountingReducer from './redux/dashboard/accounting/accounting.slice'
 
 export const store = configureStore({
   reducer: {
@@ -40,5 +47,12 @@ export const store = configureStore({
     classRoutines: classRoutineReducer,
     lessonPlans: lessonPlanReducer,
     announcements: announcementReducer,
+    feeConfig: feeConfigReducer,
+    feeDashboard: feeDashboardReducer,
+    feeInvoices: feeInvoicesReducer,
+    feePayments: feePaymentsReducer,
+    feeRefunds: feeRefundsReducer,
+    feeWallets: feeWalletsReducer,
+    accounting: accountingReducer,
   },
 })

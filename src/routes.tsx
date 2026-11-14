@@ -50,6 +50,31 @@ import { CreateGuardianPage } from './pages/dashboard/pages/guardian/pages/creat
 import { EditGuardianPage } from './pages/dashboard/pages/guardian/pages/edit/edit.page'
 import { ViewSubjectPage } from './pages/dashboard/pages/academics/pages/subjects/pages/viewSubject/viewSubject.page'
 import { AccountPage } from './pages/dashboard/pages/account/account.page'
+import { FeeDashboardPage } from './pages/dashboard/pages/fees/dashboard.page'
+import { FeeTypesPage } from './pages/dashboard/pages/fees/pages/types/types.page'
+import { FeeTemplatesPage } from './pages/dashboard/pages/fees/pages/templates/templates.page'
+import { FeeAssignmentsPage } from './pages/dashboard/pages/fees/pages/assignments/assignments.page'
+import { FeeScholarshipsPage } from './pages/dashboard/pages/fees/pages/scholarships/scholarships.page'
+import { FeeLateFeesPage } from './pages/dashboard/pages/fees/pages/lateFees/lateFees.page'
+import { FeeInvoicesPage } from './pages/dashboard/pages/fees/pages/invoices/invoices.page'
+import { FeeInvoiceGeneratePage } from './pages/dashboard/pages/fees/pages/invoices/generate.page'
+import { FeeInvoiceDetailPage } from './pages/dashboard/pages/fees/pages/invoices/invoiceDetail.page'
+import { FeePaymentsPage } from './pages/dashboard/pages/fees/pages/payments/payments.page'
+import { FeeCollectPaymentPage } from './pages/dashboard/pages/fees/pages/payments/collect.page'
+import { FeeWalletsPage } from './pages/dashboard/pages/fees/pages/wallets/wallets.page'
+import { FeeRefundsPage } from './pages/dashboard/pages/fees/pages/refunds/refunds.page'
+import { FeeDefaultersPage } from './pages/dashboard/pages/fees/pages/defaulters/defaulters.page'
+import { FeeReportsPage } from './pages/dashboard/pages/fees/pages/reports/reports.page'
+import { FeeAccountingPage } from './pages/dashboard/pages/fees/pages/accounting/accounting.page'
+import { AccountingDashboardPage } from './pages/dashboard/pages/accounting/dashboard.page'
+import { AccountingAccountsPage } from './pages/dashboard/pages/accounting/accounts.page'
+import { AccountingAccountDetailPage } from './pages/dashboard/pages/accounting/accountDetail.page'
+import { AccountingJournalPage } from './pages/dashboard/pages/accounting/journal.page'
+import { AccountingJournalCreatePage } from './pages/dashboard/pages/accounting/journalCreate.page'
+import { AccountingJournalDetailPage } from './pages/dashboard/pages/accounting/journalDetail.page'
+import { AccountingPeriodsPage } from './pages/dashboard/pages/accounting/periods.page'
+import { AccountingPeriodDetailPage } from './pages/dashboard/pages/accounting/periodDetail.page'
+import { AccountingReportsPage } from './pages/dashboard/pages/accounting/reports.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -214,7 +239,75 @@ export const privateRoutes: RouteObject[] = [
             ],
           },
           {
+            path: 'fees',
+            element: <Outlet />,
+            children: [
+              { path: '', element: <FeeDashboardPage /> },
+              { path: 'types', element: <FeeTypesPage /> },
+              { path: 'templates', element: <FeeTemplatesPage /> },
+              { path: 'assignments', element: <FeeAssignmentsPage /> },
+              { path: 'scholarships', element: <FeeScholarshipsPage /> },
+              { path: 'late-fees', element: <FeeLateFeesPage /> },
+              {
+                path: 'invoices',
+                element: <Outlet />,
+                children: [
+                  { path: '', element: <FeeInvoicesPage /> },
+                  { path: 'generate', element: <FeeInvoiceGeneratePage /> },
+                  { path: ':invoiceId', element: <FeeInvoiceDetailPage /> },
+                ],
+              },
+              {
+                path: 'payments',
+                element: <Outlet />,
+                children: [
+                  { path: '', element: <FeePaymentsPage /> },
+                  { path: 'collect', element: <FeeCollectPaymentPage /> },
+                ],
+              },
+              { path: 'wallets', element: <FeeWalletsPage /> },
+              { path: 'refunds', element: <FeeRefundsPage /> },
+              { path: 'defaulters', element: <FeeDefaultersPage /> },
+              { path: 'reports', element: <FeeReportsPage /> },
+              { path: 'accounting', element: <FeeAccountingPage /> },
+            ],
+          },
+          {
+            path: 'accounting',
+            element: <Outlet />,
+            children: [
+              { path: '', element: <AccountingDashboardPage /> },
+              {
+                path: 'accounts',
+                element: <Outlet />,
+                children: [
+                  { path: '', element: <AccountingAccountsPage /> },
+                  { path: ':id', element: <AccountingAccountDetailPage /> },
+                ],
+              },
+              {
+                path: 'journal',
+                element: <Outlet />,
+                children: [
+                  { path: '', element: <AccountingJournalPage /> },
+                  { path: 'new', element: <AccountingJournalCreatePage /> },
+                  { path: ':id', element: <AccountingJournalDetailPage /> },
+                ],
+              },
+              {
+                path: 'periods',
+                element: <Outlet />,
+                children: [
+                  { path: '', element: <AccountingPeriodsPage /> },
+                  { path: ':id', element: <AccountingPeriodDetailPage /> },
+                ],
+              },
+              { path: 'reports', element: <AccountingReportsPage /> },
+            ],
+          },
+          {
             path: '/dashboard/guardian',
+
             children: [
               { path: '/dashboard/guardian', element: <GuardianPage /> },
               {

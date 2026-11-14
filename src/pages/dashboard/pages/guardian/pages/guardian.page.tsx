@@ -26,7 +26,7 @@ export function GuardianPage() {
       mobile: el.user_profile_details.mobile,
       email: el.user_details.email,
       gender: el.user_profile_details.gender,
-      photo: getImageUrl(el.asset_details.path),
+      photo: getImageUrl(el.asset_details?.path),
     }))
   }, [guardianList])
 

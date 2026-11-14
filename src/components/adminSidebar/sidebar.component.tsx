@@ -42,6 +42,49 @@ import { isEmpty } from 'lodash'
 
 import { useNavigate } from 'react-router-dom'
 import { useAdminSidebar } from './adminSidebar.context'
+import { useFeePermissions } from '@src/hooks/useFeePermissions.hooks'
+import {
+  FeePermission,
+  hasFeePermission,
+} from '@src/pages/dashboard/pages/fees/fees.helpers'
+import {
+  hasAccountingPermission,
+  isAccountingPermission,
+} from '@src/pages/dashboard/pages/accounting/accounting.helpers'
+import { MdAccountBalance, MdPayments } from 'react-icons/md'
+
+/**
+ * A sidebar item declares the permission that unlocks it. Accounting
+ * permissions and fee permissions are namespaced (`accounting.*` / `fee.*`) so
+ * the right matrix can be resolved without touching the item declarations.
+ */
+const hasSidebarPermission = (
+  roles: string[] | undefined,
+  permission: string
+) =>
+  isAccountingPermission(permission)
+    ? hasAccountingPermission(roles, permission)
+    : hasFeePermission(roles, permission as FeePermission)
+
+/** Hides the items the current user has no permission for (fee + accounting). */
+const filterSidebarItems = (
+  items: GenerateAdminSidebarProps[],
+  roles: string[] | undefined
+): GenerateAdminSidebarProps[] =>
+  items
+    .filter((item) =>
+      item.permissions?.length
+        ? item.permissions.some((permission) =>
+            hasSidebarPermission(roles, permission)
+          )
+        : true
+    )
+    .map((item) => ({
+      ...item,
+      subItems: item.subItems
+        ? filterSidebarItems(item.subItems, roles)
+        : undefined,
+    }))
 
 const sidebarItems: GenerateAdminSidebarProps[] = [
   {
@@ -158,6 +201,137 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
     icon: <RiParentFill />,
     to: '/dashboard/guardian',
   },
+  {
+    title: 'Fee Management',
+    icon: <MdPayments />,
+    to: '/dashboard/fees',
+    subItems: [
+      {
+        title: 'Fee Dashboard',
+        icon: <BiSolidDashboard />,
+        to: '/dashboard/fees',
+        permissions: ['fee.dashboard.view'],
+      },
+      {
+        title: 'Fee Types',
+        icon: <FaSchool />,
+        to: '/dashboard/fees/types',
+        permissions: ['fee.types.view'],
+      },
+      {
+        title: 'Fee Templates',
+        icon: <VscChecklist />,
+        to: '/dashboard/fees/templates',
+        permissions: ['fee.templates.view'],
+      },
+      {
+        title: 'Student Assignments',
+        icon: <PiStudentFill />,
+        to: '/dashboard/fees/assignments',
+        permissions: ['fee.assignments.manage', 'fee.templates.view'],
+      },
+      {
+        title: 'Scholarships & Discounts',
+        icon: <MdOutlineAssignment />,
+        to: '/dashboard/fees/scholarships',
+        permissions: ['fee.scholarships.manage', 'fee.templates.view'],
+      },
+      {
+        title: 'Late Fee Rules',
+        icon: <MdOutlineNotificationsActive />,
+        to: '/dashboard/fees/late-fees',
+        permissions: ['fee.late_fees.manage', 'fee.templates.view'],
+      },
+      {
+        title: 'Invoices',
+        icon: <PiBooksFill />,
+        to: '/dashboard/fees/invoices',
+        permissions: ['fee.invoices.view'],
+      },
+      {
+        title: 'Collect Payment',
+        icon: <MdPayments />,
+        to: '/dashboard/fees/payments/collect',
+        permissions: ['fee.payments.collect'],
+      },
+      {
+        title: 'Payment History',
+        icon: <MdOutlineDashboardCustomize />,
+        to: '/dashboard/fees/payments',
+        permissions: ['fee.payments.view'],
+      },
+      {
+        title: 'Student Wallets',
+        icon: <FaSitemap />,
+        to: '/dashboard/fees/wallets',
+        permissions: ['fee.wallets.view'],
+      },
+      {
+        title: 'Refunds & Adjustments',
+        icon: <MdOutlineAssignment />,
+        to: '/dashboard/fees/refunds',
+        permissions: ['fee.refunds.view'],
+      },
+      {
+        title: 'Defaulters',
+        icon: <FaUsersGear />,
+        to: '/dashboard/fees/defaulters',
+        permissions: ['fee.defaulters.view'],
+      },
+      {
+        title: 'Fee Reports',
+        icon: <GrTableAdd />,
+        to: '/dashboard/fees/reports',
+        permissions: ['fee.reports.view'],
+      },
+      {
+        title: 'Accounting Sync',
+        icon: <VscChecklist />,
+        to: '/dashboard/fees/accounting',
+        permissions: ['fee.accounting_sync.view'],
+      },
+    ],
+  },
+
+  {
+    title: 'Accounting',
+    icon: <MdAccountBalance />,
+    to: '/dashboard/accounting',
+    permissions: ['accounting.view'],
+    subItems: [
+      {
+        title: 'Overview',
+        icon: <BiSolidDashboard />,
+        to: '/dashboard/accounting',
+        permissions: ['accounting.view'],
+      },
+      {
+        title: 'Chart of Accounts',
+        icon: <MdOutlineDashboardCustomize />,
+        to: '/dashboard/accounting/accounts',
+        permissions: ['accounting.view'],
+      },
+      {
+        title: 'Journal Entries',
+        icon: <VscChecklist />,
+        to: '/dashboard/accounting/journal',
+        permissions: ['accounting.view'],
+      },
+      {
+        title: 'Periods',
+        icon: <GrTableAdd />,
+        to: '/dashboard/accounting/periods',
+        permissions: ['accounting.view'],
+      },
+      {
+        title: 'Reports',
+        icon: <GrTableAdd />,
+        to: '/dashboard/accounting/reports',
+        permissions: ['accounting.reports.view'],
+      },
+    ],
+  },
+
   {
     title: 'Manage Student',
     icon: <PiStudentFill />,
@@ -333,6 +507,8 @@ export function AdminSidebar() {
 
 export function MainContainer() {
   const { openSidebar } = useAdminSidebar()
+  const { roles } = useFeePermissions()
+  const visibleItems = filterSidebarItems(sidebarItems, roles)
   const springWidth = useSpring({
     from: {
       width: 290,
@@ -354,7 +530,7 @@ export function MainContainer() {
       <Container>
         <AdminSidebarHeader />
         <ListContainer>
-          <RenderNestedEl data={sidebarItems} />
+          <RenderNestedEl data={visibleItems} />
         </ListContainer>
       </Container>
     </animated.div>
