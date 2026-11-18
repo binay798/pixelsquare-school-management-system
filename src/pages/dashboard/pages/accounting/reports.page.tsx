@@ -53,7 +53,7 @@ interface IMovementRow {
   netMinor: number
 }
 
-const REPORT_LIMIT = 500
+const REPORT_LIMIT = 200
 
 /**
  * Financial reports (`/dashboard/accounting/reports`).

@@ -75,6 +75,10 @@ import { AccountingJournalDetailPage } from './pages/dashboard/pages/accounting/
 import { AccountingPeriodsPage } from './pages/dashboard/pages/accounting/periods.page'
 import { AccountingPeriodDetailPage } from './pages/dashboard/pages/accounting/periodDetail.page'
 import { AccountingReportsPage } from './pages/dashboard/pages/accounting/reports.page'
+import { ComplaintListPage } from './pages/dashboard/pages/complaints/complaints.page'
+import { CreateComplaintPage } from './pages/dashboard/pages/complaints/pages/create/create.page'
+import { ComplaintDetailPage } from './pages/dashboard/pages/complaints/pages/detail/detail.page'
+import { ComplaintConfigPage } from './pages/dashboard/pages/complaints/pages/config/config.page'
 
 /** Public routes can be accessed by all users. for eg: homepage */
 export const publicRoutes: RouteObject[] = [
@@ -236,6 +240,16 @@ export const privateRoutes: RouteObject[] = [
                   },
                 ],
               },
+            ],
+          },
+          {
+            path: 'complaints',
+            element: <Outlet />,
+            children: [
+              { path: '', element: <ComplaintListPage /> },
+              { path: 'create', element: <CreateComplaintPage /> },
+              { path: 'config', element: <ComplaintConfigPage /> },
+              { path: ':complaintId', element: <ComplaintDetailPage /> },
             ],
           },
           {

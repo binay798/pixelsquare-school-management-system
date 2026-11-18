@@ -6,6 +6,10 @@ import {
   MdOutlineAssignment,
   MdCampaign,
   MdOutlineNotificationsActive,
+  MdOutlineReportProblem,
+  MdSupportAgent,
+  MdAddComment,
+  MdTune,
 } from 'react-icons/md'
 import { FaSchool } from 'react-icons/fa'
 import { animated } from '@react-spring/web'
@@ -51,6 +55,10 @@ import {
   hasAccountingPermission,
   isAccountingPermission,
 } from '@src/pages/dashboard/pages/accounting/accounting.helpers'
+import {
+  hasComplaintPermission,
+  isComplaintPermission,
+} from '@src/pages/dashboard/pages/complaints/complaints.helpers'
 import { MdAccountBalance, MdPayments } from 'react-icons/md'
 
 /**
@@ -64,6 +72,8 @@ const hasSidebarPermission = (
 ) =>
   isAccountingPermission(permission)
     ? hasAccountingPermission(roles, permission)
+    : isComplaintPermission(permission)
+    ? hasComplaintPermission(roles, permission as never)
     : hasFeePermission(roles, permission as FeePermission)
 
 /** Hides the items the current user has no permission for (fee + accounting). */
@@ -195,6 +205,32 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
     title: 'Notice Board',
     icon: <MdOutlineNotificationsActive />,
     to: '/dashboard/academics/announcements/feed',
+  },
+  {
+    title: 'Complaints',
+    icon: <MdOutlineReportProblem />,
+    to: '/dashboard/complaints',
+    permissions: ['complaint.desk.view'],
+    subItems: [
+      {
+        title: 'Complaint Desk',
+        icon: <MdSupportAgent />,
+        to: '/dashboard/complaints',
+        permissions: ['complaint.desk.view'],
+      },
+      {
+        title: 'Log Complaint',
+        icon: <MdAddComment />,
+        to: '/dashboard/complaints/create',
+        permissions: ['complaint.desk.create'],
+      },
+      {
+        title: 'Categories & SLA',
+        icon: <MdTune />,
+        to: '/dashboard/complaints/config',
+        permissions: ['complaint.config.manage'],
+      },
+    ],
   },
   {
     title: 'Guardian',
