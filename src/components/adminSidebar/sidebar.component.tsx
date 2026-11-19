@@ -59,6 +59,10 @@ import {
   hasComplaintPermission,
   isComplaintPermission,
 } from '@src/pages/dashboard/pages/complaints/complaints.helpers'
+import {
+  hasPayrollPermission,
+  isPayrollPermission,
+} from '@src/pages/dashboard/pages/payroll/payroll.helpers'
 import { MdAccountBalance, MdPayments } from 'react-icons/md'
 
 /**
@@ -74,6 +78,8 @@ const hasSidebarPermission = (
     ? hasAccountingPermission(roles, permission)
     : isComplaintPermission(permission)
     ? hasComplaintPermission(roles, permission as never)
+    : isPayrollPermission(permission)
+    ? hasPayrollPermission(roles, permission)
     : hasFeePermission(roles, permission as FeePermission)
 
 /** Hides the items the current user has no permission for (fee + accounting). */
@@ -364,6 +370,117 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
         icon: <GrTableAdd />,
         to: '/dashboard/accounting/reports',
         permissions: ['accounting.reports.view'],
+      },
+    ],
+  },
+
+  {
+    title: 'Payroll',
+    icon: <MdPayments />,
+    to: '/dashboard/payroll',
+    permissions: ['payroll.dashboard.view'],
+    subItems: [
+      {
+        title: 'Overview',
+        icon: <BiSolidDashboard />,
+        to: '/dashboard/payroll',
+        permissions: ['payroll.dashboard.view'],
+      },
+      {
+        title: 'Process Payroll',
+        icon: <VscChecklist />,
+        to: '/dashboard/payroll/process',
+        permissions: ['payroll.runs.view'],
+      },
+      {
+        title: 'Runs',
+        icon: <GrTableAdd />,
+        to: '/dashboard/payroll/runs',
+        permissions: ['payroll.runs.view'],
+      },
+      {
+        title: 'Payslips',
+        icon: <MdOutlineDashboardCustomize />,
+        to: '/dashboard/payroll/payslips',
+        permissions: ['payroll.payslips.view'],
+      },
+      {
+        title: 'Payments',
+        icon: <MdAccountBalance />,
+        to: '/dashboard/payroll/payments',
+        permissions: ['payroll.payments.view'],
+      },
+      {
+        title: 'Loans & claims',
+        icon: <VscChecklist />,
+        to: '/dashboard/payroll/documents',
+        permissions: ['payroll.profiles.view'],
+      },
+      {
+        title: 'Remittances',
+        icon: <MdAccountBalance />,
+        to: '/dashboard/payroll/remittances',
+        permissions: ['payroll.payments.view'],
+      },
+      {
+        title: 'My Payslips',
+        icon: <MdOutlineDashboardCustomize />,
+        to: '/dashboard/payroll/me/payslips',
+        permissions: ['payroll.self_service'],
+      },
+      {
+        title: 'Reports',
+        icon: <GrTableAdd />,
+        to: '/dashboard/payroll/reports',
+        permissions: ['payroll.reports.view'],
+      },
+      {
+        title: 'Settings',
+        icon: <MdOutlineDashboardCustomize />,
+        to: '/dashboard/payroll/settings',
+        permissions: ['payroll.settings.manage'],
+      },
+      {
+        title: 'Profiles',
+        icon: <GrTableAdd />,
+        to: '/dashboard/payroll/profiles',
+        permissions: ['payroll.profiles.view'],
+      },
+      {
+        title: 'Leave & Overtime',
+        icon: <VscChecklist />,
+        to: '/dashboard/payroll/attendance',
+        permissions: ['payroll.runs.view'],
+      },
+      {
+        title: 'Components',
+        icon: <VscChecklist />,
+        to: '/dashboard/payroll/components',
+        permissions: ['payroll.structures.manage'],
+      },
+      {
+        title: 'Structures',
+        icon: <GrTableAdd />,
+        to: '/dashboard/payroll/structures',
+        permissions: ['payroll.structures.manage'],
+      },
+      {
+        title: 'Groups',
+        icon: <MdOutlineDashboardCustomize />,
+        to: '/dashboard/payroll/groups',
+        permissions: ['payroll.structures.manage'],
+      },
+      {
+        title: 'Settlements',
+        icon: <MdPayments />,
+        to: '/dashboard/payroll/settlements',
+        permissions: ['payroll.profiles.view'],
+      },
+      {
+        title: 'Audit & Accounting',
+        icon: <VscChecklist />,
+        to: '/dashboard/payroll/audit',
+        permissions: ['payroll.audit.view'],
       },
     ],
   },

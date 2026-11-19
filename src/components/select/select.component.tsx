@@ -70,16 +70,37 @@ const customTheme: ThemeConfig = (theme) => ({
   },
 })
 
+/**
+ * The menu is portaled to `document.body`: without it react-select renders the
+ * options inside the form and any ancestor with `overflow: hidden` (panels,
+ * cards, dialogs) clips them. `zIndex` keeps the menu above MUI dialogs/drawers
+ * (1200–1300).
+ */
+const menuPortalTarget = () =>
+  typeof document === 'undefined' ? undefined : document.body
+
+const portalStyles: StylesConfig = {
+  ...customReactSelectStyles,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  menuPortal: (base: any) => ({
+    ...base,
+    zIndex: 9999,
+  }),
+}
+
 interface SelectProps extends ReactSelectProps {}
 export const SelectField = (props: SelectProps) => {
+  const { styles, ...rest } = props
+
   return (
     <Select
-      // options={customOptions}
-      options={props.options}
-      styles={customReactSelectStyles}
-      theme={customTheme}
+      {...rest}
+      styles={{ ...portalStyles, ...styles } as StylesConfig}
+      theme={props.theme ?? customTheme}
       placeholder={props.placeholder}
-      {...props}
+      menuPortalTarget={props.menuPortalTarget ?? menuPortalTarget()}
+      menuPosition={props.menuPosition ?? 'fixed'}
+      menuShouldScrollIntoView={false}
     />
   )
 }
@@ -107,13 +128,20 @@ export const AsyncSelectField = <Option, IsMulti extends boolean = false>(
       {...props}
       styles={
         {
-          ...customReactSelectStyles,
+          ...portalStyles,
           ...props.styles,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          menuPortal: (base: any) => ({
+            ...base,
+            zIndex: 9999,
+          }),
         } as unknown as StylesConfig<Option, IsMulti, GroupBase<Option>>
       }
       theme={customTheme}
-      // placeholder={props}
       placeholder={props.placeholder}
+      menuPortalTarget={props.menuPortalTarget ?? menuPortalTarget()}
+      menuPosition={props.menuPosition ?? 'fixed'}
+      menuShouldScrollIntoView={false}
     />
   )
 }

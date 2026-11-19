@@ -25,7 +25,10 @@ import { useState } from 'react'
 import { listDesignations } from '@src/store/redux/dashboard/humanResources/designations/designations.service'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { createEmployeeAction } from '@src/store/redux/dashboard/humanResources/manageEmployee/manageEmployee.slice'
-import { EMPLOYEE_ROLE } from '@src/constants/users.constants'
+import {
+  EMPLOYEE_ROLE,
+  EMPLOYEE_ROLE_LABEL,
+} from '@src/constants/users.constants'
 import { useNavigate } from 'react-router-dom'
 
 export function CreateEmployeePage() {
@@ -421,7 +424,7 @@ export function CreateEmployeePage() {
                   <SelectField
                     placeholder="Select role"
                     options={EMPLOYEE_ROLE.map((el) => ({
-                      label: capitalize(el),
+                      label: EMPLOYEE_ROLE_LABEL[el] ?? capitalize(el),
                       value: el,
                     }))}
                     onChange={(e) => {
@@ -430,12 +433,16 @@ export function CreateEmployeePage() {
                         (e as { value: string }).value
                       )
                     }}
-                    // defaultValue={formik.values.school_type}
-
-                    value={{
-                      label: capitalize(formik.values.role),
-                      value: formik.values.role,
-                    }}
+                    value={
+                      formik.values.role
+                        ? {
+                            label:
+                              EMPLOYEE_ROLE_LABEL[formik.values.role] ??
+                              capitalize(formik.values.role),
+                            value: formik.values.role,
+                          }
+                        : null
+                    }
                   />
                 </FormControl>
               </Stack>

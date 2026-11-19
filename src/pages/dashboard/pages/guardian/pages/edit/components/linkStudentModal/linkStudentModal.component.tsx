@@ -169,6 +169,11 @@ export function LinkStudentModal(props: Props) {
               placeholder="Select relationship"
               options={RELATIONSHIP_OPTIONS}
               isClearable
+              menuPortalTarget={
+                typeof document === 'undefined' ? undefined : document.body
+              }
+              menuPosition="fixed"
+              styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
               value={
                 RELATIONSHIP_OPTIONS.find(
                   (option) => option.value === formik.values.relationship

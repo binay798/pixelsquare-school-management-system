@@ -75,6 +75,24 @@ import { AccountingJournalDetailPage } from './pages/dashboard/pages/accounting/
 import { AccountingPeriodsPage } from './pages/dashboard/pages/accounting/periods.page'
 import { AccountingPeriodDetailPage } from './pages/dashboard/pages/accounting/periodDetail.page'
 import { AccountingReportsPage } from './pages/dashboard/pages/accounting/reports.page'
+import { PayrollDashboardPage } from './pages/dashboard/pages/payroll/dashboard.page'
+import { PayrollProcessPage } from './pages/dashboard/pages/payroll/process.page'
+import { PayrollRunsPage } from './pages/dashboard/pages/payroll/runs.page'
+import { PayrollRunDetailPage } from './pages/dashboard/pages/payroll/runDetail.page'
+import { PayrollPayslipsPage } from './pages/dashboard/pages/payroll/payslips.page'
+import { PayrollPaymentsPage } from './pages/dashboard/pages/payroll/payments.page'
+import { PayrollReportsPage } from './pages/dashboard/pages/payroll/reports.page'
+import { PayrollDocumentsPage } from './pages/dashboard/pages/payroll/documents.page'
+import { PayrollRemittancesPage } from './pages/dashboard/pages/payroll/remittances.page'
+import { PayrollMyPayslipsPage } from './pages/dashboard/pages/payroll/myPayslips.page'
+import { PayrollSettingsPage } from './pages/dashboard/pages/payroll/settings.page'
+import { PayrollComponentsPage } from './pages/dashboard/pages/payroll/components.page'
+import { PayrollStructuresPage } from './pages/dashboard/pages/payroll/structures.page'
+import { PayrollProfilesPage } from './pages/dashboard/pages/payroll/profiles.page'
+import { PayrollAuditPage } from './pages/dashboard/pages/payroll/audit.page'
+import { PayrollGroupsPage } from './pages/dashboard/pages/payroll/groups.page'
+import { PayrollSettlementsPage } from './pages/dashboard/pages/payroll/settlements.page'
+import { PayrollAttendancePage } from './pages/dashboard/pages/payroll/attendance.page'
 import { ComplaintListPage } from './pages/dashboard/pages/complaints/complaints.page'
 import { CreateComplaintPage } from './pages/dashboard/pages/complaints/pages/create/create.page'
 import { ComplaintDetailPage } from './pages/dashboard/pages/complaints/pages/detail/detail.page'
@@ -317,6 +335,36 @@ export const privateRoutes: RouteObject[] = [
                 ],
               },
               { path: 'reports', element: <AccountingReportsPage /> },
+            ],
+          },
+          {
+            path: 'payroll',
+            element: <Outlet />,
+            children: [
+              { path: '', element: <PayrollDashboardPage /> },
+              { path: 'process', element: <PayrollProcessPage /> },
+              {
+                path: 'runs',
+                element: <Outlet />,
+                children: [
+                  { path: '', element: <PayrollRunsPage /> },
+                  { path: ':runId', element: <PayrollRunDetailPage /> },
+                ],
+              },
+              { path: 'payslips', element: <PayrollPayslipsPage /> },
+              { path: 'payments', element: <PayrollPaymentsPage /> },
+              { path: 'documents', element: <PayrollDocumentsPage /> },
+              { path: 'remittances', element: <PayrollRemittancesPage /> },
+              { path: 'me/payslips', element: <PayrollMyPayslipsPage /> },
+              { path: 'settings', element: <PayrollSettingsPage /> },
+              { path: 'components', element: <PayrollComponentsPage /> },
+              { path: 'structures', element: <PayrollStructuresPage /> },
+              { path: 'profiles', element: <PayrollProfilesPage /> },
+              { path: 'groups', element: <PayrollGroupsPage /> },
+              { path: 'settlements', element: <PayrollSettlementsPage /> },
+              { path: 'attendance', element: <PayrollAttendancePage /> },
+              { path: 'audit', element: <PayrollAuditPage /> },
+              { path: 'reports', element: <PayrollReportsPage /> },
             ],
           },
           {

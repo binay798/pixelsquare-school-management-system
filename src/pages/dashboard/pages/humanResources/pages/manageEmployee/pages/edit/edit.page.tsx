@@ -30,7 +30,10 @@ import {
   getEmployeeDetailsAction,
   updateEmployeeDetailAction,
 } from '@src/store/redux/dashboard/humanResources/manageEmployee/manageEmployee.slice'
-import { EMPLOYEE_ROLE } from '@src/constants/users.constants'
+import {
+  EMPLOYEE_ROLE_EDIT,
+  EMPLOYEE_ROLE_LABEL,
+} from '@src/constants/users.constants'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getImageUrl } from '@src/helpers/getImageUrl.helpers'
 
@@ -484,8 +487,8 @@ export function EditEmployeePage() {
                   </FormLabel>
                   <SelectField
                     placeholder="Select role"
-                    options={EMPLOYEE_ROLE.map((el) => ({
-                      label: capitalize(el),
+                    options={EMPLOYEE_ROLE_EDIT.map((el) => ({
+                      label: EMPLOYEE_ROLE_LABEL[el] ?? capitalize(el),
                       value: el,
                     }))}
                     onChange={(e) => {
@@ -494,12 +497,16 @@ export function EditEmployeePage() {
                         (e as { value: string }).value
                       )
                     }}
-                    // defaultValue={formik.values.school_type}
-
-                    value={{
-                      label: capitalize(formik.values.role),
-                      value: formik.values.role,
-                    }}
+                    value={
+                      formik.values.role
+                        ? {
+                            label:
+                              EMPLOYEE_ROLE_LABEL[formik.values.role] ??
+                              capitalize(formik.values.role),
+                            value: formik.values.role,
+                          }
+                        : null
+                    }
                   />
                 </FormControl>
                 <CustomDatePicker

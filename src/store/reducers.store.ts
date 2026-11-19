@@ -27,6 +27,7 @@ import feeWalletsReducer from './redux/dashboard/fee/fee.wallets.slice'
 import accountingReducer from './redux/dashboard/accounting/accounting.slice'
 import complaintReducer from './redux/dashboard/complaints/complaints.slice'
 import complaintConfigReducer from './redux/dashboard/complaints/complaintConfig.slice'
+import payrollReducer from './redux/dashboard/payroll/payroll.slice'
 
 export const store = configureStore({
   reducer: {
@@ -58,5 +59,6 @@ export const store = configureStore({
     accounting: accountingReducer,
     complaints: complaintReducer,
     complaintConfig: complaintConfigReducer,
+    payroll: payrollReducer,
   },
 })
