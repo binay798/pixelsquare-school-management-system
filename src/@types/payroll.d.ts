@@ -192,7 +192,7 @@ declare namespace Payroll {
     status: RunEmployeeStatus
     warning_count: number
     blocker_count: number
-    designation: string
+    role: string
     employee: IEmployeeName
   }
 
@@ -238,7 +238,7 @@ declare namespace Payroll {
     employee_id: number
     firstname: string | null
     lastname: string | null
-    designation: string
+    role: string
     department_name: string | null
     employment_type: string
     days_payable: string
@@ -282,7 +282,7 @@ declare namespace Payroll {
     pay_date?: string
     period_start?: string
     period_end?: string
-    designation?: string
+    role?: string
     department_name?: string | null
     employee?: IEmployeeName
   }
@@ -338,7 +338,7 @@ declare namespace Payroll {
     purpose: string | null
     approved_at: string | null
     disbursement_transaction_id: number | null
-    designation?: string
+    role?: string
     employee?: IEmployeeName
   }
 
@@ -353,7 +353,7 @@ declare namespace Payroll {
     recovery_period_key: string | null
     status: AdvanceStatus
     reason: string | null
-    designation?: string
+    role?: string
     employee?: IEmployeeName
   }
 
@@ -366,7 +366,7 @@ declare namespace Payroll {
     description: string | null
     status: ReimbursementStatus
     rejected_reason: string | null
-    designation?: string
+    role?: string
     employee?: IEmployeeName
     attachment_count?: number
   }
@@ -392,7 +392,7 @@ declare namespace Payroll {
       }[]
       overpaid?: string
     } | null
-    designation?: string
+    role?: string
     employee?: IEmployeeName
   }
 
@@ -446,7 +446,7 @@ declare namespace Payroll {
       employee_id: number
       firstname: string | null
       lastname: string | null
-      designation: string
+      role: string
       runs: number
       gross: string
       deductions: string
@@ -659,7 +659,7 @@ declare namespace Payroll {
   interface IUnprofiledEmployee {
     employee_id: number
     joining_date: string | null
-    designation: string
+    role: string
     employee: {
       firstname: string | null
       lastname: string | null
@@ -679,7 +679,7 @@ declare namespace Payroll {
     payment_method: Payroll.PaymentMethod
     bank_account_last4: string | null
     termination_date: string | null
-    designation: string
+    role: string
     employee: {
       firstname: string | null
       lastname: string | null
@@ -724,7 +724,7 @@ declare namespace Payroll {
     employee_id: number
     joining_date: string | null
     national_id: string | null
-    designation: string
+    role: string
     employee: {
       firstname: string | null
       lastname: string | null
@@ -856,7 +856,7 @@ declare namespace Payroll {
     leave_type_code: string
     leave_type_name: string
     is_paid: boolean
-    designation: string
+    role: string
     employee?: IEmployeeName
   }
 
@@ -869,7 +869,7 @@ declare namespace Payroll {
     status: OvertimeStatus
     approved_at: string | null
     note: string | null
-    designation: string
+    role: string
     employee?: IEmployeeName
   }
 
@@ -906,7 +906,7 @@ declare namespace Payroll {
     approved_at: string | null
     run_number?: string | null
     period_key?: string | null
-    designation?: string
+    role?: string
     employee?: IEmployeeName
   }
 }

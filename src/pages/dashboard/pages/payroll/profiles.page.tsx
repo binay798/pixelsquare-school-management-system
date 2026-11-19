@@ -275,11 +275,11 @@ export function PayrollProfilesPage() {
     },
     {
       key: 'role',
-      label: 'Designation',
+      label: 'Role',
       hideBelow: 'md',
       render: (row) => (
         <FeeCellStack
-          primary={row.designation}
+          primary={row.role}
           secondary={row.department_name ?? undefined}
         />
       ),
@@ -557,7 +557,7 @@ export function PayrollProfilesPage() {
                     ]
                       .filter(Boolean)
                       .join(' ')}
-                    secondary={`${employee.designation}${
+                    secondary={`${employee.role}${
                       employee.joining_date
                         ? ` · joined ${formatDate(employee.joining_date)}`
                         : ''
@@ -601,7 +601,7 @@ export function PayrollProfilesPage() {
           {profile
             ? `${[profile.employee?.firstname, profile.employee?.lastname]
                 .filter(Boolean)
-                .join(' ')} · ${profile.designation}`
+                .join(' ')} · ${profile.role}`
             : 'Payroll profile'}
         </DialogTitle>
         <DialogContent>

@@ -5,7 +5,6 @@ import accountProfileReducer from './redux/dashboard/account/profile/profile.sli
 import manageSchoolReducer from './redux/dashboard/manageSchool/manageSchool.slice'
 import classSectionReducer from './redux/dashboard/academics/classSections/sections.slice'
 import academicYearReducer from './redux/dashboard/academicYear/academicYear.slice'
-import designationReducer from './redux/dashboard/humanResources/designations/designations.slice'
 import manageEmployeeReducer from './redux/dashboard/humanResources/manageEmployee/manageEmployee.slice'
 import departmentReducer from './redux/dashboard/teachers/departments/departments.slice'
 import classReducer from './redux/dashboard/academics/classes/classes.slice'
@@ -28,6 +27,7 @@ import accountingReducer from './redux/dashboard/accounting/accounting.slice'
 import complaintReducer from './redux/dashboard/complaints/complaints.slice'
 import complaintConfigReducer from './redux/dashboard/complaints/complaintConfig.slice'
 import payrollReducer from './redux/dashboard/payroll/payroll.slice'
+import dashboardOverviewReducer from './redux/dashboard/overview/overview.slice'
 
 export const store = configureStore({
   reducer: {
@@ -37,7 +37,6 @@ export const store = configureStore({
     attendance: attendanceReducer,
     manageSchool: manageSchoolReducer,
     academicYear: academicYearReducer,
-    designations: designationReducer,
     employees: manageEmployeeReducer,
     departments: departmentReducer,
     classes: classReducer,
@@ -60,5 +59,6 @@ export const store = configureStore({
     complaints: complaintReducer,
     complaintConfig: complaintConfigReducer,
     payroll: payrollReducer,
+    dashboardOverview: dashboardOverviewReducer,
   },
 })

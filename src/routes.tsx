@@ -1,4 +1,4 @@
-import { Outlet, RouteObject } from 'react-router-dom'
+import { Navigate, Outlet, RouteObject } from 'react-router-dom'
 import { Homepage } from './pages/homepage/homepage.pages'
 import { Login } from './pages/auth/login/login.pages'
 import {
@@ -12,9 +12,7 @@ import { ManageSchool } from './pages/dashboard/pages/administrator/pages/manage
 import { AcademicYear } from './pages/dashboard/pages/administrator/pages/academicYear/academicYear.component'
 import { CreateAcademicYear } from './pages/dashboard/pages/administrator/pages/academicYear/pages/create/create.page'
 import { EditAcademicYear } from './pages/dashboard/pages/administrator/pages/academicYear/pages/edit/edit.page'
-import { ManageDesignation } from './pages/dashboard/pages/humanResources/pages/manageDesignation/manageDesignation.page'
 import { ManageEmployee } from './pages/dashboard/pages/humanResources/pages/manageEmployee/manageEmployee.page'
-import { ListDesignation } from './pages/dashboard/pages/humanResources/pages/manageDesignation/pages/list/list.page'
 import { ListEmployeesPage } from './pages/dashboard/pages/humanResources/pages/manageEmployee/pages/list/list.page'
 import { CreateEmployeePage } from './pages/dashboard/pages/humanResources/pages/manageEmployee/pages/create/create.page'
 import { EditEmployeePage } from './pages/dashboard/pages/humanResources/pages/manageEmployee/pages/edit/edit.page'
@@ -151,13 +149,12 @@ export const privateRoutes: RouteObject[] = [
             children: [
               {
                 path: '',
-                element: <ManageDesignation />,
-                children: [
-                  {
-                    path: '',
-                    element: <ListDesignation />,
-                  },
-                ],
+                element: (
+                  <Navigate
+                    to="/dashboard/human-resources/manage-employee"
+                    replace
+                  />
+                ),
               },
               {
                 path: '/dashboard/human-resources/manage-employee',

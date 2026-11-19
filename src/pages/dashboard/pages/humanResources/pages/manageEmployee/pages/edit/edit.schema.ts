@@ -14,10 +14,6 @@ export const editEmployeeSchema = yup.object({
   nationality: yup.string().optional(),
   // email: yup.string().email().optional(),
   // password: yup.string().optional(),
-  employee_designation_id: yup.object({
-    label: yup.string().optional(),
-    value: yup.string().optional(),
-  }),
   national_id: yup.string(),
   joining_date: yup.string().optional(),
   role: yup.string().optional(),

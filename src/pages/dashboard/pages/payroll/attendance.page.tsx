@@ -122,7 +122,7 @@ export function PayrollAttendancePage() {
     value: String(row.employee_id),
     label: `${[row.employee?.firstname, row.employee?.lastname]
       .filter(Boolean)
-      .join(' ')} · ${row.designation}`,
+      .join(' ')} · ${row.role}`,
   }))
 
   const leaveTypeOptions: IOption<string>[] = (leaveTypes ?? []).map(
@@ -165,7 +165,7 @@ export function PayrollAttendancePage() {
           primary={[row.employee?.firstname, row.employee?.lastname]
             .filter(Boolean)
             .join(' ')}
-          secondary={row.designation}
+          secondary={row.role}
         />
       ),
     },
@@ -253,7 +253,7 @@ export function PayrollAttendancePage() {
           primary={[row.employee?.firstname, row.employee?.lastname]
             .filter(Boolean)
             .join(' ')}
-          secondary={row.designation}
+          secondary={row.role}
         />
       ),
     },

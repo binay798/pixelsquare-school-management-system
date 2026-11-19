@@ -21,7 +21,7 @@ export interface AttendancePerson {
   code: string
   name: string
   photo?: string
-  /** class / section / designation, when the endpoint exposes it */
+  /** class / section / role, when the endpoint exposes it */
   meta?: string
   /** user behind the person, resolved again by the backend */
   userId?: number

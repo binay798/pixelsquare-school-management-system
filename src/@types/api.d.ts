@@ -53,10 +53,6 @@ declare namespace Api {
     instagram_link: string
   }
 
-  interface IDesignationList extends PaginatedData<HumanResource.IDesignation> {
-    total: string
-  }
-
   interface IEmployeeList
     extends PaginatedData<{
       employee_details: {
@@ -73,10 +69,7 @@ declare namespace Api {
         id: number
         email: string
       }
-      designation_details: {
-        id: number
-        designation: string
-      }
+      role: string | null
     }> {
     total: string
   }
@@ -88,7 +81,6 @@ declare namespace Api {
     >
     user_profile_details: User.IUserProfile
     user_details: Pick<User.IUser, 'email' | 'id'>
-    designation_details: Pick<HumanResource.IDesignation, 'id' | 'designation'>
     user_roles: Pick<User.IUserRole, 'id' | 'role'>[]
     profile_pic_details: Asset.IAsset | null
   }

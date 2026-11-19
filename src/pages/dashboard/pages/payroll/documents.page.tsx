@@ -206,7 +206,7 @@ export function PayrollDocumentsPage() {
     value: String(row.employee_id),
     label: `${[row.employee?.firstname, row.employee?.lastname]
       .filter(Boolean)
-      .join(' ')} · ${row.designation}`,
+      .join(' ')} · ${row.role}`,
   }))
 
   const submitRequest = () => {

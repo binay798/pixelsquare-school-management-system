@@ -45,7 +45,7 @@ declare namespace Service {
       user_credential: Pick<User.IUser, 'email'>
       employee_profile: Pick<
         HumanResource.IEmployee,
-        'employee_designation_id' | 'joining_date' | 'national_id'
+        'joining_date' | 'national_id'
       > & { role: string }
     }
 
@@ -54,10 +54,9 @@ declare namespace Service {
         Omit<User.IUserProfile, 'id' | 'created_at' | 'updated_at' | 'user_id'>
       >
       employee_profile: Partial<
-        Pick<
-          HumanResource.IEmployee,
-          'employee_designation_id' | 'joining_date' | 'national_id'
-        > & { role: string }
+        Pick<HumanResource.IEmployee, 'joining_date' | 'national_id'> & {
+          role: string
+        }
       >
     }
   }

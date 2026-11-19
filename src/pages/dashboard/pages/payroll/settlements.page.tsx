@@ -142,7 +142,7 @@ export function PayrollSettlementsPage() {
     value: String(row.employee_id),
     label: `${[row.employee?.firstname, row.employee?.lastname]
       .filter(Boolean)
-      .join(' ')} · ${row.designation}`,
+      .join(' ')} · ${row.role}`,
   }))
 
   const accountOptionsList: IOption<string>[] = (accountOptions ?? []).map(
@@ -161,7 +161,7 @@ export function PayrollSettlementsPage() {
           primary={[row.employee?.firstname, row.employee?.lastname]
             .filter(Boolean)
             .join(' ')}
-          secondary={row.designation}
+          secondary={row.role}
         />
       ),
     },

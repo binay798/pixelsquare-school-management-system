@@ -77,16 +77,6 @@ export function CreateDepartmentModal(props: Props) {
           )
         }
       }
-      // dispatch(
-      //   createDesignationAction({
-      //     payload: values,
-      //     onSuccess: () => {
-      //       props.onClose()
-      //       formik.resetForm()
-      //       dispatch(listDesignationAction({ payload: { page, limit } }))
-      //     },
-      //   })
-      // )
     },
     validationSchema: createDepartmentSchema,
   })

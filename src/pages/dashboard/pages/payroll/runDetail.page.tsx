@@ -131,7 +131,7 @@ export function PayrollRunDetailPage() {
       `payroll-register-${register.run_number}`,
       [
         { key: 'name', label: 'Employee' },
-        { key: 'designation', label: 'Designation' },
+        { key: 'role', label: 'Role' },
         { key: 'department_name', label: 'Department' },
         { key: 'days_payable', label: 'Payable days' },
         { key: 'gross_amount', label: 'Gross' },
@@ -215,7 +215,7 @@ export function PayrollRunDetailPage() {
           primary={[row.employee?.firstname, row.employee?.lastname]
             .filter(Boolean)
             .join(' ')}
-          secondary={`${row.designation}${
+          secondary={`${row.role}${
             row.department_name ? ` · ${row.department_name}` : ''
           }`}
         />

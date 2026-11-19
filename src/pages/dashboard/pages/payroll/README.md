@@ -95,7 +95,7 @@ onboarding dialog: it lists the school employees that still have **no** payroll 
 (`GET /payroll/employees/unprofiled`) and creates it with sensible defaults (permanent,
 monthly, active, eligible, optional default structure) through the profile upsert. Teachers
 are employees too: the teachers module writes the matching `employees` row, so a teacher
-appears in this list with the `Teacher` designation and is onboarded like anybody else.
+appears in this list with the `teacher` role and is onboarded like anybody else.
 **Manage** then opens the profile of one employee:
 
 1. **Payroll profile** — employment type, pay frequency, salary structure, payroll status,

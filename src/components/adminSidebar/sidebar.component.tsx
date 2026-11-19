@@ -142,11 +142,6 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
     to: '/dashboard/human-resources',
     subItems: [
       {
-        title: 'Manage Designation',
-        icon: <FaSitemap />,
-        to: '/dashboard/human-resources',
-      },
-      {
         title: 'Manage Employee',
         icon: <IoSchool />,
         to: '/dashboard/human-resources/manage-employee',

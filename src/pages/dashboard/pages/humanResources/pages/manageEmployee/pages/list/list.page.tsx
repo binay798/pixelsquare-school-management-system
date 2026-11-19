@@ -20,7 +20,7 @@ export function ListEmployeesPage() {
       employee_id: el.employee_details.id,
       name: `${el.user_profile_details.firstname} ${el.user_profile_details.lastname}`,
       email: el.user_details.email,
-      designation: el.designation_details.designation,
+      role: el.role ?? '—',
       mobile: el.user_profile_details.mobile,
       gender: el.user_profile_details.gender,
     }))
@@ -70,7 +70,7 @@ export function ListEmployeesPage() {
           { field: 'name', name: 'Name' },
           { field: 'email', name: 'Email Address' },
           { field: 'mobile', name: 'Mobile' },
-          { field: 'designation', name: 'Designation' },
+          { field: 'role', name: 'Role' },
           { field: 'gender', name: 'Gender' },
         ]}
         loading={employeeListLoading}

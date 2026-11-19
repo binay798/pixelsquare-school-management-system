@@ -80,7 +80,7 @@ export function PayrollReportsPage() {
       render: (row) => (
         <FeeCellStack
           primary={[row.firstname, row.lastname].filter(Boolean).join(' ')}
-          secondary={`${row.designation} · ${row.runs} runs`}
+          secondary={`${row.role} · ${row.runs} runs`}
         />
       ),
     },

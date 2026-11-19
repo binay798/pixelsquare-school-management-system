@@ -10,10 +10,7 @@ import { ButtonComp } from '@src/components/button/button.component'
 import { CustomDatePicker } from '@src/components/datePicker/datePicker.component'
 import { FormBlock } from '@src/components/formBlock/formBlock.component'
 import { InputField } from '@src/components/input/input.component'
-import {
-  AsyncSelectField,
-  SelectField,
-} from '@src/components/select/select.component'
+import { SelectField } from '@src/components/select/select.component'
 import { colors } from '@src/helpers/colors.helpers'
 
 import { UploadAvatarComp } from '@src/pages/dashboard/components/uploadAvatarComp/uploadAvatar.component'
@@ -22,7 +19,6 @@ import { createEmployeeSchema } from './create.schema'
 import { capitalize, isEmpty } from 'lodash'
 import moment from 'moment'
 import { useState } from 'react'
-import { listDesignations } from '@src/store/redux/dashboard/humanResources/designations/designations.service'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { createEmployeeAction } from '@src/store/redux/dashboard/humanResources/manageEmployee/manageEmployee.slice'
 import {
@@ -52,7 +48,6 @@ export function CreateEmployeePage() {
       gender: '',
       nationality: '',
       email: '',
-      employee_designation_id: { label: '', value: '' },
       national_id: '',
       joining_date: '',
       role: '',
@@ -63,9 +58,6 @@ export function CreateEmployeePage() {
           createEmployeeAction({
             payload: {
               employee_profile: {
-                employee_designation_id: Number(
-                  values.employee_designation_id.value
-                ),
                 joining_date: values.joining_date,
                 national_id: values.national_id,
                 role: values.role,
@@ -98,13 +90,6 @@ export function CreateEmployeePage() {
     },
     validationSchema: createEmployeeSchema,
   })
-
-  const loadDesignations = () => {
-    return listDesignations(1, 100).then(
-      (res) =>
-        res.data?.rows?.map((el) => ({ label: el.designation, value: el.id }))
-    )
-  }
 
   return (
     <Box>
@@ -199,64 +184,6 @@ export function CreateEmployeePage() {
                         : undefined
                     }
                   />
-                  <FormControl fullWidth required>
-                    <FormLabel
-                      sx={{
-                        fontSize: 13,
-                        mb: 1,
-                        color: colors.grey[600],
-                      }}
-                    >
-                      Designation
-                    </FormLabel>
-                    <AsyncSelectField<
-                      { label: string; value: string | number },
-                      false
-                    >
-                      placeholder="Select employee designation"
-                      // defaultOptions={[
-                      //   { label: 'Accountant', value: 'Accountant' },
-                      //   { label: 'Receptionist', value: 'Receptionist' },
-                      //   { label: 'Librarian', value: 'librarian' },
-                      // ]}
-                      defaultOptions
-                      loadOptions={() =>
-                        new Promise((resolve) => {
-                          loadDesignations().then((res) => {
-                            resolve(res)
-                          })
-                        })
-                      }
-                      onChange={(e) => {
-                        formik.setFieldValue('employee_designation_id', e)
-                      }}
-                      // defaultValue={formik.values.school_type}
-
-                      value={formik.values.employee_designation_id}
-                    />
-                    {/* <SelectField
-                      placeholder="Select employee designation"
-                      options={[
-                        { label: 'Accountant', value: 'Accountant' },
-                        { label: 'Receptionist', value: 'Receptionist' },
-                        { label: 'Librarian', value: 'librarian' },
-                      ]}
-                      onChange={(e) => {
-                        formik.setFieldValue(
-                          'employee_designation_id',
-                          (e as { value: string }).value
-                        )
-                      }}
-                      // defaultValue={formik.values.school_type}
-
-                      value={{
-                        label: capitalize(
-                          formik.values.employee_designation_id
-                        ),
-                        value: formik.values.employee_designation_id,
-                      }}
-                    /> */}
-                  </FormControl>
                   <InputField
                     placeholder="Phone no."
                     labelDetail={{ text: 'Phone no.', required: true }}

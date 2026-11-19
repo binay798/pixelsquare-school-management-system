@@ -13,10 +13,6 @@ export const createEmployeeSchema = yup.object({
   gender: yup.string().required(),
   nationality: yup.string().required(),
   email: yup.string().email().required(),
-  employee_designation_id: yup.object({
-    label: yup.string().required(),
-    value: yup.string().required(),
-  }),
   national_id: yup.string(),
   joining_date: yup.string().required(),
   role: yup.string().required(),

@@ -1,6 +1,24 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { isAxiosError } from 'axios'
 import { catchAsync } from '@src/helpers/catchAsync.helpers'
+import { errResponse } from '@src/helpers/errResponse.helper'
 import * as services from './auth.service'
+
+/** Serializable login failure, so the form can render the API message inline. */
+export interface IAuthError {
+  message: string
+  status?: number
+}
+
+type TLoginResponse = Api.Base<Api.Auth.Login>['data']
+
+function toAuthError(error: unknown): IAuthError {
+  const status = isAxiosError(error) ? error.response?.status : undefined
+  const raw = errResponse(error)
+  const message = Array.isArray(raw) ? raw.join(' ') : raw
+
+  return { message: message ?? '', status }
+}
 interface InitialState {
   user: {
     data: Api.Auth.Login | null
@@ -22,19 +40,20 @@ const initialState: InitialState = {
   },
 }
 
-export const authSliceLogin = createAsyncThunk(
-  'auth/login',
-  catchAsync(
-    async (data: { body: Service.Auth.Login; onSuccess?: () => void }) => {
-      const res = await services.login(data.body)
-      data.onSuccess?.()
+export const authSliceLogin = createAsyncThunk<
+  TLoginResponse,
+  { body: Service.Auth.Login; onSuccess?: () => void },
+  { rejectValue: IAuthError }
+>('auth/login', async (data, { rejectWithValue }) => {
+  try {
+    const res = await services.login(data.body)
+    data.onSuccess?.()
 
-      return res
-    },
-    true,
-    false
-  )
-)
+    return res
+  } catch (error) {
+    return rejectWithValue(toAuthError(error))
+  }
+})
 export const authSliceGetUserSession = createAsyncThunk(
   'auth/getUserSession',
   catchAsync(
