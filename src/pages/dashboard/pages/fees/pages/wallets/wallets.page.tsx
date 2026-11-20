@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRightLeft, Banknote } from 'lucide-react'
+import { ArrowRightLeft, Banknote, Undo2 } from 'lucide-react'
 import { colors } from '@src/helpers/colors.helpers'
 import { ButtonComp } from '@src/components/button/button.component'
 import { useFeePermissions } from '@src/hooks/useFeePermissions.hooks'
@@ -33,8 +33,10 @@ import {
   formatDate,
   formatDateTime,
   formatMoney,
+  toMinor,
   WALLET_TX_TYPE_META,
 } from '../../fees.helpers'
+import { RequestRefundModal } from '../refunds/components/requestRefundModal.component'
 
 export function FeeWalletsPage() {
   const navigate = useNavigate()
@@ -42,6 +44,8 @@ export function FeeWalletsPage() {
   const { can } = useFeePermissions()
 
   const [selected, setSelected] = useState<IStudentOption | null>(null)
+  const [refundOpen, setRefundOpen] = useState(false)
+  const [refundNotice, setRefundNotice] = useState(false)
   const { studentId, setStudentId, student, loading } = useFeeStudent(null)
 
   const { data: wallet, loading: walletLoading } = useSelector(
@@ -64,6 +68,7 @@ export function FeeWalletsPage() {
       return
     }
 
+    setRefundNotice(false)
     dispatch(getWalletAction({ studentId }))
     dispatch(getWalletTransactionsAction({ studentId, page: 1, limit: 50 }))
     dispatch(
@@ -134,6 +139,8 @@ export function FeeWalletsPage() {
   ]
 
   const openInvoices = invoices?.rows ?? []
+  const walletBalance = wallet?.current_balance ?? '0.00'
+  const canRefundWallet = Boolean(wallet) && toMinor(walletBalance) > 0
 
   return (
     <Box>
@@ -187,6 +194,16 @@ export function FeeWalletsPage() {
               >
                 Apply to invoices
               </ButtonComp>
+              <ButtonComp
+                size="small"
+                variant="outlined"
+                color="error"
+                startIcon={<Undo2 size={14} />}
+                disabled={!canRefundWallet || !can('fee.refunds.request')}
+                onClick={() => setRefundOpen(true)}
+              >
+                Refund wallet
+              </ButtonComp>
             </>
           ) : null
         }
@@ -233,6 +250,13 @@ export function FeeWalletsPage() {
               </Stack>
             }
           />
+
+          {refundNotice ? (
+            <Typography fontSize={12} color={colors.grey[700]}>
+              Wallet refund requested. The balance is debited after a supervisor
+              approves and processes it on the Refunds & Adjustments screen.
+            </Typography>
+          ) : null}
 
           <FeePanel
             title="Wallet ledger"
@@ -287,6 +311,29 @@ export function FeeWalletsPage() {
           </FeePanel>
         </Stack>
       ) : null}
+
+      <RequestRefundModal
+        open={refundOpen}
+        initialStudent={selected}
+        initialRefundType="WALLET_REFUND"
+        onClose={() => setRefundOpen(false)}
+        onSaved={(refund) => {
+          setRefundNotice(true)
+          const refundedStudentId = refund?.student_id ?? studentId
+
+          if (!refundedStudentId) {
+            return
+          }
+          dispatch(getWalletAction({ studentId: refundedStudentId }))
+          dispatch(
+            getWalletTransactionsAction({
+              studentId: refundedStudentId,
+              page: 1,
+              limit: 50,
+            })
+          )
+        }}
+      />
     </Box>
   )
 }
