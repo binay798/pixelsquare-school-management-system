@@ -15,6 +15,7 @@ import React from 'react'
 import { IoSettingsSharp } from 'react-icons/io5'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { authSliceLogout } from '@src/store/redux/auth/auth.slice'
+import { resetAppState } from '@src/store/reducers.store'
 import { useNavigate } from 'react-router-dom'
 
 export function AccountMenu() {
@@ -33,8 +34,24 @@ export function AccountMenu() {
   const userRoles = useSelector((store) => store.auth.user.data?.userRoles)
 
   const logoutHandler = () => {
-    dispatch(authSliceLogout({}))
     handleClose()
+    dispatch(authSliceLogout({}))
+      .unwrap()
+      // A failed request must not trap the user behind a dead logout button: the
+      // store is reset either way and the router sends him to the sign-in screen.
+      .catch(() => undefined)
+      .finally(() => {
+        // One build serves every school: drop every cached tenant slice so no page
+        // of the previous school survives into the next session.
+        dispatch(resetAppState())
+        // The app uses a hash router (`#/login`), and `AuthRouter` rebuilds the
+        // router from the URL on every render. Set the hash synchronously instead of
+        // navigating through React state, and replace the entry so the dashboard
+        // is not kept in the browser history.
+        window.location.replace(
+          `${window.location.pathname}${window.location.search}#/login`
+        )
+      })
   }
   const accountHandler = () => {
     handleClose()

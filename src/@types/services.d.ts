@@ -3,7 +3,8 @@ declare namespace Service {
     interface Login {
       email: string
       password: string
-      schoolId: number
+      /** Public school code typed on the sign-in screen, e.g. `BKS01`. */
+      schoolCode: string
     }
   }
 

@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import authReducer from './redux/auth/auth.slice'
 import accountPasswordReducer from './redux/dashboard/account/password/password.slice'
 import accountProfileReducer from './redux/dashboard/account/profile/profile.slice'
@@ -29,36 +29,54 @@ import complaintConfigReducer from './redux/dashboard/complaints/complaintConfig
 import payrollReducer from './redux/dashboard/payroll/payroll.slice'
 import dashboardOverviewReducer from './redux/dashboard/overview/overview.slice'
 
+/**
+ * One frontend build serves every school, so a sign-out has to forget everything
+ * the previous tenant loaded. Without the reset below, the rows of school A stay
+ * in memory and render under the token of the next user of school B.
+ */
+export const RESET_APP_STATE = 'app/reset'
+export const resetAppState = () => ({ type: RESET_APP_STATE })
+
+const appReducer = combineReducers({
+  auth: authReducer,
+  accountPassword: accountPasswordReducer,
+  accountProfile: accountProfileReducer,
+  attendance: attendanceReducer,
+  manageSchool: manageSchoolReducer,
+  academicYear: academicYearReducer,
+  employees: manageEmployeeReducer,
+  departments: departmentReducer,
+  classes: classReducer,
+  classSections: classSectionReducer,
+  subjects: subjectReducer,
+  topics: topicReducer,
+  teachers: teacherReduder,
+  manageStudents: manageStudentReducer,
+  guardians: guardianReducer,
+  classRoutines: classRoutineReducer,
+  lessonPlans: lessonPlanReducer,
+  announcements: announcementReducer,
+  feeConfig: feeConfigReducer,
+  feeDashboard: feeDashboardReducer,
+  feeInvoices: feeInvoicesReducer,
+  feePayments: feePaymentsReducer,
+  feeRefunds: feeRefundsReducer,
+  feeWallets: feeWalletsReducer,
+  accounting: accountingReducer,
+  complaints: complaintReducer,
+  complaintConfig: complaintConfigReducer,
+  payroll: payrollReducer,
+  dashboardOverview: dashboardOverviewReducer,
+})
+
+const rootReducer: typeof appReducer = (state, action) => {
+  if (action.type === RESET_APP_STATE) {
+    return appReducer(undefined, action)
+  }
+
+  return appReducer(state, action)
+}
+
 export const store = configureStore({
-  reducer: {
-    auth: authReducer,
-    accountPassword: accountPasswordReducer,
-    accountProfile: accountProfileReducer,
-    attendance: attendanceReducer,
-    manageSchool: manageSchoolReducer,
-    academicYear: academicYearReducer,
-    employees: manageEmployeeReducer,
-    departments: departmentReducer,
-    classes: classReducer,
-    classSections: classSectionReducer,
-    subjects: subjectReducer,
-    topics: topicReducer,
-    teachers: teacherReduder,
-    manageStudents: manageStudentReducer,
-    guardians: guardianReducer,
-    classRoutines: classRoutineReducer,
-    lessonPlans: lessonPlanReducer,
-    announcements: announcementReducer,
-    feeConfig: feeConfigReducer,
-    feeDashboard: feeDashboardReducer,
-    feeInvoices: feeInvoicesReducer,
-    feePayments: feePaymentsReducer,
-    feeRefunds: feeRefundsReducer,
-    feeWallets: feeWalletsReducer,
-    accounting: accountingReducer,
-    complaints: complaintReducer,
-    complaintConfig: complaintConfigReducer,
-    payroll: payrollReducer,
-    dashboardOverview: dashboardOverviewReducer,
-  },
+  reducer: rootReducer,
 })

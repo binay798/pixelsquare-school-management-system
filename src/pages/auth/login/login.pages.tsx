@@ -8,6 +8,7 @@ import {
 import {
   AlertCircle,
   ArrowRight,
+  Building2,
   GraduationCap,
   LifeBuoy,
   Lock,
@@ -23,14 +24,23 @@ import { colors } from '@src/helpers/colors.helpers'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { authSliceLogin } from '@src/store/redux/auth/auth.slice'
 import type { IAuthError } from '@src/store/redux/auth/auth.slice'
+import { resolveSchoolByCode } from '@src/store/redux/auth/auth.service'
 import { LoginBrandPanel } from './components/loginBrandPanel.component'
 import { LoginHelpModal } from './components/loginHelpModal.component'
 import {
   LoginPasswordField,
   LoginTextField,
 } from './components/loginTextField.component'
-import { LOGIN_BRAND, REMEMBERED_EMAIL_KEY } from './login.constants'
-import { loginValidationSchema } from './login.schema'
+import {
+  LOGIN_BRAND,
+  REMEMBERED_EMAIL_KEY,
+  REMEMBERED_SCHOOL_CODE_KEY,
+} from './login.constants'
+import {
+  SCHOOL_CODE_PATTERN,
+  loginValidationSchema,
+  normalizeSchoolCode,
+} from './login.schema'
 import {
   CapsHint,
   FieldGroup,
@@ -58,6 +68,7 @@ const NETWORK_ERROR =
   'We could not reach the server. Check your connection and try again.'
 const INVALID_CREDENTIALS =
   'Incorrect email or password. Please check your details and try again.'
+const NO_SCHOOL_ACCESS = 'You do not have access to this school.'
 
 type LoginFailure = Partial<IAuthError>
 
@@ -65,12 +76,19 @@ type LoginFailure = Partial<IAuthError>
  * Turns an API failure into copy a person can act on:
  * - 400/403 on this endpoint mean the credential pair did not match, so the
  *   message stays generic instead of confirming whether the email exists.
+ * - "no access to this school" is only returned after the password matched, so it
+ *   is safe (and necessary) to show it: the code was valid but belongs to a school
+ *   the account does not belong to.
  * - No status at all is a connectivity problem, not a password problem.
  */
 function resolveLoginError(error: unknown) {
   const failure = (error ?? {}) as LoginFailure
   const status = failure.status
   const message = failure.message
+
+  if (message === NO_SCHOOL_ACCESS) {
+    return message
+  }
 
   if (status === 400 || status === 403) {
     return INVALID_CREDENTIALS
@@ -103,18 +121,44 @@ function persistRememberedEmail(email: string, remember: boolean) {
   }
 }
 
+function readRememberedSchoolCode() {
+  try {
+    return LOCAL_STORAGE.getItem(REMEMBERED_SCHOOL_CODE_KEY) ?? ''
+  } catch {
+    return ''
+  }
+}
+
+function persistRememberedSchoolCode(code: string) {
+  try {
+    if (code) {
+      LOCAL_STORAGE.setItem(REMEMBERED_SCHOOL_CODE_KEY, code)
+    }
+  } catch {
+    // Storage can be blocked (private mode). The code is still validated on submit.
+  }
+}
+
 export function Login() {
   const authLoginStore = useSelector((store) => store.auth.user)
   const dispatch = useDispatch()
 
   const rememberedEmail = useMemo(readRememberedEmail, [])
+  const rememberedSchoolCode = useMemo(readRememberedSchoolCode, [])
   const [rememberEmail, setRememberEmail] = useState(Boolean(rememberedEmail))
   const [serverError, setServerError] = useState('')
   const [capsLock, setCapsLock] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
+  const [resolvedSchool, setResolvedSchool] = useState<{
+    code: string
+    name: string
+  } | null>(null)
+  const [schoolLookupError, setSchoolLookupError] = useState('')
+  const [schoolLookupLoading, setSchoolLookupLoading] = useState(false)
 
   const formik = useFormik({
     initialValues: {
+      schoolCode: rememberedSchoolCode,
       email: rememberedEmail,
       password: '',
     },
@@ -126,18 +170,21 @@ export function Login() {
 
       setServerError('')
 
+      const schoolCode = normalizeSchoolCode(values.schoolCode)
+
       try {
         await dispatch(
           authSliceLogin({
             body: {
+              schoolCode,
               email: values.email.trim(),
               password: values.password,
-              schoolId: Number(import.meta.env.VITE_APP_SCHOOL_URL),
             },
           })
         ).unwrap()
 
         persistRememberedEmail(values.email.trim(), rememberEmail)
+        persistRememberedSchoolCode(schoolCode)
       } catch (error) {
         setServerError(resolveLoginError(error))
       }
@@ -145,6 +192,51 @@ export function Login() {
   })
 
   const submitting = authLoginStore.loading || formik.isSubmitting
+  const typedSchoolCode = normalizeSchoolCode(formik.values.schoolCode)
+
+  /**
+   * Resolve the code while the user is still typing. Entering the right password
+   * with the code of another school is the mistake this screen must prevent, so
+   * the school name is shown before the form can be submitted.
+   */
+  useEffect(() => {
+    if (!SCHOOL_CODE_PATTERN.test(typedSchoolCode)) {
+      setResolvedSchool(null)
+      setSchoolLookupError('')
+      setSchoolLookupLoading(false)
+
+      return undefined
+    }
+
+    let cancelled = false
+    setSchoolLookupLoading(true)
+
+    const timer = setTimeout(async () => {
+      try {
+        const school = await resolveSchoolByCode(typedSchoolCode)
+        if (cancelled) {
+          return
+        }
+        setResolvedSchool({ code: school.code, name: school.name })
+        setSchoolLookupError('')
+      } catch {
+        if (cancelled) {
+          return
+        }
+        setResolvedSchool(null)
+        setSchoolLookupError('We could not find a school with this code.')
+      } finally {
+        if (!cancelled) {
+          setSchoolLookupLoading(false)
+        }
+      }
+    }, 400)
+
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  }, [typedSchoolCode])
 
   // Move focus to the first invalid field so keyboard and screen-reader users
   // hear the error instead of hunting for it.
@@ -153,12 +245,19 @@ export function Login() {
       return
     }
 
-    if (formik.errors.email) {
+    if (formik.errors.schoolCode) {
+      document.getElementById('login-school-code')?.focus()
+    } else if (formik.errors.email) {
       document.getElementById('login-email')?.focus()
     } else if (formik.errors.password) {
       document.getElementById('login-password')?.focus()
     }
-  }, [formik.submitCount, formik.errors.email, formik.errors.password])
+  }, [
+    formik.submitCount,
+    formik.errors.schoolCode,
+    formik.errors.email,
+    formik.errors.password,
+  ])
 
   const handlePasswordKeyUp = (event: KeyboardEvent<HTMLInputElement>) => {
     if (typeof event.getModifierState === 'function') {
@@ -217,7 +316,7 @@ export function Login() {
             </FormKicker>
             <FormHeading>Welcome back</FormHeading>
             <FormSub>
-              Sign in with your school account to continue to your workspace.
+              Enter your school code and sign in with your school account.
             </FormSub>
 
             <LoginForm
@@ -251,6 +350,39 @@ export function Login() {
 
               <FieldGroup>
                 <LoginTextField
+                  id="login-school-code"
+                  name="schoolCode"
+                  label="School code"
+                  value={formik.values.schoolCode}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="BKS01"
+                  autoComplete="organization"
+                  autoFocus
+                  startIcon={<Building2 size={16} />}
+                  error={
+                    formik.touched.schoolCode
+                      ? formik.errors.schoolCode
+                      : undefined
+                  }
+                  hint={
+                    schoolLookupError ? (
+                      <Box component="span" sx={{ color: colors.red[500] }}>
+                        {schoolLookupError}
+                      </Box>
+                    ) : resolvedSchool ? (
+                      <Box component="span">
+                        Signing in to <strong>{resolvedSchool.name}</strong>
+                      </Box>
+                    ) : schoolLookupLoading ? (
+                      'Checking school code…'
+                    ) : (
+                      'The code your school shared with you, e.g. BKS01.'
+                    )
+                  }
+                />
+
+                <LoginTextField
                   id="login-email"
                   name="email"
                   label="Email address"
@@ -260,7 +392,6 @@ export function Login() {
                   onBlur={formik.handleBlur}
                   placeholder="you@school.edu"
                   autoComplete="username"
-                  autoFocus
                   startIcon={<Mail size={16} />}
                   error={formik.touched.email ? formik.errors.email : undefined}
                 />

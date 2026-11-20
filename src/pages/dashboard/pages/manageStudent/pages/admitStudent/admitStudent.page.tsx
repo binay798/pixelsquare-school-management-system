@@ -27,8 +27,8 @@ export function AdmitStudentPage() {
             </Typography>
 
             <Typography variant="body2" mt={1}>
-              Update the school&apos;s details to keep records accurate and
-              up-to-date.
+              Add a new student to the school. Guardians are optional and can be
+              linked later from the student profile.
             </Typography>
           </Box>
         </Stack>

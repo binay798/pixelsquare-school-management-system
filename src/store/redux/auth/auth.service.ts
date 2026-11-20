@@ -16,6 +16,18 @@ export const getUserSession = async () => {
   return res.data.data
 }
 
+/**
+ * Public, unauthenticated lookup: turns the typed code into the school it
+ * belongs to, so the sign-in screen can show which tenant is being entered.
+ */
+export const resolveSchoolByCode = async (code: string) => {
+  const res = await api<Api.Base<Api.IPublicSchool>>('get')(
+    `public/schools/${encodeURIComponent(code)}`
+  )
+
+  return res.data.data.data
+}
+
 export const logoutService = async () => {
   const res = await api<Api.Base<object>>('get')('auth/logout')
 

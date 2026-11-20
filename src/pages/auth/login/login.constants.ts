@@ -38,3 +38,10 @@ export const LOGIN_BRAND = {
 
 /** Key used to remember the last email address typed on this device. */
 export const REMEMBERED_EMAIL_KEY = 'sms.login.rememberedEmail'
+
+/**
+ * Key used to remember the last school code typed on this device. A school
+ * computer is always used with the same school, so retyping the code every day
+ * would be pointless friction.
+ */
+export const REMEMBERED_SCHOOL_CODE_KEY = 'sms.login.rememberedSchoolCode'

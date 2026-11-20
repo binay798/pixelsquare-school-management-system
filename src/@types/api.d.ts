@@ -18,13 +18,32 @@ declare namespace Api {
     interface Login {
       user: Omit<User.IUser, 'password', 'completed_password_setup'>
       userRoles: string[]
+      /** The tenant of the session, resolved from the typed school code. */
+      school: IAuthSchool | null
     }
+  }
+
+  /** The school of the current session, returned by login and by `/users/session`. */
+  interface IAuthSchool {
+    id: number
+    code: string
+    name: string
+  }
+
+  /** Public projection of a school, used by the sign-in screen. */
+  interface IPublicSchool {
+    code: string
+    name: string
+    address: string
+    school_type: string | null
   }
 
   interface ISchool {
     id: number
     created_at: string
     updated_at: string
+    /** Public tenant code, e.g. `BKS01`. Issued once and never changed. */
+    code: string
     name: string
     address: string
     phone: string

@@ -57,8 +57,8 @@ export function StudentListPage() {
             </Typography>
 
             <Typography variant="body2" mt={1}>
-              Update the school&apos;s details to keep records accurate and
-              up-to-date.
+              Every student of the school with their class, section and roll
+              number.
             </Typography>
           </Box>
           <ButtonComp
@@ -98,7 +98,12 @@ export function StudentListPage() {
           {
             field: 'fatherName',
             name: 'Father Name',
-            render: (val, item) => `${val} (${item.fatherMobile})`,
+            // Legacy data only: admission records parents as guardians now, so new
+            // students show a dash instead of "undefined (undefined)".
+            render: (val, item) =>
+              val
+                ? `${val}${item.fatherMobile ? ` (${item.fatherMobile})` : ''}`
+                : '—',
           },
         ]}
         loading={studentListLoading}

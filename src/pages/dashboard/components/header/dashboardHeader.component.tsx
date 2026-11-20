@@ -6,13 +6,17 @@ import {
   DashboardHeaderContainer,
   HeaderSearchField,
 } from './dashboardHeader.styles'
-import { Box, IconButton, Stack } from '@mui/material'
+import { Box, IconButton, Stack, Typography } from '@mui/material'
 import { useAdminSidebar } from '@src/components/adminSidebar/adminSidebar.context'
 import { colors } from '@src/helpers/colors.helpers'
+import { useSelector } from '@src/store/hooks.store'
 import { AccountMenu } from './components/accountMenu/accountMenu.component'
 
 export function DashboardHeader() {
   const { openSidebar, toggleShowSidebar } = useAdminSidebar()
+  // The session carries the tenant, so the header can name the school of the
+  // current build — which is the same build for every school.
+  const school = useSelector((store) => store.auth.user.data?.school)
 
   return (
     <DashboardHeaderContainer>
@@ -40,6 +44,32 @@ export function DashboardHeader() {
         </Box>
         <Box>
           <Stack direction="row" alignItems={'center'} spacing={1}>
+            {school ? (
+              <Box
+                sx={{
+                  display: { xs: 'none', md: 'block' },
+                  textAlign: 'right',
+                  lineHeight: 1.25,
+                  mr: 0.5,
+                }}
+              >
+                <Typography
+                  fontSize={12.5}
+                  fontWeight={600}
+                  color={colors.grey[700]}
+                  noWrap
+                >
+                  {school.name}
+                </Typography>
+                <Typography
+                  fontSize={11}
+                  letterSpacing={'0.6px'}
+                  color={colors.grey[500]}
+                >
+                  {school.code}
+                </Typography>
+              </Box>
+            ) : null}
             <IconButton>
               <IoNotifications size={20} />
             </IconButton>

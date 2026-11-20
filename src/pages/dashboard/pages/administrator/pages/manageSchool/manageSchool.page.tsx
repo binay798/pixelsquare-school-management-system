@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Card,
   FormControl,
@@ -23,7 +24,13 @@ export function ManageSchool() {
   )
   const dispatch = useDispatch()
   const formik = useFormik({
-    initialValues: omit(school.data, ['created_at', 'updated_at', 'id']),
+    initialValues: omit(school.data, [
+      'created_at',
+      'updated_at',
+      'id',
+      // The code is issued once and is the tenant selector of every session.
+      'code',
+    ]),
     onSubmit: (values) => {
       dispatch(
         updateSchoolDetailsSlice({
@@ -58,6 +65,13 @@ export function ManageSchool() {
       </Box>
 
       <Card sx={{ p: 2, minHeight: '80vh' }}>
+        {school.data?.code ? (
+          <Alert severity="info" sx={{ mb: 2, borderRadius: '10px' }}>
+            School code <strong>{school.data.code}</strong> — staff, students
+            and guardians type it on the sign-in screen. It is issued once and
+            cannot be changed.
+          </Alert>
+        ) : null}
         <form onSubmit={formik.handleSubmit}>
           <FormBlock title="Basic Information">
             <Stack spacing={2}>

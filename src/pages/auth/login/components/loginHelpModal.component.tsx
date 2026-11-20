@@ -16,6 +16,7 @@ interface Props {
 }
 
 const STEPS = [
+  'Find your school code — your school office shares it with staff, students and guardians.',
   'Contact your school office or IT desk.',
   'Ask an administrator to reset your password from user management.',
   'Sign in with the temporary password, then change it from your profile.',

@@ -42,6 +42,21 @@ interface IGuardianOption {
   value: number
 }
 
+/**
+ * Blood groups are a closed set, so the field is a select instead of free text.
+ * The empty option is handled by `placeholder`; a `null` value cannot be stored.
+ */
+const BLOOD_GROUP_OPTIONS = [
+  { label: 'A+', value: 'A+' },
+  { label: 'A-', value: 'A-' },
+  { label: 'B+', value: 'B+' },
+  { label: 'B-', value: 'B-' },
+  { label: 'AB+', value: 'AB+' },
+  { label: 'AB-', value: 'AB-' },
+  { label: 'O+', value: 'O+' },
+  { label: 'O-', value: 'O-' },
+]
+
 export function CreateStudentComp() {
   const dispatch = useDispatch()
   const [editMode, setEditMode] = useState(false)
@@ -103,7 +118,10 @@ export function CreateStudentComp() {
       permanent_address:
         selectedStudent?.user_profile_details?.permanent_address ?? '',
       religion: selectedStudent?.user_profile_details?.religion ?? '',
-      blood_group: selectedStudent?.user_profile_details?.blood_group ?? '',
+      blood_group: {
+        label: selectedStudent?.user_profile_details?.blood_group ?? '',
+        value: selectedStudent?.user_profile_details?.blood_group ?? '',
+      },
       date_of_birth: selectedStudent?.user_profile_details?.date_of_birth ?? '',
       gender: {
         label: selectedStudent?.user_profile_details?.gender ?? '',
@@ -114,10 +132,6 @@ export function CreateStudentComp() {
       // password: editMode ? '***' : '',
 
       previousSchool: selectedStudent?.student_details?.previous_school ?? '',
-      fatherName: selectedStudent?.student_details?.father_name ?? '',
-      fatherMobile: selectedStudent?.student_details?.father_mobile ?? 0,
-      motherName: selectedStudent?.student_details?.mother_name ?? '',
-      motherMobile: selectedStudent?.student_details?.mother_mobile ?? 0,
       class: {
         label: selectedStudent?.class_details?.name ?? '',
         value: selectedStudent?.class_details?.id ?? 0,
@@ -154,18 +168,17 @@ export function CreateStudentComp() {
           temporary_address: values.temporary_address,
           permanent_address: values.permanent_address,
           religion: values.religion,
-          blood_group: values.blood_group,
+          blood_group: values.blood_group.value,
           date_of_birth: values.date_of_birth,
           gender: values.gender.value,
           nationality: values.nationality,
         },
         student_profile: {
           previous_school: values.previousSchool,
-          guardian_ids: values.guardians.map((guardian) => guardian.value),
-          father_name: values.fatherName,
-          father_mobile: String(values.fatherMobile),
-          mother_name: values.motherName,
-          mother_mobile: String(values.motherMobile),
+          // Optional at admission: an empty list simply means no guardian yet.
+          guardian_ids: (values.guardians ?? []).map(
+            (guardian) => guardian.value
+          ),
           roll_no: values.rollNo,
           class_id: values.class.value,
           class_section_id: values.section.value,
@@ -254,6 +267,11 @@ export function CreateStudentComp() {
         .join(' '),
     }))
   }
+
+  const bloodGroupMissing = isEmpty(formik.values.blood_group.value)
+  const showBloodGroupError =
+    bloodGroupMissing &&
+    (Boolean(formik.touched.blood_group) || formik.submitCount > 0)
 
   return (
     <Box>
@@ -386,23 +404,34 @@ export function CreateStudentComp() {
                   </FormControl>
                 </Stack>
                 <Stack spacing={2} direction="row">
-                  <InputField
-                    placeholder="Blood group"
-                    labelDetail={{ text: 'Blood Group', required: true }}
-                    value={formik.values.blood_group}
-                    onChange={formik.handleChange}
-                    name="blood_group"
-                    onBlur={formik.handleBlur}
-                    error={
-                      formik.touched.blood_group &&
-                      Boolean(formik.errors.blood_group)
-                    }
-                    helperText={
-                      formik.touched.blood_group
-                        ? formik.errors.blood_group
-                        : undefined
-                    }
-                  />
+                  <FormControl fullWidth required error={showBloodGroupError}>
+                    <FormLabel
+                      sx={{
+                        fontSize: 13,
+                        mb: 1,
+                        color: colors.grey[600],
+                      }}
+                    >
+                      Blood Group
+                    </FormLabel>
+                    <SelectField
+                      placeholder="Select blood group"
+                      options={BLOOD_GROUP_OPTIONS}
+                      onChange={(e) =>
+                        formik.setFieldValue(
+                          'blood_group',
+                          e as { label: string; value: string }
+                        )
+                      }
+                      onBlur={() => formik.setFieldTouched('blood_group', true)}
+                      value={formik.values.blood_group}
+                    />
+                    {showBloodGroupError ? (
+                      <FormHelperText error>
+                        Blood group is required
+                      </FormHelperText>
+                    ) : null}
+                  </FormControl>
                   <InputField
                     placeholder="Religion"
                     labelDetail={{ text: 'Religion', required: true }}
@@ -498,84 +527,7 @@ export function CreateStudentComp() {
                       : undefined
                   }
                 />
-                <InputField
-                  placeholder="Father name"
-                  labelDetail={{ text: 'Father name', required: true }}
-                  type="text"
-                  // disabled={editMode}
-                  value={formik.values.fatherName}
-                  onChange={formik.handleChange}
-                  name="fatherName"
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.fatherName &&
-                    Boolean(formik.errors.fatherName)
-                  }
-                  helperText={
-                    formik.touched.fatherName
-                      ? formik.errors.fatherName
-                      : undefined
-                  }
-                />
-                <InputField
-                  placeholder="Father mobile"
-                  labelDetail={{ text: 'Father mobile', required: true }}
-                  type="text"
-                  // disabled={editMode}
-                  value={formik.values.fatherMobile}
-                  onChange={formik.handleChange}
-                  name="fatherMobile"
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.fatherMobile &&
-                    Boolean(formik.errors.fatherMobile)
-                  }
-                  helperText={
-                    formik.touched.fatherMobile
-                      ? formik.errors.fatherMobile
-                      : undefined
-                  }
-                />
-              </Stack>
-              <Stack spacing={2} direction="row">
-                <InputField
-                  placeholder="Mother name"
-                  labelDetail={{ text: 'Mother name', required: true }}
-                  type="text"
-                  // disabled={editMode}
-                  value={formik.values.motherName}
-                  onChange={formik.handleChange}
-                  name="motherName"
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.motherName &&
-                    Boolean(formik.errors.motherName)
-                  }
-                  helperText={
-                    formik.touched.motherName
-                      ? formik.errors.motherName
-                      : undefined
-                  }
-                />
-                <InputField
-                  placeholder="Mother mobile"
-                  labelDetail={{ text: 'Mother mobile', required: false }}
-                  type="text"
-                  // disabled={editMode}
-                  value={formik.values.motherMobile}
-                  onChange={formik.handleChange}
-                  name="motherMobile"
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.motherMobile &&
-                    Boolean(formik.errors.motherMobile)
-                  }
-                  helperText={
-                    formik.touched.motherMobile
-                      ? formik.errors.motherMobile
-                      : undefined
-                  }
-                />
+
                 {/* Class */}
                 <FormControl fullWidth required>
                   <FormLabel
@@ -702,11 +654,7 @@ export function CreateStudentComp() {
           </FormBlock>
 
           <FormBlock title="Guardian Information">
-            <FormControl
-              fullWidth
-              required
-              error={isEmpty(formik.values.guardians)}
-            >
+            <FormControl fullWidth>
               <FormLabel
                 sx={{
                   fontSize: 13,
@@ -714,7 +662,7 @@ export function CreateStudentComp() {
                   color: colors.grey[600],
                 }}
               >
-                Guardians
+                Guardians (optional)
               </FormLabel>
               <AsyncSelectField<IGuardianOption, true>
                 isMulti
@@ -730,7 +678,7 @@ export function CreateStudentComp() {
               />
               <FormHelperText>
                 {isEmpty(formik.values.guardians)
-                  ? 'Select at least one guardian.'
+                  ? 'Not required — you can link guardians later from the student profile.'
                   : 'The first selected guardian becomes the primary contact.'}
               </FormHelperText>
             </FormControl>

@@ -26,12 +26,25 @@ const updateStudentType = async (studentTypeId: number, name: string) => {
   return res.data.data
 }
 
+/**
+ * Fields the admission form owns. The legacy father/mother columns of `students`
+ * are deliberately excluded: parents are modelled as guardians and linked through
+ * `guardian_ids`, so admission never writes those columns again.
+ */
 interface IExtendedStudentProfile
-  extends Omit<Students.IStudent, 'profile_photo'> {
+  extends Omit<
+    Students.IStudent,
+    | 'profile_photo'
+    | 'father_name'
+    | 'father_mobile'
+    | 'mother_name'
+    | 'mother_mobile'
+  > {
   roll_no: number
   class_id: number
   class_section_id: number
-  guardian_ids: number[]
+  /** Optional: a student may be admitted before any guardian is linked. */
+  guardian_ids?: number[]
 }
 // STUDENT SERVICE
 export interface TCreateStudent {
