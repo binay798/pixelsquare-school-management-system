@@ -1,6 +1,7 @@
 import { Navigate, Outlet, RouteObject } from 'react-router-dom'
 import { Homepage } from './pages/homepage/homepage.pages'
 import { Login } from './pages/auth/login/login.pages'
+import { SetupPassword } from './pages/auth/setupPassword/setupPassword.pages'
 import {
   PrivateRoute,
   ProtectedRouteComp,
@@ -392,6 +393,10 @@ export const protectedRoutes: RouteObject[] = [
   {
     path: '/',
     element: <ProtectedRouteComp />,
-    children: [{ path: '/login', element: <Login /> }],
+    children: [
+      { path: '/login', element: <Login /> },
+      // Public landing page of the password setup email.
+      { path: '/setup-password', element: <SetupPassword /> },
+    ],
   },
 ]

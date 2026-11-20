@@ -6,6 +6,16 @@ declare namespace Service {
       /** Public school code typed on the sign-in screen, e.g. `BKS01`. */
       schoolCode: string
     }
+
+    /**
+     * `POST /api/auth/password-setup`
+     *
+     * Public: the one-time token from the invitation email is the credential.
+     */
+    interface CompletePasswordSetup {
+      token: string
+      newPassword: string
+    }
   }
 
   namespace Account {
