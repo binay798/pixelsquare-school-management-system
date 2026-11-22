@@ -1130,6 +1130,20 @@ export const createPolicyVersionAction = createAsyncThunk(
   )
 )
 
+/** One-click provisioning of the payroll defaults of the school (idempotent). */
+export const provisionPayrollAction = createAsyncThunk<
+  Payroll.IProvisioningSummary,
+  void
+>(
+  'payroll/provisionPayroll',
+  catchAsync<Payroll.IProvisioningSummary, void>(
+    async () => payrollServices.provisionPayrollService(),
+    true,
+    false,
+    'Payroll provisioned'
+  )
+)
+
 export const getComponentsAction = createAsyncThunk<
   Payroll.IComponent[],
   {

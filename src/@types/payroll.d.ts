@@ -570,6 +570,19 @@ declare namespace Payroll {
     versions: IPolicyVersion[]
   }
 
+  /** Result of `POST /payroll/settings/provision` (idempotent defaults). */
+  interface IProvisioningSummary {
+    already_provisioned: boolean
+    accounts_created: number
+    salary_components_created: number
+    salary_structure_created: boolean
+    structure_components_created: number
+    policy_version_created: boolean
+    accounting_mappings_created: number
+    statutory_rules_created: number
+    leave_types_created: number
+  }
+
   interface IComponent {
     id: number
     code: string

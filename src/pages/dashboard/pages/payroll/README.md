@@ -18,7 +18,7 @@ browser, amounts are displayed from the server computed decimal strings.
 | `/dashboard/payroll/documents`   | `documents.page.tsx`   | loans, advances, reimbursements, adjustments + decisions / disburse / pay                                                                              |
 | `/dashboard/payroll/remittances` | `remittances.page.tsx` | `GET/POST /payroll/remittances`, `POST /remittances/:id/pay`                                                                                           |
 | `/dashboard/payroll/me/payslips` | `myPayslips.page.tsx`  | `GET /payroll/me/payslips`, `GET /me/payslips/:id/pdf`                                                                                                 |
-| `/dashboard/payroll/settings`    | `settings.page.tsx`    | `GET/POST /payroll/settings`, `GET/PUT /payroll/accounting/mappings`                                                                                   |
+| `/dashboard/payroll/settings`    | `settings.page.tsx`    | `GET/POST /payroll/settings`, `POST /payroll/settings/provision`, `GET/PUT /payroll/accounting/mappings`                                               |
 | `/dashboard/payroll/components`  | `components.page.tsx`  | `GET/POST /payroll/components`, `PATCH/DELETE /payroll/components/:id`                                                                                 |
 | `/dashboard/payroll/structures`  | `structures.page.tsx`  | `GET/POST /payroll/structures`, `PATCH /payroll/structures/:id` (edit), `POST …/activate`, `DELETE …` (deactivate)                                     |
 | `/dashboard/payroll/profiles`    | `profiles.page.tsx`    | `GET /payroll/employees`, profile upsert, payment details, assignments, revisions + arrears                                                            |
@@ -75,6 +75,11 @@ Three screens cover the setup the run depends on:
   saved as a **new version** with an effective date (history is never rewritten), plus the
   payroll ↔ chart of accounts mapping. Each mapping row is a select: choosing an account
   `PUT /payroll/accounting/mappings`, so the journal builder picks it up on the next post.
+  The **Set up payroll** button (`POST /payroll/settings/provision`, permission
+  `payroll.settings.manage`) provisions a school that has no payroll configuration yet
+  (chart of accounts, components, `DEFAULT` structure, policy v1, mapping, statutory
+  placeholders, leave types). It is idempotent and is also the repair action when a
+  default row was deleted.
 - **Components** (`components.page.tsx`) — list / create / edit / deactivate salary
   components. The code is immutable once created (it is the engine identity); the
   calculation type decides whether the percentage, the fixed amount, the formula or the

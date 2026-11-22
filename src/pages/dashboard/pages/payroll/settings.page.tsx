@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
-import { Settings2 } from 'lucide-react'
+import { Settings2, Sparkles } from 'lucide-react'
 import { ButtonComp } from '@src/components/button/button.component'
 import { CustomDatePicker } from '@src/components/datePicker/datePicker.component'
 import { InputField } from '@src/components/input/input.component'
@@ -25,6 +25,7 @@ import {
   createPolicyVersionAction,
   getMappingsAction,
   getSettingsAction,
+  provisionPayrollAction,
   upsertMappingAction,
 } from '@src/store/redux/dashboard/payroll/payroll.slice'
 import { usePayrollPermissions } from '@src/hooks/usePayrollPermissions.hooks'
@@ -63,6 +64,17 @@ type TPolicyForm = {
   periods_per_year: string
 }
 
+/** What the one-click provisioning creates (existing rows are left untouched). */
+const PROVISION_ITEMS = [
+  'Default chart of accounts, including the payroll accounts',
+  '16 salary components (basic, allowances, overtime, deductions, employer contribution)',
+  'the DEFAULT salary structure wiring every component',
+  'policy version 1 (ACTUAL_WORKDAYS, 8 h/day, 1.5× overtime, 4-eyes approval)',
+  'the 11 payroll → ledger account mappings',
+  'TDS / PF / SSF / CIT rule placeholders at 0%',
+  'the paid, sick and unpaid leave types',
+]
+
 /**
  * Payroll settings: the effective policy (versioned, effective dated), the policy
  * history and the payroll ↔ chart of accounts mapping used by the journal builder.
@@ -85,6 +97,8 @@ export function PayrollSettingsPage() {
   const [busy, setBusy] = useState(false)
   const [effectiveFrom, setEffectiveFrom] = useState(todayIso())
   const [form, setForm] = useState<TPolicyForm | null>(null)
+  const [provisionOpen, setProvisionOpen] = useState(false)
+  const [provisioning, setProvisioning] = useState(false)
 
   useEffect(() => {
     dispatch(getSettingsAction())
@@ -151,6 +165,27 @@ export function PayrollSettingsPage() {
       /* toast raised by the slice */
     } finally {
       setBusy(false)
+    }
+  }
+
+  /**
+   * Creates the payroll defaults of the school (idempotent) and reloads the
+   * policy and the mapping, so the screen leaves the "not provisioned" state
+   * without a seed migration.
+   */
+  const provisionPayroll = async () => {
+    try {
+      setProvisioning(true)
+      await dispatch(provisionPayrollAction()).unwrap()
+      setProvisionOpen(false)
+      await Promise.all([
+        dispatch(getSettingsAction()),
+        dispatch(getMappingsAction()),
+      ])
+    } catch {
+      /* toast raised by the slice */
+    } finally {
+      setProvisioning(false)
     }
   }
 
@@ -268,15 +303,25 @@ export function PayrollSettingsPage() {
         loading={loading && !settings}
         actions={
           permissions.canManageSettings ? (
-            <ButtonComp
-              size="small"
-              variant="contained"
-              startIcon={<Settings2 size={15} />}
-              disabled={!policy}
-              onClick={startVersion}
-            >
-              New policy version
-            </ButtonComp>
+            <Stack direction="row" spacing={1} flexWrap="wrap" rowGap={1}>
+              <ButtonComp
+                size="small"
+                variant="outlined"
+                startIcon={<Sparkles size={15} />}
+                onClick={() => setProvisionOpen(true)}
+              >
+                Set up payroll
+              </ButtonComp>
+              <ButtonComp
+                size="small"
+                variant="contained"
+                startIcon={<Settings2 size={15} />}
+                disabled={!policy}
+                onClick={startVersion}
+              >
+                New policy version
+              </ButtonComp>
+            </Stack>
           ) : null
         }
       />
@@ -320,9 +365,23 @@ export function PayrollSettingsPage() {
               ))}
             </Box>
           ) : (
-            <Typography fontSize={13} color={colors.grey[600]}>
-              Payroll is not provisioned for this school yet.
-            </Typography>
+            <Box>
+              <Typography fontSize={13} color={colors.grey[600]} mb={1.5}>
+                Payroll is not provisioned for this school yet. Set up the
+                default chart of accounts, salary components, structure, policy
+                and accounting mapping in one step.
+              </Typography>
+              {permissions.canManageSettings ? (
+                <ButtonComp
+                  size="small"
+                  variant="contained"
+                  startIcon={<Sparkles size={15} />}
+                  onClick={() => setProvisionOpen(true)}
+                >
+                  Set up payroll
+                </ButtonComp>
+              ) : null}
+            </Box>
           )}
         </FeePanel>
 
@@ -587,6 +646,48 @@ export function PayrollSettingsPage() {
           <Button onClick={() => setOpen(false)}>Cancel</Button>
           <Button variant="contained" disabled={busy} onClick={saveVersion}>
             Save version
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={provisionOpen}
+        onClose={() => (provisioning ? undefined : setProvisionOpen(false))}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Set up payroll</DialogTitle>
+        <DialogContent>
+          <Typography fontSize={13} color={colors.grey[600]} mb={1.5}>
+            Creates the configuration this school needs before its first payroll
+            run. The call is idempotent: existing rows are never changed, only
+            what is missing is created.
+          </Typography>
+          <Box component="ul" sx={{ pl: 2.5, m: 0 }}>
+            {PROVISION_ITEMS.map((item) => (
+              <Typography component="li" fontSize={13} key={item} mb={0.5}>
+                {item}
+              </Typography>
+            ))}
+          </Box>
+          <Typography fontSize={12} color={colors.grey[500]} mt={1.5}>
+            The statutory rules are created at 0%: fill the TDS / PF / SSF / CIT
+            rates before the first production run.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setProvisionOpen(false)}
+            disabled={provisioning}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            disabled={provisioning}
+            onClick={provisionPayroll}
+          >
+            {provisioning ? 'Setting up…' : 'Set up payroll'}
           </Button>
         </DialogActions>
       </Dialog>

@@ -969,6 +969,19 @@ const getSettingsService = async () => {
   return unwrap(res)
 }
 
+/**
+ * Creates the payroll defaults of the school (chart of accounts, components,
+ * `DEFAULT` structure, policy v1, accounting mapping, statutory placeholders,
+ * leave types). Idempotent: an already provisioned school receives no change.
+ */
+const provisionPayrollService = async () => {
+  const res = await api<Api.Base<Payroll.IProvisioningSummary>>('post')(
+    'payroll/settings/provision'
+  )
+
+  return unwrap(res)
+}
+
 const createPolicyVersionService = async (payload: {
   effective_from?: string
   policy: Partial<Payroll.IPolicy>
@@ -1549,6 +1562,7 @@ export const payrollServices = {
   previewArrearsService,
   /* configuration */
   getSettingsService,
+  provisionPayrollService,
   createPolicyVersionService,
   listComponentsService,
   getComponentService,
