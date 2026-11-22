@@ -3,7 +3,9 @@ import React, { useRef } from 'react'
 export const useDebounceValue = <T>(value: T, timeout?: number) => {
   const [searchValue, setSearchValue] = React.useState<T>(value)
 
-  const handlerRef = useRef<number | undefined>()
+  // `setTimeout` returns a `number` in the DOM lib but `Timeout` when
+  // @types/node is present, so derive the type instead of hardcoding it.
+  const handlerRef = useRef<ReturnType<typeof setTimeout> | undefined>()
 
   React.useEffect(() => {
     handlerRef.current = setTimeout(function () {
