@@ -30,6 +30,17 @@ import { CreateLessonPlanPage } from './pages/dashboard/pages/academics/pages/le
 import { LessonPlanDetailPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/detail/detail.page'
 import { WeeklyPlannerPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/weekly/weekly.page'
 import { SyllabusCompletionPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/syllabus/syllabus.page'
+import { RoomsOverviewPage } from './pages/dashboard/pages/rooms/pages/overview/overview.page'
+import { AllRoomsPage } from './pages/dashboard/pages/rooms/pages/allRooms/allRooms.page'
+import { BuildingsPage } from './pages/dashboard/pages/rooms/pages/buildings/buildings.page'
+import {
+  FacilitiesPage,
+  RoomTypesPage,
+} from './pages/dashboard/pages/rooms/pages/roomMaster/roomMaster.page'
+import { AllocationsPage } from './pages/dashboard/pages/rooms/pages/allocations/allocations.page'
+import { BookingsPage } from './pages/dashboard/pages/rooms/pages/bookings/bookings.page'
+import { RoomSchedulePage } from './pages/dashboard/pages/rooms/pages/schedule/schedule.page'
+import { MaintenancePage } from './pages/dashboard/pages/rooms/pages/maintenance/maintenance.page'
 import { LessonPlanTemplatesPage } from './pages/dashboard/pages/academics/pages/lessonPlan/pages/templates/templates.page'
 import { AnnouncementListPage } from './pages/dashboard/pages/academics/pages/announcements/announcements.page'
 import { CreateAnnouncementPage } from './pages/dashboard/pages/academics/pages/announcements/pages/create/create.page'
@@ -257,6 +268,21 @@ export const privateRoutes: RouteObject[] = [
                   },
                 ],
               },
+            ],
+          },
+          {
+            path: 'rooms',
+            element: <Outlet />,
+            children: [
+              { path: '', element: <RoomsOverviewPage /> },
+              { path: 'all', element: <AllRoomsPage /> },
+              { path: 'buildings', element: <BuildingsPage /> },
+              { path: 'types', element: <RoomTypesPage /> },
+              { path: 'facilities', element: <FacilitiesPage /> },
+              { path: 'allocations', element: <AllocationsPage /> },
+              { path: 'bookings', element: <BookingsPage /> },
+              { path: 'schedule', element: <RoomSchedulePage /> },
+              { path: 'maintenance', element: <MaintenancePage /> },
             ],
           },
           {

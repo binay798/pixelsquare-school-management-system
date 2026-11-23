@@ -7,11 +7,12 @@ export interface TCreateClassRoutineDto {
   subject_id: number
   working_day_id: number
   time_slot_id: number
+  room_id?: number | null
 }
 
 export type TUpdateClassRoutineDto = Pick<
   TCreateClassRoutineDto,
-  'working_day_id' | 'time_slot_id'
+  'working_day_id' | 'time_slot_id' | 'room_id'
 >
 
 export interface TCreateTimeSlotDto {

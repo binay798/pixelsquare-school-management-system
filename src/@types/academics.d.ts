@@ -149,6 +149,7 @@ declare namespace Academics {
     class_section_id: number
     subject_id: number
     teacher_id: number
+    room_id?: number | null
   }
 
   interface IClassRoutineList {
@@ -165,5 +166,9 @@ declare namespace Academics {
       'id' | 'name' | 'start_time' | 'end_time' | 'slot_type' | 'sequence_order'
     >
     schedule_template_details: Pick<IScheduleTemplate, 'id' | 'name'>
+    room_details?: Pick<
+      Rooms.IRoom,
+      'id' | 'name' | 'code' | 'capacity' | 'status'
+    > | null
   }
 }

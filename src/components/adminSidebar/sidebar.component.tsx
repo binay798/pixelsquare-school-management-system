@@ -64,6 +64,7 @@ import {
   isPayrollPermission,
 } from '@src/pages/dashboard/pages/payroll/payroll.helpers'
 import { MdAccountBalance, MdPayments } from 'react-icons/md'
+import { MdMeetingRoom } from 'react-icons/md'
 
 /**
  * A sidebar item declares the permission that unlocks it. Accounting
@@ -194,6 +195,54 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
         title: 'Lesson Plan',
         icon: <MdOutlineAssignment />,
         to: '/dashboard/academics/lesson-plan',
+      },
+    ],
+  },
+  {
+    title: 'Room Management',
+    icon: <MdMeetingRoom />,
+    to: '/dashboard/rooms',
+    subItems: [
+      { title: 'Overview', icon: <BiSolidDashboard />, to: '/dashboard/rooms' },
+      {
+        title: 'All Rooms',
+        icon: <MdMeetingRoom />,
+        to: '/dashboard/rooms/all',
+      },
+      {
+        title: 'Buildings & Floors',
+        icon: <FaSitemap />,
+        to: '/dashboard/rooms/buildings',
+      },
+      {
+        title: 'Room Types',
+        icon: <MdOutlineDashboardCustomize />,
+        to: '/dashboard/rooms/types',
+      },
+      {
+        title: 'Facilities',
+        icon: <VscChecklist />,
+        to: '/dashboard/rooms/facilities',
+      },
+      {
+        title: 'Room Allocations',
+        icon: <BsFillSignIntersectionSideFill />,
+        to: '/dashboard/rooms/allocations',
+      },
+      {
+        title: 'Bookings',
+        icon: <MdOutlineAssignment />,
+        to: '/dashboard/rooms/bookings',
+      },
+      {
+        title: 'Room Schedule',
+        icon: <GrTableAdd />,
+        to: '/dashboard/rooms/schedule',
+      },
+      {
+        title: 'Maintenance',
+        icon: <MdTune />,
+        to: '/dashboard/rooms/maintenance',
       },
     ],
   },

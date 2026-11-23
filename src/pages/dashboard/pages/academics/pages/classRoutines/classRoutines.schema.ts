@@ -6,12 +6,17 @@ const selectOptionSchema = (message: string) =>
     .nullable()
     .required(message)
 
+const optionalSelectOptionSchema = yup
+  .object({ label: yup.string(), value: yup.number().nullable() })
+  .nullable()
+
 export const assignRoutineSchema = yup.object({
   class_section_id: selectOptionSchema('Class section is required'),
   teacher_id: selectOptionSchema('Teacher is required'),
   subject_id: selectOptionSchema('Subject is required'),
   working_day_id: selectOptionSchema('Working day is required'),
   time_slot_id: selectOptionSchema('Time slot is required'),
+  room_id: optionalSelectOptionSchema,
 })
 
 export const timeSlotSchema = yup.object({

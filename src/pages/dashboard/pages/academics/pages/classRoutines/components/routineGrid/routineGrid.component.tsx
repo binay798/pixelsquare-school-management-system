@@ -93,6 +93,11 @@ function RoutineItem({
           <Typography fontSize={11.5} color={colors.grey[700]} noWrap>
             {getTeacherFullName(routine)}
           </Typography>
+          {routine.room_details ? (
+            <Typography fontSize={11} color={colors.grey[600]} noWrap>
+              {routine.room_details.name}
+            </Typography>
+          ) : null}
           {showSection ? (
             <Typography fontSize={11} color={colors.grey[600]} noWrap>
               {routine.class_section_details?.name}
@@ -382,6 +387,9 @@ function RoutineGridMobile(props: Props) {
                 </Stack>
                 <Typography fontSize={11.5} color={colors.grey[700]} mt={0.25}>
                   {getTeacherFullName(routine)}
+                  {routine.room_details
+                    ? ` · ${routine.room_details.name}`
+                    : ''}
                 </Typography>
               </Box>
             ))}

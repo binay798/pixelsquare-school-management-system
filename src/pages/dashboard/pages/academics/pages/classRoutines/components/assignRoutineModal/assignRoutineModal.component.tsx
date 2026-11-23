@@ -1,6 +1,6 @@
 import { Box, FormControl, FormLabel, Stack, Typography } from '@mui/material'
 import { useFormik } from 'formik'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { StylesConfig } from 'react-select'
 import { ButtonComp } from '@src/components/button/button.component'
 import { InputField } from '@src/components/input/input.component'
@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from '@src/store/hooks.store'
 import { getClassSectionList } from '@src/store/redux/dashboard/academics/classSections/sections.service'
 import { subjectServices } from '@src/store/redux/dashboard/academics/subjects/subjects.service'
 import { teacherServices } from '@src/store/redux/dashboard/teachers/teachers.service'
+import { getRoomListService } from '@src/store/redux/dashboard/rooms/rooms.service'
 import {
   createClassRoutineAction,
   updateClassRoutineAction,
@@ -52,6 +53,17 @@ interface Props {
 
 export function AssignRoutineModal(props: Props) {
   const dispatch = useDispatch()
+  const [rooms, setRooms] = useState<Rooms.IRoomListRow[]>([])
+
+  useEffect(() => {
+    if (!props.open) {
+      return
+    }
+
+    getRoomListService({ limit: 500 })
+      .then((res) => setRooms(res.rows))
+      .catch(() => setRooms([]))
+  }, [props.open])
   const { loading: createLoading } = useSelector(
     (store) => store.classRoutines.createRoutine
   )
@@ -177,6 +189,12 @@ export function AssignRoutineModal(props: Props) {
             value: props.details.time_slot_details?.id,
           }
         : getDefaultTimeSlot(),
+      room_id: props.details?.room_details
+        ? {
+            label: `${props.details.room_details.name} (${props.details.room_details.code})`,
+            value: props.details.room_details.id,
+          }
+        : (null as ISelectOption | null),
     },
     enableReinitialize: true,
     validationSchema: assignRoutineSchema,
@@ -198,6 +216,7 @@ export function AssignRoutineModal(props: Props) {
             body: {
               working_day_id: values.working_day_id?.value as number,
               time_slot_id: values.time_slot_id?.value as number,
+              room_id: values.room_id?.value ?? null,
             },
             onSuccess,
           })
@@ -215,6 +234,7 @@ export function AssignRoutineModal(props: Props) {
             subject_id: values.subject_id?.value as number,
             working_day_id: values.working_day_id?.value as number,
             time_slot_id: values.time_slot_id?.value as number,
+            room_id: values.room_id?.value ?? null,
           },
           onSuccess,
         })
@@ -401,6 +421,33 @@ export function AssignRoutineModal(props: Props) {
               {fieldError('time_slot_id') ? (
                 <Typography fontSize={11.5} color="error" mt={0.5}>
                   {helperText('time_slot_id')}
+                </Typography>
+              ) : null}
+            </FormControl>
+
+            <FormControl fullWidth>
+              <FormLabel sx={{ fontSize: 13, mb: 1, color: colors.grey[800] }}>
+                Room (optional)
+              </FormLabel>
+              <SelectField
+                isClearable
+                placeholder="Select room"
+                options={rooms
+                  .filter((room) => room.room_details.status === 'available')
+                  .map((room) => ({
+                    label: `${room.room_details.name} (${room.room_details.code}) · ${room.room_details.capacity} seats`,
+                    value: room.room_details.id,
+                  }))}
+                value={formik.values.room_id}
+                onChange={(e) =>
+                  formik.setFieldValue('room_id', e as ISelectOption | null)
+                }
+                {...routineSelectPortalProps}
+                styles={selectStyles}
+              />
+              {fieldError('room_id') ? (
+                <Typography fontSize={11.5} color="error" mt={0.5}>
+                  {helperText('room_id')}
                 </Typography>
               ) : null}
             </FormControl>
