@@ -18,6 +18,7 @@ import {
   getPeriodsAction,
   getRunDetailAction,
   postRunToAccountingAction,
+  publishRunPayslipsAction,
   transitionRunAction,
 } from '@src/store/redux/dashboard/payroll/payroll.slice'
 import { usePayrollPermissions } from '@src/hooks/usePayrollPermissions.hooks'
@@ -335,7 +336,7 @@ export function PayrollProcessPage() {
       {step === 1 ? (
         <FeePanel
           title="2. Payroll run"
-          subtitle="One regular run per period. Use an off-cycle run for a bonus or a supplementary payment."
+          subtitle="One regular run per period and payroll group. Use an off-cycle run for a bonus or a supplementary payment."
         >
           <Stack spacing={2}>
             <Box sx={{ maxWidth: 280 }}>
@@ -626,6 +627,24 @@ export function PayrollProcessPage() {
                   }
                 >
                   Generate payslips
+                </ButtonComp>
+              ) : null}
+              {permissions.canPublishPayslips &&
+              ['APPROVED', 'POSTED', 'PAYMENT_AUTHORIZED', 'PAID'].includes(
+                run.status
+              ) ? (
+                <ButtonComp
+                  size="small"
+                  variant="outlined"
+                  disabled={disabled}
+                  onClick={() =>
+                    execute(
+                      () => dispatch(publishRunPayslipsAction(run.id)).unwrap(),
+                      false
+                    )
+                  }
+                >
+                  Publish payslips
                 </ButtonComp>
               ) : null}
               {canRunAction(run.status, 'close') && permissions.canFinalize ? (

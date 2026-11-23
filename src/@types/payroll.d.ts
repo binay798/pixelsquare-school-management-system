@@ -42,7 +42,7 @@ declare namespace Payroll {
     | 'PARTIALLY_PAID'
     | 'FAILED'
     | 'REVERSED'
-  type PayslipStatus = 'GENERATED' | 'SENT' | 'VIEWED'
+  type PayslipStatus = 'GENERATED' | 'PUBLISHED' | 'SENT' | 'VIEWED'
   type ExceptionSeverity = 'INFO' | 'WARNING' | 'BLOCKER'
   type ExceptionStatus = 'OPEN' | 'ACKNOWLEDGED' | 'WAIVED' | 'RESOLVED'
   type LineItemType = 'EARNING' | 'DEDUCTION' | 'EMPLOYER_CONTRIBUTION'
@@ -537,6 +537,9 @@ declare namespace Payroll {
     | 'REIMBURSEMENT_EXPENSE'
     | 'ROUNDING'
   type StructureStatus = 'ACTIVE' | 'INACTIVE'
+  type StatutoryCode = 'TDS' | 'PF' | 'SSF' | 'CIT' | 'INSURANCE'
+  type StatutoryCalculationBase = 'BASIC' | 'GROSS' | 'TAXABLE_GROSS'
+  type StatutorySlabMode = 'NONE' | 'PROGRESSIVE' | 'FIXED_AMOUNT'
 
   interface IPolicy {
     frequency: Frequency
@@ -631,6 +634,54 @@ declare namespace Payroll {
 
   interface IStructureDetail extends IStructure {
     components: IStructureComponent[]
+  }
+
+  /* --------------------------- statutory rules --------------------------- */
+
+  interface IStatutorySlab {
+    id?: number
+    rule_id?: number
+    slab_from: string
+    slab_to: string | null
+    rate: string
+    fixed_amount: string | null
+    sequence?: number
+  }
+
+  interface IStatutoryRule {
+    id: number
+    jurisdiction: string
+    code: StatutoryCode
+    name: string
+    calculation_base: StatutoryCalculationBase
+    employee_rate: string
+    employer_rate: string
+    slab_mode: StatutorySlabMode
+    is_annualised: boolean
+    effective_from: string
+    effective_to: string | null
+    is_active: boolean
+    slabs: IStatutorySlab[]
+    enrollment_count: number
+    created_at: string
+    updated_at: string
+  }
+
+  interface IStatutoryEnrollmentRule {
+    rule_id: number
+    code: StatutoryCode
+    name: string
+    employee_rate: string
+    employer_rate: string
+    slab_mode: StatutorySlabMode
+    effective_from: string
+    is_enrolled: boolean
+  }
+
+  interface IStatutoryEnrollments {
+    /** ALL = the engine applies every active rule (no enrollment rows yet). */
+    mode: 'ALL' | 'SELECTED'
+    rules: IStatutoryEnrollmentRule[]
   }
 
   interface IDocumentListQuery {
@@ -746,6 +797,7 @@ declare namespace Payroll {
     payroll_profile: IPayrollProfile | null
     assignments: ISalaryAssignment[]
     revisions: ISalaryRevision[]
+    statutory_enrollments?: IStatutoryEnrollments
   }
 
   interface IArrearsPreview {
@@ -906,6 +958,7 @@ declare namespace Payroll {
         period_key: string
         base_amount: string
         days_payable: string
+        working_days?: string
         gross: string
         deductions: string
         net: string

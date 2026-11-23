@@ -37,6 +37,7 @@ export function usePayrollPermissions() {
     canPost: can('payroll.runs.post'),
     canFinalize: can('payroll.runs.finalize'),
     canGeneratePayslips: can('payroll.payslips.generate'),
+    canPublishPayslips: can('payroll.payslips.publish'),
     canCreatePayments: can('payroll.payments.create'),
     canManageRemittances: can('payroll.remittances.manage'),
     canManageLoans: can('payroll.loans.manage'),

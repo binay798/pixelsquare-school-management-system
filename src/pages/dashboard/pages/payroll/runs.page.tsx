@@ -168,7 +168,7 @@ export function PayrollRunsPage() {
       <FeePanel
         noPadding
         title="Runs"
-        subtitle="A regular run is unique per period; off-cycle runs are used for bonuses and arrears."
+        subtitle="A regular run is unique per period and payroll group; off-cycle runs are used for bonuses and arrears."
         footer={
           totalPages > 1 ? (
             <Pagination

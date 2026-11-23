@@ -39,6 +39,7 @@ import { FeePageHeader } from '../fees/components/feePageHeader.component'
 import { FeePanel } from '../fees/components/feePanel.component'
 import { FeeStatusChip } from '../fees/components/feeStatusChip.component'
 import { ProfileSalaryComponent } from './components/profileSalary.component'
+import { ProfileStatutoryComponent } from './components/profileStatutory.component'
 import {
   ELIGIBLE_OPTIONS,
   EMPLOYMENT_TYPE_OPTIONS,
@@ -803,6 +804,7 @@ export function PayrollProfilesPage() {
               </Stack>
             </Box>
 
+            {openId ? <ProfileStatutoryComponent employeeId={openId} /> : null}
             {openId ? <ProfileSalaryComponent employeeId={openId} /> : null}
           </Stack>
         </DialogContent>

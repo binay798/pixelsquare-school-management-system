@@ -627,3 +627,47 @@ export const hasPayrollPermission = (
 
 export const canViewPayrollModule = (roles: string[] | undefined) =>
   hasPayrollPermission(roles, 'payroll.dashboard.view')
+
+/* ------------------------------------------------------------------ *
+ * Statutory rules
+ * ------------------------------------------------------------------ */
+
+export const STATUTORY_CODE_LABEL: Record<Payroll.StatutoryCode, string> = {
+  TDS: 'Income tax (TDS)',
+  PF: 'Provident fund (PF)',
+  SSF: 'Social security fund (SSF)',
+  CIT: 'Citizen investment trust (CIT)',
+  INSURANCE: 'Insurance premium',
+}
+
+export const STATUTORY_CODE_OPTIONS: IOption<Payroll.StatutoryCode>[] = (
+  Object.keys(STATUTORY_CODE_LABEL) as Payroll.StatutoryCode[]
+).map((value) => ({ value, label: STATUTORY_CODE_LABEL[value] }))
+
+export const STATUTORY_BASE_LABEL: Record<
+  Payroll.StatutoryCalculationBase,
+  string
+> = {
+  BASIC: 'Basic salary',
+  GROSS: 'Gross salary',
+  TAXABLE_GROSS: 'Taxable gross',
+}
+
+export const STATUTORY_BASE_OPTIONS: IOption<Payroll.StatutoryCalculationBase>[] =
+  (Object.keys(STATUTORY_BASE_LABEL) as Payroll.StatutoryCalculationBase[]).map(
+    (value) => ({ value, label: STATUTORY_BASE_LABEL[value] })
+  )
+
+export const STATUTORY_SLAB_MODE_LABEL: Record<
+  Payroll.StatutorySlabMode,
+  string
+> = {
+  NONE: 'Flat rate',
+  PROGRESSIVE: 'Progressive slabs',
+  FIXED_AMOUNT: 'Fixed amount',
+}
+
+export const STATUTORY_SLAB_MODE_OPTIONS: IOption<Payroll.StatutorySlabMode>[] =
+  (Object.keys(STATUTORY_SLAB_MODE_LABEL) as Payroll.StatutorySlabMode[]).map(
+    (value) => ({ value, label: STATUTORY_SLAB_MODE_LABEL[value] })
+  )

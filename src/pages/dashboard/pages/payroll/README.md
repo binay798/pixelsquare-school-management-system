@@ -10,15 +10,16 @@ browser, amounts are displayed from the server computed decimal strings.
 | Route                            | Page                   | Backend endpoints                                                                                                                                      |
 | -------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `/dashboard/payroll`             | `dashboard.page.tsx`   | `GET /payroll/reports/dashboard`                                                                                                                       |
-| `/dashboard/payroll/process`     | `process.page.tsx`     | periods, `POST /runs`, `calculate`, `submit/verify/approve`, `post-to-accounting`, `authorize-payment`, `POST /runs/:id/payments`, `payslips/generate` |
+| `/dashboard/payroll/process`     | `process.page.tsx`     | periods, `POST /runs`, `calculate`, `submit/verify/approve`, `post-to-accounting`, `authorize-payment`, `POST /runs/:id/payments`, `payslips/generate`, `payslips/publish` |
 | `/dashboard/payroll/runs`        | `runs.page.tsx`        | `GET /payroll/runs`                                                                                                                                    |
 | `/dashboard/payroll/runs/:runId` | `runDetail.page.tsx`   | run detail, employees, register, transitions, exceptions, delete (draft/calculated/rejected/cancelled)                                                 |
-| `/dashboard/payroll/payslips`    | `payslips.page.tsx`    | `GET /payroll/payslips`, `GET /payslips/:id/pdf`                                                                                                       |
+| `/dashboard/payroll/payslips`    | `payslips.page.tsx`    | `GET /payroll/payslips`, `GET /payslips/:id/pdf`, `POST /payslips/:id/publish`                                                                          |
 | `/dashboard/payroll/payments`    | `payments.page.tsx`    | `GET /payroll/payments`, `POST /payments/:id/complete`, `POST /payments/:id/cancel`                                                                    |
 | `/dashboard/payroll/documents`   | `documents.page.tsx`   | loans, advances, reimbursements, adjustments + decisions / disburse / pay                                                                              |
 | `/dashboard/payroll/remittances` | `remittances.page.tsx` | `GET/POST /payroll/remittances`, `POST /remittances/:id/pay`                                                                                           |
 | `/dashboard/payroll/me/payslips` | `myPayslips.page.tsx`  | `GET /payroll/me/payslips`, `GET /me/payslips/:id/pdf`                                                                                                 |
 | `/dashboard/payroll/settings`    | `settings.page.tsx`    | `GET/POST /payroll/settings`, `POST /payroll/settings/provision`, `GET/PUT /payroll/accounting/mappings`                                               |
+| `/dashboard/payroll/statutory-rules` | `statutoryRules.page.tsx` | `GET/POST /payroll/statutory-rules`, `PATCH/DELETE /payroll/statutory-rules/:id`                                                              |
 | `/dashboard/payroll/components`  | `components.page.tsx`  | `GET/POST /payroll/components`, `PATCH/DELETE /payroll/components/:id`                                                                                 |
 | `/dashboard/payroll/structures`  | `structures.page.tsx`  | `GET/POST /payroll/structures`, `PATCH /payroll/structures/:id` (edit), `POST …/activate`, `DELETE …` (deactivate)                                     |
 | `/dashboard/payroll/profiles`    | `profiles.page.tsx`    | `GET /payroll/employees`, profile upsert, payment details, assignments, revisions + arrears                                                            |
@@ -30,10 +31,11 @@ browser, amounts are displayed from the server computed decimal strings.
 
 ## Process Payroll wizard
 
-Five steps, each mapped to exactly one backend transition:
+The five-step wizard plus payslip publishing; each step is mapped to exactly one backend
+transition:
 
 1. **Period** — pick an open period, or generate a whole year (`POST /periods/generate`).
-2. **Run** — create the run (`POST /runs`, regular is unique per period).
+2. **Run** — create the run (`POST /runs`, a regular run is unique per period and group).
 3. **Calculate** — `POST /runs/:id/calculate`; the engine snapshots attendance,
    assignments, loans/advances and approved adjustments.
 4. **Approve** — `submit → verify → approve` (maker-checker enforced by the backend;
@@ -41,6 +43,8 @@ Five steps, each mapped to exactly one backend transition:
 5. **Post & pay** — `post-to-accounting` (accrual + employer contributions),
    `authorize-payment`, then a payment batch (`POST /runs/:id/payments`) that is
    completed from the Payments screen.
+6. **Payslips** — `generate` creates the documents (`GENERATED`); `publish` (single or
+   whole run) is what makes them visible on **My Payslips**.
 
 The current run status drives the enabled step, so leaving and returning to the screen
 resumes the workflow where it stopped.
@@ -91,6 +95,11 @@ Three screens cover the setup the run depends on:
   save never drops one), and **Activate / Deactivate** are confirmed: a structure can only
   be deactivated once no employee is assigned to it, and a structure whose end date already
   passed has to be extended before it can be activated again.
+- **Statutory rules** (`statutoryRules.page.tsx`) — TDS / PF / SSF / CIT / insurance
+  versions with their slabs. A rate change is a **new effective-dated version** (the
+  previous open version is closed automatically); the screen only deactivates a version,
+  it never edits a published rate. The engine reads the latest effective version per
+  scheme, so two versions can never double-deduct.
 
 ## Payroll profiles
 
@@ -114,6 +123,10 @@ appears in this list with the `teacher` role and is onboarded like anybody else.
    (per-period expected vs paid) and create the adjustment (`POST /revisions/:id/arrears`).
    The adjustment then follows the normal adjustment approval and is consumed by the next
    run.
+4. **Statutory schemes** — a checkbox per active scheme
+   (`GET/PUT /payroll/employees/:id/statutory-enrollments`). With no selection every
+   active rule applies; income tax always applies. Enrollments are matched by scheme
+   code, so publishing a new rate version does not drop the employee.
 
 ## Leave & overtime
 

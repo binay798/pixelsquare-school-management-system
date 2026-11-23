@@ -29,7 +29,11 @@ import {
 import type { IFeeColumn } from '../fees/components/feeDataTable.component'
 import { FeePageHeader } from '../fees/components/feePageHeader.component'
 import { FeePanel } from '../fees/components/feePanel.component'
-import { FREQUENCY_OPTIONS, PAYROLL_BASE_PATH } from './payroll.helpers'
+import {
+  FREQUENCY_OPTIONS,
+  EMPLOYMENT_TYPE_OPTIONS,
+  PAYROLL_BASE_PATH,
+} from './payroll.helpers'
 import type { IOption } from './payroll.helpers'
 
 /** Payroll groups: a named subset of employees (e.g. teaching vs support staff). */
@@ -45,6 +49,9 @@ export function PayrollGroupsPage() {
   const [name, setName] = useState('')
   const [frequency, setFrequency] = useState<Payroll.Frequency>('MONTHLY')
   const [structureId, setStructureId] = useState<number | null>(null)
+  const [employmentTypes, setEmploymentTypes] = useState<
+    Payroll.EmploymentType[]
+  >([])
 
   useEffect(() => {
     dispatch(getGroupsAction())
@@ -66,12 +73,16 @@ export function PayrollGroupsPage() {
           name,
           frequency,
           default_structure_id: structureId,
+          filter: employmentTypes.length
+            ? { employment_types: employmentTypes }
+            : null,
         })
       ).unwrap()
       await dispatch(getGroupsAction())
       setOpen(false)
       setName('')
       setStructureId(null)
+      setEmploymentTypes([])
     } catch {
       /* toast raised by the slice */
     } finally {
@@ -218,6 +229,29 @@ export function PayrollGroupsPage() {
                   }
                 }}
               />
+            </Box>
+            <Box>
+              <Typography fontSize={13} mb={0.75}>
+                Employment types (optional)
+              </Typography>
+              <SelectField
+                isMulti
+                placeholder="Every employment type"
+                options={EMPLOYMENT_TYPE_OPTIONS}
+                value={EMPLOYMENT_TYPE_OPTIONS.filter((option) =>
+                  employmentTypes.includes(option.value)
+                )}
+                onChange={(options) =>
+                  setEmploymentTypes(
+                    ((options ?? []) as IOption<Payroll.EmploymentType>[]).map(
+                      (option) => option.value
+                    )
+                  )
+                }
+              />
+              <Typography fontSize={11} color={colors.grey[500]} mt={0.5}>
+                The run only pays these types inside the group.
+              </Typography>
             </Box>
             <Box>
               <Typography fontSize={13} mb={0.75}>

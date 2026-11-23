@@ -16,7 +16,9 @@ import {
   ICreateRevisionDto,
   ICreateRunDto,
   ICreateSettlementDto,
+  ICreateStatutoryRuleDto,
   ICreateStructureDto,
+  IUpdateStatutoryRuleDto,
   IUpdateStructureDto,
   IDecideAttendanceDto,
   IGeneratePeriodsDto,
@@ -103,6 +105,11 @@ interface InitialState {
   settings: { data: Payroll.ISettings | null; loading: boolean }
   salaryComponents: { data: Payroll.IComponent[] | null; loading: boolean }
   structures: { data: Payroll.IStructure[] | null; loading: boolean }
+  statutoryRules: { data: Payroll.IStatutoryRule[] | null; loading: boolean }
+  statutoryEnrollments: {
+    data: Payroll.IStatutoryEnrollments | null
+    loading: boolean
+  }
   mappings: { data: Payroll.IMappings | null; loading: boolean }
   profiles: {
     data: Payroll.IPaginated<Payroll.IProfileListItem> | null
@@ -164,6 +171,8 @@ const initialState: InitialState = {
   settings: { data: null, loading: false },
   salaryComponents: { data: null, loading: false },
   structures: { data: null, loading: false },
+  statutoryRules: { data: null, loading: false },
+  statutoryEnrollments: { data: null, loading: false },
   mappings: { data: null, loading: false },
   profiles: { data: null, loading: false },
   auditLogs: { data: null, loading: false },
@@ -492,6 +501,27 @@ export const generatePayslipsAction = createAsyncThunk(
     true,
     false,
     'Payslips generated'
+  )
+)
+
+export const publishPayslipAction = createAsyncThunk(
+  'payroll/publishPayslip',
+  catchAsync(
+    async (payslipId: number) =>
+      payrollServices.publishPayslipService(payslipId),
+    true,
+    false,
+    'Payslip published'
+  )
+)
+
+export const publishRunPayslipsAction = createAsyncThunk(
+  'payroll/publishRunPayslips',
+  catchAsync(
+    async (runId: number) => payrollServices.publishRunPayslipsService(runId),
+    true,
+    false,
+    'Payslips published'
   )
 )
 
@@ -1241,6 +1271,79 @@ export const activateStructureAction = createAsyncThunk(
   )
 )
 
+/* ---------------------------- statutory rules -------------------------- */
+
+export const getStatutoryRulesAction = createAsyncThunk<
+  Payroll.IStatutoryRule[],
+  void
+>(
+  'payroll/getStatutoryRules',
+  catchAsync<Payroll.IStatutoryRule[], void>(async () =>
+    payrollServices.listStatutoryRulesService()
+  )
+)
+
+export const createStatutoryRuleAction = createAsyncThunk(
+  'payroll/createStatutoryRule',
+  catchAsync(
+    async (payload: ICreateStatutoryRuleDto) =>
+      payrollServices.createStatutoryRuleService(payload),
+    true,
+    false,
+    'Statutory rule created'
+  )
+)
+
+export const updateStatutoryRuleAction = createAsyncThunk(
+  'payroll/updateStatutoryRule',
+  catchAsync(
+    async (payload: { ruleId: number; changes: IUpdateStatutoryRuleDto }) =>
+      payrollServices.updateStatutoryRuleService(
+        payload.ruleId,
+        payload.changes
+      ),
+    true,
+    false,
+    'Statutory rule updated'
+  )
+)
+
+export const deactivateStatutoryRuleAction = createAsyncThunk(
+  'payroll/deactivateStatutoryRule',
+  catchAsync(
+    async (ruleId: number) =>
+      payrollServices.deactivateStatutoryRuleService(ruleId),
+    true,
+    false,
+    'Statutory rule deactivated'
+  )
+)
+
+export const getStatutoryEnrollmentsAction = createAsyncThunk<
+  Payroll.IStatutoryEnrollments,
+  number
+>(
+  'payroll/getStatutoryEnrollments',
+  catchAsync<Payroll.IStatutoryEnrollments, number>(
+    async (employeeId: number) =>
+      payrollServices.listStatutoryEnrollmentsService(employeeId)
+  )
+)
+
+export const setStatutoryEnrollmentsAction = createAsyncThunk(
+  'payroll/setStatutoryEnrollments',
+  catchAsync(
+    async (payload: { employeeId: number; ruleIds: number[] }) =>
+      payrollServices.setStatutoryEnrollmentsService(
+        payload.employeeId,
+        payload.ruleIds
+      ),
+    true,
+    false,
+    'Statutory enrollments updated'
+  )
+)
+
 export const getStructureDetailAction = createAsyncThunk<
   Payroll.IStructureDetail,
   number
@@ -1532,6 +1635,26 @@ const payrollSlice = createSlice({
       })
       .addCase(getStructuresAction.rejected, (state) => {
         state.structures.loading = false
+      })
+      .addCase(getStatutoryRulesAction.pending, (state) => {
+        state.statutoryRules.loading = true
+      })
+      .addCase(getStatutoryRulesAction.fulfilled, (state, action) => {
+        state.statutoryRules.data = action.payload
+        state.statutoryRules.loading = false
+      })
+      .addCase(getStatutoryRulesAction.rejected, (state) => {
+        state.statutoryRules.loading = false
+      })
+      .addCase(getStatutoryEnrollmentsAction.pending, (state) => {
+        state.statutoryEnrollments.loading = true
+      })
+      .addCase(getStatutoryEnrollmentsAction.fulfilled, (state, action) => {
+        state.statutoryEnrollments.data = action.payload
+        state.statutoryEnrollments.loading = false
+      })
+      .addCase(getStatutoryEnrollmentsAction.rejected, (state) => {
+        state.statutoryEnrollments.loading = false
       })
       .addCase(getMappingsAction.pending, (state) => {
         state.mappings.loading = true

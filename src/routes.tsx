@@ -85,6 +85,7 @@ import { PayrollDocumentsPage } from './pages/dashboard/pages/payroll/documents.
 import { PayrollRemittancesPage } from './pages/dashboard/pages/payroll/remittances.page'
 import { PayrollMyPayslipsPage } from './pages/dashboard/pages/payroll/myPayslips.page'
 import { PayrollSettingsPage } from './pages/dashboard/pages/payroll/settings.page'
+import { PayrollStatutoryRulesPage } from './pages/dashboard/pages/payroll/statutoryRules.page'
 import { PayrollComponentsPage } from './pages/dashboard/pages/payroll/components.page'
 import { PayrollStructuresPage } from './pages/dashboard/pages/payroll/structures.page'
 import { PayrollProfilesPage } from './pages/dashboard/pages/payroll/profiles.page'
@@ -355,6 +356,10 @@ export const privateRoutes: RouteObject[] = [
               { path: 'remittances', element: <PayrollRemittancesPage /> },
               { path: 'me/payslips', element: <PayrollMyPayslipsPage /> },
               { path: 'settings', element: <PayrollSettingsPage /> },
+              {
+                path: 'statutory-rules',
+                element: <PayrollStatutoryRulesPage />,
+              },
               { path: 'components', element: <PayrollComponentsPage /> },
               { path: 'structures', element: <PayrollStructuresPage /> },
               { path: 'profiles', element: <PayrollProfilesPage /> },

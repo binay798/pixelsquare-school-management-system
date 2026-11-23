@@ -97,6 +97,7 @@ export function PayrollAttendancePage() {
   const [fromDate, setFromDate] = useState(todayIso())
   const [toDate, setToDate] = useState(todayIso())
   const [hours, setHours] = useState('2')
+  const [rateMultiplier, setRateMultiplier] = useState('')
   const [note, setNote] = useState('')
 
   useEffect(() => {
@@ -152,6 +153,7 @@ export function PayrollAttendancePage() {
     setFromDate(todayIso())
     setToDate(todayIso())
     setHours('2')
+    setRateMultiplier('')
     setNote('')
     setDialog(kind)
   }
@@ -268,7 +270,12 @@ export function PayrollAttendancePage() {
       key: 'hours',
       label: 'Hours',
       align: 'right',
-      render: (row) => <Typography fontSize={12.5}>{row.hours}</Typography>,
+      render: (row) => (
+        <Typography fontSize={12.5}>
+          {row.hours}
+          {row.rate_multiplier ? ` × ${row.rate_multiplier}` : ''}
+        </Typography>
+      ),
     },
     {
       key: 'status',
@@ -518,6 +525,14 @@ export function PayrollAttendancePage() {
                   value={hours}
                   onChange={(event) => setHours(event.target.value)}
                 />
+                <InputField
+                  labelDetail={{
+                    text: 'Multiplier (blank = policy)',
+                    required: false,
+                  }}
+                  value={rateMultiplier}
+                  onChange={(event) => setRateMultiplier(event.target.value)}
+                />
               </Stack>
             )}
 
@@ -555,6 +570,7 @@ export function PayrollAttendancePage() {
                         employee_id: Number(employeeId),
                         work_date: fromDate,
                         hours: Number(hours),
+                        rate_multiplier: rateMultiplier.trim() || null,
                         note: note || null,
                       })
                     ).unwrap()

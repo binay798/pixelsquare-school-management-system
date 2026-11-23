@@ -403,9 +403,25 @@ const downloadPayslipPdfService = async (payslipId: number) => {
 }
 
 const generatePayslipsService = async (runId: number) => {
-  const res = await api<Api.Base<{ generated: number; skipped: number }>>(
-    'post'
-  )(`payroll/runs/${runId}/payslips/generate`)
+  const res = await api<
+    Api.Base<{ created: number; payslips: Payroll.IPayslip[] }>
+  >('post')(`payroll/runs/${runId}/payslips/generate`)
+
+  return unwrap(res)
+}
+
+const publishPayslipService = async (payslipId: number) => {
+  const res = await api<Api.Base<Payroll.IPayslip>>('post')(
+    `payroll/payslips/${payslipId}/publish`
+  )
+
+  return unwrap(res)
+}
+
+const publishRunPayslipsService = async (runId: number) => {
+  const res = await api<Api.Base<{ published: number }>>('post')(
+    `payroll/runs/${runId}/payslips/publish`
+  )
 
   return unwrap(res)
 }
@@ -1086,6 +1102,37 @@ const deactivateStructureService = async (structureId: number) => {
 
 export type IUpdateStructureDto = Omit<ICreateStructureDto, 'code'>
 
+/* ---------------------------- statutory rules -------------------------- */
+
+export interface IStatutorySlabDto {
+  slab_from?: string | null
+  slab_to?: string | null
+  rate?: string | null
+  fixed_amount?: string | null
+}
+
+export interface ICreateStatutoryRuleDto {
+  code: Payroll.StatutoryCode
+  name: string
+  jurisdiction?: string
+  calculation_base?: Payroll.StatutoryCalculationBase
+  employee_rate?: string | null
+  employer_rate?: string | null
+  slab_mode?: Payroll.StatutorySlabMode
+  is_annualised?: boolean
+  effective_from: string
+  effective_to?: string | null
+  is_active?: boolean
+  slabs?: IStatutorySlabDto[]
+}
+
+export interface IUpdateStatutoryRuleDto {
+  name?: string
+  jurisdiction?: string
+  effective_to?: string | null
+  is_active?: boolean
+}
+
 const updateStructureService = async (
   structureId: number,
   payload: IUpdateStructureDto
@@ -1102,6 +1149,68 @@ const updateStructureService = async (
 const activateStructureService = async (structureId: number) => {
   const res = await api<Api.Base<Payroll.IStructure>>('post')(
     `payroll/structures/${structureId}/activate`
+  )
+
+  return unwrap(res)
+}
+
+/* ---------------------------- statutory rules -------------------------- */
+
+const listStatutoryRulesService = async () => {
+  const res = await api<Api.Base<{ rules: Payroll.IStatutoryRule[] }>>('get')(
+    'payroll/statutory-rules'
+  )
+
+  return unwrap(res).rules
+}
+
+const createStatutoryRuleService = async (payload: ICreateStatutoryRuleDto) => {
+  const res = await api<Api.Base<Payroll.IStatutoryRule>>('post')(
+    'payroll/statutory-rules',
+    undefined,
+    payload
+  )
+
+  return unwrap(res)
+}
+
+const updateStatutoryRuleService = async (
+  ruleId: number,
+  payload: IUpdateStatutoryRuleDto
+) => {
+  const res = await api<Api.Base<Payroll.IStatutoryRule>>('patch')(
+    `payroll/statutory-rules/${ruleId}`,
+    undefined,
+    payload
+  )
+
+  return unwrap(res)
+}
+
+const deactivateStatutoryRuleService = async (ruleId: number) => {
+  const res = await api<Api.Base<Payroll.IStatutoryRule>>('delete')(
+    `payroll/statutory-rules/${ruleId}`
+  )
+
+  return unwrap(res)
+}
+
+const listStatutoryEnrollmentsService = async (employeeId: number) => {
+  const res = await api<Api.Base<Payroll.IStatutoryEnrollments>>('get')(
+    `payroll/employees/${employeeId}/statutory-enrollments`
+  )
+
+  return unwrap(res)
+}
+
+const setStatutoryEnrollmentsService = async (
+  employeeId: number,
+  ruleIds: number[]
+) => {
+  const res = await api<Api.Base<Payroll.IStatutoryEnrollments>>('put')(
+    `payroll/employees/${employeeId}/statutory-enrollments`,
+    undefined,
+    { rule_ids: ruleIds }
   )
 
   return unwrap(res)
@@ -1343,6 +1452,7 @@ export interface IGroupDto {
   name: string
   frequency?: Payroll.Frequency
   default_structure_id?: number | null
+  filter?: Record<string, unknown> | null
   is_active?: boolean
 }
 
@@ -1517,6 +1627,8 @@ export const payrollServices = {
   getPayslipService,
   downloadPayslipPdfService,
   generatePayslipsService,
+  publishPayslipService,
+  publishRunPayslipsService,
   listMyPayslipsService,
   downloadMyPayslipPdfService,
   /* payments */
@@ -1575,6 +1687,12 @@ export const payrollServices = {
   updateStructureService,
   deactivateStructureService,
   activateStructureService,
+  listStatutoryRulesService,
+  createStatutoryRuleService,
+  updateStatutoryRuleService,
+  deactivateStatutoryRuleService,
+  listStatutoryEnrollmentsService,
+  setStatutoryEnrollmentsService,
   getMappingsService,
   upsertMappingService,
   /* leave & overtime */

@@ -1,11 +1,15 @@
-import { Box, Button, Pagination, Typography } from '@mui/material'
+import { Box, Button, Pagination, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Download, FileText } from 'lucide-react'
 import { InputField } from '@src/components/input/input.component'
 import { SelectField } from '@src/components/select/select.component'
 import { colors } from '@src/helpers/colors.helpers'
 import { useDispatch, useSelector } from '@src/store/hooks.store'
-import { getPayslipsAction } from '@src/store/redux/dashboard/payroll/payroll.slice'
+import {
+  getPayslipsAction,
+  publishPayslipAction,
+} from '@src/store/redux/dashboard/payroll/payroll.slice'
+import { usePayrollPermissions } from '@src/hooks/usePayrollPermissions.hooks'
 import { payrollServices } from '@src/store/redux/dashboard/payroll/payroll.service'
 import {
   FeeAmount,
@@ -30,6 +34,13 @@ const PAYSLIP_STATUS_META: Record<Payroll.PayslipStatus, IStatusMeta> = {
     dot: '#2563eb',
     label: 'Generated',
   },
+  PUBLISHED: {
+    text: '#15803d',
+    bg: '#f0fdf4',
+    border: '#bbf7d0',
+    dot: '#22c55e',
+    label: 'Published',
+  },
   SENT: {
     text: '#15803d',
     bg: '#f0fdf4',
@@ -48,6 +59,7 @@ const PAYSLIP_STATUS_META: Record<Payroll.PayslipStatus, IStatusMeta> = {
 
 const PAYSLIP_STATUS_OPTIONS: IOption<Payroll.PayslipStatus>[] = [
   { value: 'GENERATED', label: 'Generated' },
+  { value: 'PUBLISHED', label: 'Published' },
   { value: 'SENT', label: 'Sent' },
   { value: 'VIEWED', label: 'Viewed' },
 ]
@@ -55,6 +67,7 @@ const PAYSLIP_STATUS_OPTIONS: IOption<Payroll.PayslipStatus>[] = [
 /** Payslips listing and PDF download (`GET /payroll/payslips`). */
 export function PayrollPayslipsPage() {
   const dispatch = useDispatch()
+  const permissions = usePayrollPermissions()
 
   const { data, loading } = useSelector((store) => store.payroll.payslips)
 
@@ -62,6 +75,7 @@ export function PayrollPayslipsPage() {
   const [status, setStatus] = useState<Payroll.PayslipStatus | undefined>()
   const [page, setPage] = useState(1)
   const [downloading, setDownloading] = useState<number | null>(null)
+  const [publishing, setPublishing] = useState<number | null>(null)
 
   useEffect(() => {
     dispatch(
@@ -91,6 +105,24 @@ export function PayrollPayslipsPage() {
       URL.revokeObjectURL(url)
     } finally {
       setDownloading(null)
+    }
+  }
+
+  const publish = async (payslip: Payroll.IPayslip) => {
+    try {
+      setPublishing(payslip.id)
+      await dispatch(publishPayslipAction(payslip.id)).unwrap()
+      await dispatch(
+        getPayslipsAction({
+          filters: { period_key: periodKey.trim() || undefined, status },
+          page,
+          limit: PAGE_LIMIT,
+        })
+      )
+    } catch {
+      /* toast raised by the slice */
+    } finally {
+      setPublishing(null)
     }
   }
 
@@ -143,22 +175,42 @@ export function PayrollPayslipsPage() {
       render: (row) => <FeeStatusChip meta={PAYSLIP_STATUS_META[row.status]} />,
     },
     {
-      key: 'pdf',
+      key: 'actions',
       label: '',
       align: 'right',
       render: (row) => (
-        <Button
-          size="small"
-          variant="text"
-          startIcon={<Download size={14} />}
-          disabled={downloading === row.id}
-          onClick={(event) => {
-            event.stopPropagation()
-            void download(row)
-          }}
+        <Stack
+          direction="row"
+          spacing={0.5}
+          justifyContent="flex-end"
+          alignItems="center"
         >
-          PDF
-        </Button>
+          {permissions.canPublishPayslips && !row.published_at ? (
+            <Button
+              size="small"
+              variant="text"
+              disabled={publishing === row.id}
+              onClick={(event) => {
+                event.stopPropagation()
+                void publish(row)
+              }}
+            >
+              Publish
+            </Button>
+          ) : null}
+          <Button
+            size="small"
+            variant="text"
+            startIcon={<Download size={14} />}
+            disabled={downloading === row.id}
+            onClick={(event) => {
+              event.stopPropagation()
+              void download(row)
+            }}
+          >
+            PDF
+          </Button>
+        </Stack>
       ),
     },
   ]

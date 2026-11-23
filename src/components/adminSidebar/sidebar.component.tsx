@@ -436,6 +436,12 @@ const sidebarItems: GenerateAdminSidebarProps[] = [
         permissions: ['payroll.settings.manage'],
       },
       {
+        title: 'Statutory rules',
+        icon: <VscChecklist />,
+        to: '/dashboard/payroll/statutory-rules',
+        permissions: ['payroll.settings.manage'],
+      },
+      {
         title: 'Profiles',
         icon: <GrTableAdd />,
         to: '/dashboard/payroll/profiles',
